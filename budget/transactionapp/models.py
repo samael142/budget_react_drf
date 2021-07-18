@@ -11,7 +11,7 @@ class PlainOperation(models.Model):
         daily = "daily"
         monthly = "monthly"
 
-    start_operation_date = models.DateField(verbose_name='дата первой транзакции')
+    operation_date = models.DateField(verbose_name='дата первой транзакции')
     operation_summ = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
     header = models.ForeignKey(Header, on_delete=models.RESTRICT)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)

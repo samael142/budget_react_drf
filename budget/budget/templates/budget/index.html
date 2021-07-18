@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title|title }}</title>
+    <link rel="stylesheet" href="{% static 'budget/css/style.css' %}">
+</head>
+<body>
+<div class="container">
+<a href="{% url 'transactions:transaction_create' %}" type="button" class="btn btn__green" id="submit">создать транзакцию
+</a>
+</div>
+</body>
+</html>

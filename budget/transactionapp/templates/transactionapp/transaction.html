@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <link rel="stylesheet" href="{% static 'budget/css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+        <div class="container">
+            <div class="title__single">Транзакция</div>
+            <form method="post" onsubmit="return submitForm();">
+            {% csrf_token %}
+                <div class="tr__upper">
+                    <input class="form__control form__sm row__2" type="date" id="start" name="operation_date"
+                        value="{{ date }}">
+                    <select class="form__select form__sm row__2" name="operation_type">
+                        <option value="out">Расход</option>
+                        <option value="in">Приход</option>
+                    </select>
+                </div>
+                <hr class="top__hr">
+                <input onfocus="this.select();" type="number" step="0.01" name="operation_summ" class="form__control form__sm" placeholder="Сумма"
+                       value="" required>
+                <h5 class="select__label">Счёт</h5>
+                <select name="account" class="form__select form__sm" id="account">
+                    <option selected value="{{ tr_ma_id }}">{{ tr_ma_name }}</option>
+                    {% for el in money_accounts %}
+                    <option value="{{ el.pk }}">{{ el.name }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <div class="header__datalist__code input__group">
+                    <input class="form__control form__sm" type="button" value="->" id="headerButton">
+                </div>
+                <br>
+                <input onfocus="this.select();" type="text" name="category" class="form__control form__sm" list="datalistOptions1" id="category"
+                    placeholder="Категория" value="{{ tr_category }}" required>
+                <datalist id="datalistOptions1">
+                    {% for el in categories %}
+                    <option value="{{ el.name }}">
+                        {% endfor %}
+                </datalist>
+                <br>
+                <input onfocus="this.select();" type="text" name="subcategory" class="form__control form__sm" list="subcategory"
+                    id="exampleDataList2" placeholder="Подкатегория" value="{{ tr_subcategory }}" required>
+                <datalist id="subcategory">
+                    {% for el in subcategories %}
+                    <option value="{{ el.name }}">
+                        {% endfor %}
+                </datalist>
+                <br>
+
+                <input type="text" name="comment" class="form__control form__sm" placeholder="Комментарий"
+                    value="">
+                <br>
+                <input name="plain" class="form__check plain" type="checkbox" value="1" id="plain">
+                <label class="form-check-label" for="plain">Планируемая</label>
+                <!-- <br> -->
+                <br>
+                <div class="tr__upper">
+                    <select name="period" class="form__select period form__sm row__2 plain__fields hide" id="period">
+                        <option value="once">Разовая</option>
+                        <option value="daily">Ежедневная</option>
+                        <option value="monthly">Ежемесячная</option>
+                    </select>
+                    <input class="form__control form__sm trip-end row__2 plain__fields hide" type="date" id="end"
+                        name="trip-end" value="{{ default_date }}" disabled>
+                </div>
+                <div class="tr__upper tr__upper__left">
+                    <input type="submit" class="btn btn__green" name="add" value="Отправить" id="submit">
+                    <input type="submit" class="btn btn__green" name="copy" value="+Отправить" id="submitCopy">
+
+                    <input id="close" type="button" class="btn btn__red"
+                        onclick="window.location.href='{% url 'index' %}';" value="Закрыть" />
+                </div>
+            </form>
+        </div>
+
+        <script>
+            $("#submit").click(function () {
+                var checkbox_state = $("#activate").prop('checked');
+                if (checkbox_state == true) {
+                    var account = $("#account").val();
+                    if (account == 'None') {
+                        alert('Выберите счёт')
+                        return false
+                    }
+                }
+            });
+            $(".period").on('change', function () {
+                var target = $('.period').val();
+                if (target == "once") {
+                    $('.quanity').prop('disabled', true)
+                    $('.trip-end').prop('disabled', true)
+                    $('.quanity').val('1')
+                } else {
+                    $('.quanity').prop('disabled', false)
+                    $('.trip-end').prop('disabled', false)
+                }
+            });
+            $(".plain").on('change', function () {
+                if ($('.plain').prop('checked')) {
+                    $('.quanity').prop('required', true)
+                    $(".plain__fields").show()
+                } else {
+                    $('.quanity').prop('required', false)
+                    $(".plain__fields").hide()
+                }
+            });
+            $("#submit").click(function () {
+                var checkbox_state1 = $("#plain").prop('checked');
+                var period = $("#period").val();
+                if ((checkbox_state1 == true) && ((period == 'daily') || (period == 'monthly'))) {
+                    var startDate = new Date($('#start').val());
+                    var endDate = new Date($('#end').val());
+                    if (endDate <= startDate) {
+                        alert('Дата окончания должна быть больше даты начала');
+                        return false;
+                    }
+                }
+            });
+        </script>
+        <script>
+            function submitForm() {
+                return (true)
+            }
+        </script>
+        <script>
+            const htmlIphone = `<input onfocus="this.select();" type="text" name="header" class="form__control form__sm" list="datalistOptions"
+                    id="searchHeader" placeholder="Заголовок" value="" autocomplete="off" minlength="2" required>
+                    <datalist id="datalistOptions" style="height:5.1em; overflow: hidden;">
+                    {% for el in headers %}
+                    <option value="{{ el.name }}">
+                    {% endfor %}
+                    </datalist>`
+            const htmlOther = `<template id="resultstemplateHeader">
+                    {% for el in headers %}
+                    <option class="header">{{ el.name }}</option>
+                    {% endfor %}
+                    </template>
+                    <input onfocus="this.select();" type="text" value="" name="header" placeholder="Заголовок" id="searchHeader"
+                    list="searchresultsHeader" class="form__control form__sm" autocomplete="off" required />
+                    <datalist id="searchresultsHeader"></datalist>`
+            const headerBlock = document.querySelector('.header__datalist__code')
+
+            function datalistLimitter(searchArg, resultsArg, templatContentArg, size) {
+                const search = document.querySelector(searchArg);
+                const results = document.querySelector(resultsArg);
+                const templateContent = document.querySelector(templatContentArg).content;
+                search.addEventListener('keyup', function handler(event) {
+                    let inputVal = new RegExp(search.value.trim(), 'i');
+                    let itemsList = []
+                    results.innerHTML = ''
+                    for (child of templateContent.children) {
+                        if (inputVal.test(child.textContent) && (itemsList.length < size)) {
+                            itemsList.push(child.cloneNode(true))
+                        }
+                    }
+                    for (el of itemsList) {
+                        results.appendChild(el)
+                    }
+                    if (results.children.length === 1 && results.children[0].innerHTML === search.value) {
+                        results.innerHTML = ''
+                        addValuesToForm()
+                    }
+                })
+                return;
+            }
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                headerBlock.insertAdjacentHTML('afterbegin', htmlIphone)
+            } else {
+                headerBlock.insertAdjacentHTML('afterbegin', htmlOther)
+                datalistLimitter('#searchHeader', '#searchresultsHeader', '#resultstemplateHeader', 4);
+            }
+        </script>
+        <script>
+            cat = document.querySelector('#category')
+            subcat = document.querySelector('#exampleDataList2')
+            document.querySelector('#headerButton').addEventListener('click', (event) => {addValuesToForm()})
+            function addValuesToForm() {
+            header = document.querySelector('#searchHeader').value;
+                if (header) {
+                {#url = `/transactionapp/transactions/autoform/${header}`#}
+                djangoUrl = "{% url 'transactionapp:transaction_autoform' 'header' %}"
+                url = djangoUrl.replace('header', header)
+                fetch(url).then(function (response) {
+                    response.json().then(function(data) {
+                        cat.value = data.cat
+                        subcat.value = data.subcat
+                    })
+                })}
+            }
+        </script>
+</body>

@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import index
+from .views import *
+
+app_name = 'transactionapp'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', index, name='index'),
-    path('transactionapp/', include('transactionapp.urls', namespace='transactions')),
+    path('transactions/create/', transaction_create, name='transaction_create'),
+    path('transactions/autoform/<header_name>/', transaction_autoform, name='transaction_autoform'),
 ]
