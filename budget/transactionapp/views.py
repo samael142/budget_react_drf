@@ -3,10 +3,10 @@ from datetime import datetime
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .forms import TransactionForm
+from .forms import TransactionForm, PlainOperationForm
 from maapp.models import MoneyAccount
 from mainapp.models import Header, Category, Subcategory
-from .models import Transaction
+from .models import Transaction, PlainOperation
 from django.http import JsonResponse
 
 
@@ -23,29 +23,41 @@ def transaction_create(request):
             operation_summ = float(request.POST['operation_summ']) * -1
         else:
             operation_summ = float(request.POST['operation_summ'])
-        transaction_form = TransactionForm({
+        post_data_dict = {
             'operation_date': request.POST['operation_date'],
             'operation_summ': operation_summ,
             'account': request.POST['account'],
             'header': Header.add_header_to_transaction(request.POST['header']),
             'category': Category.add_category_to_transaction(request.POST['category']),
-            'subcategory': Subcategory.add_subcategory_to_transaction(
-                request.POST['subcategory']),
+            'subcategory': Subcategory.add_subcategory_to_transaction(request.POST['subcategory']),
             'comment': request.POST['comment'],
-            'period': request.POST['comment'],
-        })
-
-        if transaction_form.is_valid():
-            transaction_form.save()
-            if 'add' in request.POST:
-                return HttpResponseRedirect(reverse('index'))
+        }
+        if 'plain' in request.POST:
+            post_data_dict.pop('account', None)
+            post_data_dict['period'] = request.POST['period']
+            if request.POST['period'] != 'once':
+                post_data_dict['quantity'] = PlainOperation.quantity_count(request.POST['operation_date'],
+                                                                           request.POST['trip-end'],
+                                                                           request.POST['period'])
             else:
-                return HttpResponseRedirect(reverse('transactions:transaction_create'))
-    else:
-        transaction_form = TransactionForm()
+                post_data_dict['quantity'] = '1'
+            plain_operation_form = PlainOperationForm(post_data_dict)
+            print(post_data_dict)
+            if plain_operation_form.is_valid():
+                plain_operation_form.save()
+                PlainOperation.add_plain_transactions()
+                return HttpResponseRedirect(reverse('index'))
+        else:
+            transaction_form = TransactionForm(post_data_dict)
+
+            if transaction_form.is_valid():
+                transaction_form.save()
+                if 'add' in request.POST:
+                    return HttpResponseRedirect(reverse('index'))
+                else:
+                    return HttpResponseRedirect(reverse('transactions:transaction_create'))
     content = {
         'title': title,
-        'transaction_form': transaction_form,
         'headers': headers,
         'categories': categories,
         'subcategories': subcategories,

@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+import calendar
 from django.db import models
 from maapp.models import MoneyAccount
 from mainapp.models import Header, Category, Subcategory
@@ -5,7 +7,6 @@ from mainapp.models import Header, Category, Subcategory
 
 # Create your models here.
 class PlainOperation(models.Model):
-
     class PeriodType(models.TextChoices):
         once = "once"
         daily = "daily"
@@ -18,7 +19,58 @@ class PlainOperation(models.Model):
     subcategory = models.ForeignKey(Subcategory, on_delete=models.RESTRICT)
     comment = models.TextField(blank=True)
     period = models.CharField(max_length=10, choices=PeriodType.choices)
-    quantity = models.PositiveSmallIntegerField
+    quantity = models.PositiveSmallIntegerField(verbose_name="количество операций", default=1)
+
+    @staticmethod
+    def quantity_count(start_date, end_date, per):
+        datetime_start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        datetime_end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        if per == "daily":
+            return abs((datetime_end_date - datetime_start_date).days) + 1
+        elif per == "monthly":
+            delta = 0
+            while True:
+                mdays = calendar.monthrange(datetime_start_date.year, datetime_start_date.month)[1]
+                datetime_start_date += timedelta(days=mdays)
+                if datetime_start_date <= datetime_end_date:
+                    delta += 1
+                else:
+                    break
+            return delta + 1
+
+    @staticmethod
+    def add_plain_transactions():
+        plain_operation_object = PlainOperation.objects.latest('id')
+        print(plain_operation_object)
+        if plain_operation_object.period == 'once':
+            transaction = Transaction(operation_date=plain_operation_object.operation_date,
+                                      operation_summ=plain_operation_object.operation_summ,
+                                      account=None,
+                                      header=plain_operation_object.header,
+                                      category=plain_operation_object.category,
+                                      subcategory=plain_operation_object.subcategory,
+                                      comment=plain_operation_object.comment,
+                                      past=True,
+                                      plain_id=plain_operation_object,)
+            transaction.save()
+        elif plain_operation_object.period == 'daily' or plain_operation_object.period == 'monthly':
+            operation_date = plain_operation_object.operation_date
+            for n in range(plain_operation_object.quantity):
+                transaction = Transaction(operation_date=operation_date,
+                                          operation_summ=plain_operation_object.operation_summ,
+                                          account=None,
+                                          header=plain_operation_object.header,
+                                          category=plain_operation_object.category,
+                                          subcategory=plain_operation_object.subcategory,
+                                          comment=plain_operation_object.comment,
+                                          past=True,
+                                          plain_id=plain_operation_object, )
+                transaction.save()
+                if plain_operation_object.period == 'daily':
+                    operation_date = operation_date + timedelta(days=1)
+                else:
+                    days_in_month = calendar.monthrange(operation_date.year, operation_date.month)[1]
+                    operation_date = operation_date + timedelta(days=days_in_month)
 
 
 class Transaction(models.Model):
