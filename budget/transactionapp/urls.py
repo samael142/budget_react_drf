@@ -20,6 +20,6 @@ from .views import *
 app_name = 'transactionapp'
 
 urlpatterns = [
-    path('transactions/create/', transaction_create, name='transaction_create'),
+    path('transactions/create/', TransactionCreateView.as_view(), name='transaction_create'),
     path('transactions/autoform/<header_name>/', transaction_autoform, name='transaction_autoform'),
 ]

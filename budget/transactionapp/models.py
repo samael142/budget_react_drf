@@ -3,6 +3,8 @@ import calendar
 from django.db import models
 from maapp.models import MoneyAccount
 from mainapp.models import Header, Category, Subcategory
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -51,7 +53,7 @@ class PlainOperation(models.Model):
                                       subcategory=plain_operation_object.subcategory,
                                       comment=plain_operation_object.comment,
                                       past=True,
-                                      plain_id=plain_operation_object,)
+                                      plain_id=plain_operation_object, )
             transaction.save()
         elif plain_operation_object.period == 'daily' or plain_operation_object.period == 'monthly':
             operation_date = plain_operation_object.operation_date
@@ -86,3 +88,8 @@ class Transaction(models.Model):
     past = models.BooleanField(default=False)
     plain_id = models.ForeignKey(PlainOperation, on_delete=models.RESTRICT, null=True, blank=True)
     transfer_id = models.CharField(max_length=8, null=True, blank=True)
+
+    @staticmethod
+    def get_last_transaction():
+        transaction_object = Transaction.objects.latest('id')
+        return transaction_object

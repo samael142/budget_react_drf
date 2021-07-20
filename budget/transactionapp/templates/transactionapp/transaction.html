@@ -30,7 +30,9 @@
                        value="" required>
                 <h5 class="select__label">Счёт</h5>
                 <select name="account" class="form__select form__sm" id="account">
-                    <option selected value="{{ tr_ma_id }}">{{ tr_ma_name }}</option>
+                    {% if default_account %}
+                    <option selected value="{{ default_account.pk }}">{{ default_account.name }}</option>
+                    {% endif %}
                     {% for el in money_accounts %}
                     <option value="{{ el.pk }}">{{ el.name }}</option>
                     {% endfor %}
