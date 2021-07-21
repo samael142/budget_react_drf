@@ -1,17 +1,6 @@
-<!DOCTYPE html>
+{% extends 'budget/base.html' %}
 {% load static %}
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <meta http-equiv="Cache-Control" content="no-cache">
-    <link rel="stylesheet" href="{% static 'budget/css/style.css' %}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-</head>
-
+{% block content %}
 <body>
         <div class="container">
             <div class="title__single">Транзакция</div>
@@ -190,7 +179,7 @@
             header = document.querySelector('#searchHeader').value;
                 if (header) {
                 {#url = `/transactionapp/transactions/autoform/${header}`#}
-                djangoUrl = "{% url 'transactionapp:transaction_autoform' 'header' %}"
+                djangoUrl = "{% url 'transactionapp:tr_autoform' 'header' %}"
                 url = djangoUrl.replace('header', header)
                 fetch(url).then(function (response) {
                     response.json().then(function(data) {
@@ -201,3 +190,4 @@
             }
         </script>
 </body>
+{% endblock %}

@@ -12,6 +12,7 @@ class Currency(models.Model):
 class MoneyAccount(models.Model):
     name = models.CharField(verbose_name='название', max_length=64, unique=True)
     currency = models.ForeignKey(Currency, on_delete=models.RESTRICT)
+    is_visible = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

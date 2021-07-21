@@ -1,9 +1,12 @@
 from datetime import datetime
+from django.db.models import Sum
 from maapp.models import MoneyAccount
 from mainapp.models import Header, Category, Subcategory
 from .models import Transaction, PlainOperation
 from django.http import JsonResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.dates import MonthArchiveView
+from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -23,9 +26,10 @@ class TransactionCreateView(CreateView):
         context['categories'] = Category.objects.all()
         context['subcategories'] = Subcategory.objects.all()
         context['date'] = datetime.today().strftime('%Y-%m-%d')
-        if 'transactions/create' in self.request.META.get('HTTP_REFERER'):
-            context['date'] = Transaction.get_last_transaction().operation_date.strftime('%Y-%m-%d')
-            context['default_account'] = Transaction.get_last_transaction().account
+        if self.request.META.get('HTTP_REFERER'):
+            if 'transactions/create' in self.request.META.get('HTTP_REFERER'):
+                context['date'] = Transaction.get_last_transaction().operation_date.strftime('%Y-%m-%d')
+                context['default_account'] = Transaction.get_last_transaction().account
         return context
 
     def post(self, request, **kwargs):
@@ -41,8 +45,8 @@ class TransactionCreateView(CreateView):
         if 'plain' in request.POST:
             if request.POST['period'] != 'once':
                 request.POST['quantity'] = PlainOperation.quantity_count(request.POST['operation_date'],
-                                                                               request.POST['trip-end'],
-                                                                               request.POST['period'])
+                                                                         request.POST['trip-end'],
+                                                                         request.POST['period'])
             else:
                 request.POST['quantity'] = 1
             self.model = PlainOperation
@@ -61,70 +65,32 @@ class TransactionCreateView(CreateView):
     @receiver(post_save, sender=PlainOperation)
     def add_plain_transactions(sender, **kwargs):
         PlainOperation.add_plain_transactions()
-#
-#
-# # Create your views here.
-# def transaction_create(request):
-#     title = 'транзакция/создание'
-#     money_accounts = MoneyAccount.objects.all()
-#     headers = Header.objects.all()
-#     categories = Category.objects.all()
-#     subcategories = Subcategory.objects.all()
-#
-#     if request.method == 'POST':
-#         if request.POST['operation_type'] == 'out':
-#             operation_summ = float(request.POST['operation_summ']) * -1
-#         else:
-#             operation_summ = float(request.POST['operation_summ'])
-#         post_data_dict = {
-#             'operation_date': request.POST['operation_date'],
-#             'operation_summ': operation_summ,
-#             'account': request.POST['account'],
-#             'header': Header.add_header_to_transaction(request.POST['header']),
-#             'category': Category.add_category_to_transaction(request.POST['category']),
-#             'subcategory': Subcategory.add_subcategory_to_transaction(request.POST['subcategory']),
-#             'comment': request.POST['comment'],
-#         }
-#         if 'plain' in request.POST:
-#             post_data_dict.pop('account', None)
-#             post_data_dict['period'] = request.POST['period']
-#             if request.POST['period'] != 'once':
-#                 post_data_dict['quantity'] = PlainOperation.quantity_count(request.POST['operation_date'],
-#                                                                            request.POST['trip-end'],
-#                                                                            request.POST['period'])
-#             else:
-#                 post_data_dict['quantity'] = '1'
-#             plain_operation_form = PlainOperationForm(post_data_dict)
-#             if plain_operation_form.is_valid():
-#                 plain_operation_form.save()
-#                 PlainOperation.add_plain_transactions()
-#                 return HttpResponseRedirect(reverse('index'))
-#         else:
-#             transaction_form = TransactionForm(post_data_dict)
-#
-#             if transaction_form.is_valid():
-#                 transaction_form.save()
-#                 if 'add' in request.POST:
-#                     return HttpResponseRedirect(reverse('index'))
-#                 else:
-#                     return HttpResponseRedirect(reverse('transactions:transaction_create'))
-#     content = {
-#         'title': title,
-#         'headers': headers,
-#         'categories': categories,
-#         'subcategories': subcategories,
-#         'money_accounts': money_accounts,
-#         'date': datetime.today().strftime('%Y-%m-%d')
-#     }
-#     return render(request, 'transactionapp/transaction.html', content)
+
+    @staticmethod
+    def transaction_autoform(request, header_name):
+        formObj = {'cat': '', 'subcat': ''}
+        try:
+            header = Header.objects.filter(name=header_name).first()
+            transaction = Transaction.objects.filter(header=header.pk).first()
+            formObj = {'cat': str(transaction.category), 'subcat': str(transaction.subcategory)}
+        except:
+            pass
+        return JsonResponse(formObj)
 
 
-def transaction_autoform(request, header_name):
-    formObj = {'cat': '', 'subcat': ''}
-    try:
-        header = Header.objects.filter(name=header_name).first()
-        transaction = Transaction.objects.filter(header=header.pk).first()
-        formObj = {'cat': str(transaction.category), 'subcat': str(transaction.subcategory)}
-    except:
-        pass
-    return JsonResponse(formObj)
+class TransactionsListView(MonthArchiveView):
+    # queryset = Transaction.objects.all()
+    date_field = "operation_date"
+    allow_future = True
+    template_name = "transactionapp/transactions.html"
+    month_format = '%m'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'транзакции'
+        context['total'] = Transaction.get_total_balance()
+        return context
+
+    def get_queryset(self):
+        queryset = Transaction.objects.all().order_by('operation_date')
+        return queryset

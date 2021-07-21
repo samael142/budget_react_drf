@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import calendar
 from django.db import models
+from django.db.models import Sum
+
 from maapp.models import MoneyAccount
 from mainapp.models import Header, Category, Subcategory
 from django.db.models.signals import post_save
@@ -93,3 +95,15 @@ class Transaction(models.Model):
     def get_last_transaction():
         transaction_object = Transaction.objects.latest('id')
         return transaction_object
+
+    @staticmethod
+    def get_total_balance():
+        total_dict = {}
+        total_summ = 0
+        query = Transaction.objects.values('operation_date').\
+            order_by('operation_date').\
+            annotate(total=Sum('operation_summ'))
+        for el in query:
+            total_summ += float(el['total'])
+            total_dict[el['operation_date'].strftime("%d-%m-%Y")] = total_summ
+        return total_dict
