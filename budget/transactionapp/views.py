@@ -84,6 +84,7 @@ class TransactionsListView(MonthArchiveView):
     allow_future = True
     template_name = "transactionapp/transactions.html"
     month_format = '%m'
+    # year = datetime.now().strftime('%Y')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

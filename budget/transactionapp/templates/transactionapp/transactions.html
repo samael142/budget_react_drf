@@ -45,28 +45,7 @@
     {% endfor %}
 </div>
 <div class="clear__block"></div>
-<div class="fix__footer container">
-    <div class="tr__box__acc1">
-        <div class="down__menu1">
-            <ul class="new__nav">
-                <li class="nav__item left__arrow">
-                    <a href="
-                            {% if previous_month %}{% url 'transactionapp:page' previous_month|date:"Y" previous_month|date:"m" %}{% endif %}"
-                       class="nav__link">
-                        <img src="{% static 'budget/img/left.svg' %}" alt="Назад" class="nav__img">
-                    </a>
-                </li>
-                <li class="nav__item right__arrow">
-                    <a href="
-                            {% if next_month %}{% url 'transactionapp:page' next_month|date:"Y" next_month|date:"m" %}{% endif %}"
-                       class="nav__link">
-                        <img src="{% static 'budget/img/right.svg' %}" alt="Вперёд" class="nav__img">
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
+{% include 'includes/inc_main_menu.html' %}
 <script>
     $('.num').each(function () {
         this.innerHTML = parseFloat(this.textContent)

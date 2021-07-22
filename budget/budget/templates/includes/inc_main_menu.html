@@ -1,0 +1,62 @@
+{% load static %}
+<div class="fix__footer container">
+    <div class="tr__box__acc1">
+        <div class="down__menu1">
+            <ul class="new__nav">
+                <li class="nav__item left__arrow">
+                    <a href="
+                            {% if previous_month %}{% url 'transactionapp:page' previous_month|date:"Y" previous_month|date:"m" %}{% endif %}"
+                       class="nav__link {% if not previous_month %}link__disabled{% endif %}">
+                        <img src="{% static 'budget/img/left.svg' %}" alt="Назад" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="{% url 'transactions:transaction_create' %}" class="nav__link">
+                        <img src="{% static 'budget/img/transaction.svg' %}" alt="Транзнакция" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="" class="nav__link">
+                        <img src="{% static 'budget/img/transfer.svg' %}" alt="Перевод" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="" class="nav__link">
+                        <img src="{% static 'budget/img/accounts.svg' %}" alt="Баланс" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="" class="nav__link">
+                        <img src="{% static 'budget/img/plain_list.svg' %}" alt="Планируемые" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="" class="nav__link">
+                        <img src="{% static 'budget/img/report.svg' %}" alt="Отчёт" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="" class="nav__link">
+                        <img src="{% static 'budget/img/settings.svg' %}" alt="Настройки" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item">
+                    <a href="" class="nav__link">
+                        <img src="{% static 'budget/img/home.svg' %}" alt="Домашняя" class="nav__img">
+                    </a>
+                </li>
+                <li class="nav__item right__arrow">
+                    <a href="
+                            {% if next_month %}{% url 'transactionapp:page' next_month|date:"Y" next_month|date:"m" %}{% endif %}"
+                       class="nav__link {% if not next_month %}link__disabled{% endif %}">
+                        <img src="{% static 'budget/img/right.svg' %}" alt="Вперёд" class="nav__img">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="tr__box__acc1">
+        <div class="footer__str">Текущий&nbsp;баланс:&nbsp;
+        </div>
+    </div>
+</div>
