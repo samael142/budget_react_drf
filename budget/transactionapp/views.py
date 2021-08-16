@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db.models import Sum
 from maapp.models import MoneyAccount
 from mainapp.models import Header, Category, Subcategory
-from .models import Transaction, PlainOperation
+from .models import Transaction, PlainOperation, Transfer
 from django.http import JsonResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.dates import MonthArchiveView
@@ -10,6 +10,27 @@ from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.views.generic.base import TemplateView
+from django.shortcuts import redirect
+
+
+class TransactionsListView(MonthArchiveView):
+    # queryset = Transaction.objects.all()
+    date_field = "operation_date"
+    allow_future = True
+    template_name = "transactionapp/transactions.html"
+    month_format = '%m'
+    # year = datetime.now().strftime('%Y')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'транзакции'
+        context['total'] = Transaction.get_total_balance()
+        return context
+
+    def get_queryset(self):
+        queryset = Transaction.objects.all().order_by('operation_date')
+        return queryset
 
 
 class TransactionCreateView(CreateView):
@@ -78,20 +99,123 @@ class TransactionCreateView(CreateView):
         return JsonResponse(formObj)
 
 
-class TransactionsListView(MonthArchiveView):
-    # queryset = Transaction.objects.all()
-    date_field = "operation_date"
-    allow_future = True
-    template_name = "transactionapp/transactions.html"
-    month_format = '%m'
-    # year = datetime.now().strftime('%Y')
+class TransactionUpdateView(UpdateView):
+    model = Transaction
+    template_name = 'transactionapp/transaction.html'
+    fields = ('operation_date', 'operation_summ', 'account', 'header', 'category', 'subcategory', 'comment', 'past', 'plain_id')
+    success_url = reverse_lazy('index')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'транзакции'
-        context['total'] = Transaction.get_total_balance()
+        context['title'] = 'транзакция/редактирование'
+        context['date'] = str(self.get_object().operation_date)
+        context['summ'] = self.get_object().operation_summ
+        context['default_account'] = self.get_object().account
+        context['header'] = self.get_object().header
+        context['category'] = self.get_object().category
+        context['subcategory'] = self.get_object().subcategory
+        context['past'] = self.get_object().past
+        context['comment'] = self.get_object().comment
+        context['money_accounts'] = MoneyAccount.objects.all()
+        context['headers'] = Header.objects.all()
+        context['categories'] = Category.objects.all()
+        context['subcategories'] = Subcategory.objects.all()
         return context
 
-    def get_queryset(self):
-        queryset = Transaction.objects.all().order_by('operation_date')
-        return queryset
+    def post(self, request, **kwargs):
+        request.POST = request.POST.copy()
+        if request.POST['operation_type'] == 'out':
+            operation_summ = float(request.POST['operation_summ']) * -1
+        else:
+            operation_summ = float(request.POST['operation_summ'])
+        request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
+        request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
+        request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
+        request.POST['operation_summ'] = operation_summ
+        if 'deactivate' in request.POST:
+            request.POST['past'] = True
+            request.POST['account'] = None
+        if 'activate' in request.POST:
+            request.POST['past'] = False
+            request.POST['plain_id'] = None
+        return super(TransactionUpdateView, self).post(request, **kwargs)
+
+
+class TransactionDeleteView(DeleteView):
+    model = Transaction
+    success_url = reverse_lazy('index')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+
+class TransferCreateView(TemplateView):
+    template_name = 'transactionapp/transfer.html'
+    success_url = reverse_lazy('index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'перевод/создание'
+        context['money_accounts'] = MoneyAccount.objects.all()
+        context['date'] = datetime.today().strftime('%Y-%m-%d')
+        return context
+
+
+    def post(self, request, **kwargs):
+        account_from = request.POST['money_account_from']
+        account_to = request.POST['money_account_to']
+        summ = request.POST['summ']
+        operation_date = request.POST['trip-start']
+        new_transfer = Transfer(account_from, account_to, operation_date, summ)
+        new_transfer.create_transfer()
+        del new_transfer
+        return redirect(self.success_url)
+
+
+class TransferUpdateView(TemplateView):
+    template_name = 'transactionapp/transfer.html'
+    success_url = reverse_lazy('index')
+
+    def setup(self, request, *args, **kwargs):
+        self.request = request
+        self.args = args
+        self.kwargs = kwargs
+        transactions = Transaction.objects.filter(transfer_id=self.kwargs['transfer_id'])
+        for transaction in transactions:
+            self.kwargs['operation_summ'] = abs(float(transaction.operation_summ))
+            self.kwargs['operation_date'] = str(transaction.operation_date)
+            if int(transaction.operation_summ) < 0:
+                self.kwargs['account_from'] = transaction.account
+            if int(transaction.operation_summ) > 0:
+                self.kwargs['account_to'] = transaction.account
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'перевод/изменение'
+        context['money_accounts'] = MoneyAccount.objects.all()
+        context['summ'] = self.kwargs['operation_summ']
+        context['date'] = self.kwargs['operation_date']
+        context['account_from'] = self.kwargs['account_from']
+        context['account_to'] = self.kwargs['account_to']
+        context['transfer_id'] = self.kwargs['transfer_id']
+        return context
+
+    def post(self, request, **kwargs):
+        update_transfer = Transfer(request.POST['money_account_from'],
+                                   request.POST['money_account_to'],
+                                   request.POST['trip-start'],
+                                   request.POST['summ'])
+        update_transfer.update_transfer(self.kwargs['transfer_id'])
+        del update_transfer
+        return redirect(self.success_url)
+
+class TransferDeleteView(TemplateView):
+    success_url = reverse_lazy('index')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, **kwargs):
+        Transfer.delete_transfer(self.kwargs['transfer_id'])
+        return redirect(self.success_url)

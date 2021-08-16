@@ -19,9 +19,13 @@ from .views import *
 app_name = 'transactionapp'
 
 urlpatterns = [
-    path('transactions/create/', TransactionCreateView.as_view(), name='transaction_create'),
-    path('transactions/update/<int:pk>', TransactionCreateView.as_view(), name='transaction_update'),
-    path('transactions/autoform/<header_name>/', TransactionCreateView.transaction_autoform, name='tr_autoform'),
-    path('transactions/', TransactionsListView.as_view(), name='transactions'),
-    path('transactions/<int:year>/<int:month>/', TransactionsListView.as_view(), name='page'),
+    path('create/', TransactionCreateView.as_view(), name='transaction_create'),
+    path('update/<int:pk>', TransactionUpdateView.as_view(), name='transaction_update'),
+    path('delete/<int:pk>', TransactionDeleteView.as_view(), name='transaction_delete'),
+    path('autoform/<header_name>/', TransactionCreateView.transaction_autoform, name='tr_autoform'),
+    path('', TransactionsListView.as_view(), name='transactions'),
+    path('<int:year>/<int:month>/', TransactionsListView.as_view(), name='page'),
+    path('transfer/create', TransferCreateView.as_view(), name='transfer_create'),
+    path('transfer/update/<int:transfer_id>', TransferUpdateView.as_view(), name='transfer_update'),
+    path('transfer/delete/<int:transfer_id>', TransferDeleteView.as_view(), name='transfer_delete'),
 ]

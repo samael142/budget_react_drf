@@ -1,5 +1,6 @@
 {% extends 'budget/base.html' %}
 {% load static %}
+{% load tr_tags %}
 {% block content %}
 <body>
         <div class="container">
@@ -10,18 +11,28 @@
                     <input class="form__control form__sm row__2" type="date" id="start" name="operation_date"
                         value="{{ date }}">
                     <select class="form__select form__sm row__2" name="operation_type">
+                        {% if summ > 0 %}
+                            <option selected value="in">Приход</option>
+                        {% endif %}
+                        {% if summ < 0 %}
+                            <option selected value="out">Расход</option>
+                        {% endif %}
+
                         <option value="out">Расход</option>
                         <option value="in">Приход</option>
                     </select>
                 </div>
                 <hr class="top__hr">
                 <input onfocus="this.select();" type="number" step="0.01" name="operation_summ" class="form__control form__sm" placeholder="Сумма"
-                       value="" required>
+                       {% if request.resolver_match.url_name == 'transaction_update' %}
+                       value="{{ summ|abs }}"
+                       {% endif %}
+                       required>
                 <h5 class="select__label">Счёт</h5>
                 <select name="account" class="form__select form__sm" id="account">
-                    {% if default_account %}
+
                     <option selected value="{{ default_account.pk }}">{{ default_account.name }}</option>
-                    {% endif %}
+
                     {% for el in money_accounts %}
                     <option value="{{ el.pk }}">{{ el.name }}</option>
                     {% endfor %}
@@ -32,7 +43,7 @@
                 </div>
                 <br>
                 <input onfocus="this.select();" type="text" name="category" class="form__control form__sm" list="datalistOptions1" id="category"
-                    placeholder="Категория" value="{{ tr_category }}" required>
+                    placeholder="Категория" value="{{ category }}" required>
                 <datalist id="datalistOptions1">
                     {% for el in categories %}
                     <option value="{{ el.name }}">
@@ -40,7 +51,7 @@
                 </datalist>
                 <br>
                 <input onfocus="this.select();" type="text" name="subcategory" class="form__control form__sm" list="subcategory"
-                    id="exampleDataList2" placeholder="Подкатегория" value="{{ tr_subcategory }}" required>
+                    id="exampleDataList2" placeholder="Подкатегория" value="{{ subcategory }}" required>
                 <datalist id="subcategory">
                     {% for el in subcategories %}
                     <option value="{{ el.name }}">
@@ -49,8 +60,23 @@
                 <br>
 
                 <input type="text" name="comment" class="form__control form__sm" placeholder="Комментарий"
-                    value="">
+                    value="{{ comment }}">
                 <br>
+
+                {% if request.resolver_match.url_name == 'transaction_update' and past == 0 %}
+                <input name="deactivate" class="form__check" type="checkbox" value="0" id="deactivate">
+                <label class="form-check-label" for="deactivate">Деактивировать</label>
+                <br>
+                <br>
+                {% endif %}
+                {% if request.resolver_match.url_name == 'transaction_update' and past == 1%}
+                <input name="activate" class="form__check" type="checkbox" value="0" id="activate">
+                <label class="form-check-label" for="activate">Активировать</label>
+                <br>
+                <br>
+                {% endif %}
+
+                {% if request.resolver_match.url_name == 'transaction_create' %}
                 <input name="plain" class="form__check plain" type="checkbox" value="1" id="plain">
                 <label class="form-check-label" for="plain">Планируемая</label>
                 <!-- <br> -->
@@ -64,10 +90,16 @@
                     <input class="form__control form__sm trip-end row__2 plain__fields hide" type="date" id="end"
                         name="trip-end" value="{{ default_date }}" disabled>
                 </div>
+                {% endif %}
                 <div class="tr__upper tr__upper__left">
                     <input type="submit" class="btn btn__green" name="add" value="Отправить" id="submit">
+                    {% if request.resolver_match.url_name == 'transaction_create' %}
                     <input type="submit" class="btn btn__green" name="copy" value="+Отправить" id="submitCopy">
-
+                    {% endif %}
+                    {% if request.resolver_match.url_name == 'transaction_update' %}
+                    <input id="delete" type="button" class="btn btn__red"
+                        onclick="window.location.href='{% url 'transactionapp:transaction_delete' object.pk %}';" value="Удалить" />
+                    {% endif %}
                     <input id="close" type="button" class="btn btn__red"
                         onclick="window.location.href='{% url 'index' %}';" value="Закрыть" />
                 </div>
@@ -77,9 +109,9 @@
         <script>
             $("#submit").click(function () {
                 var checkbox_state = $("#activate").prop('checked');
-                if (checkbox_state == true) {
+                if (checkbox_state === true) {
                     var account = $("#account").val();
-                    if (account == 'None') {
+                    if (account === '') {
                         alert('Выберите счёт')
                         return false
                     }
@@ -87,28 +119,23 @@
             });
             $(".period").on('change', function () {
                 var target = $('.period').val();
-                if (target == "once") {
-                    $('.quanity').prop('disabled', true)
+                if (target === "once") {
                     $('.trip-end').prop('disabled', true)
-                    $('.quanity').val('1')
                 } else {
-                    $('.quanity').prop('disabled', false)
                     $('.trip-end').prop('disabled', false)
                 }
             });
             $(".plain").on('change', function () {
                 if ($('.plain').prop('checked')) {
-                    $('.quanity').prop('required', true)
                     $(".plain__fields").show()
                 } else {
-                    $('.quanity').prop('required', false)
                     $(".plain__fields").hide()
                 }
             });
             $("#submit").click(function () {
                 var checkbox_state1 = $("#plain").prop('checked');
                 var period = $("#period").val();
-                if ((checkbox_state1 == true) && ((period == 'daily') || (period == 'monthly'))) {
+                if ((checkbox_state1 === true) && ((period === 'daily') || (period === 'monthly'))) {
                     var startDate = new Date($('#start').val());
                     var endDate = new Date($('#end').val());
                     if (endDate <= startDate) {
@@ -125,7 +152,7 @@
         </script>
         <script>
             const htmlIphone = `<input onfocus="this.select();" type="text" name="header" class="form__control form__sm" list="datalistOptions"
-                    id="searchHeader" placeholder="Заголовок" value="" autocomplete="off" minlength="2" required>
+                    id="searchHeader" placeholder="Заголовок" value="{{ header }}" autocomplete="off" minlength="2" required>
                     <datalist id="datalistOptions" style="height:5.1em; overflow: hidden;">
                     {% for el in headers %}
                     <option value="{{ el.name }}">
@@ -136,7 +163,7 @@
                     <option class="header">{{ el.name }}</option>
                     {% endfor %}
                     </template>
-                    <input onfocus="this.select();" type="text" value="" name="header" placeholder="Заголовок" id="searchHeader"
+                    <input onfocus="this.select();" type="text" value="{{ header }}" name="header" placeholder="Заголовок" id="searchHeader"
                     list="searchresultsHeader" class="form__control form__sm" autocomplete="off" required />
                     <datalist id="searchresultsHeader"></datalist>`
             const headerBlock = document.querySelector('.header__datalist__code')

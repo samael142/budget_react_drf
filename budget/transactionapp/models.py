@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 import calendar
+from random import randint
+
 from django.db import models
 from django.db.models import Sum
 
 from maapp.models import MoneyAccount
 from mainapp.models import Header, Category, Subcategory
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 
 # Create your models here.
@@ -81,9 +81,9 @@ class Transaction(models.Model):
     operation_date = models.DateField(verbose_name='дата')
     operation_summ = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
     account = models.ForeignKey(MoneyAccount, on_delete=models.RESTRICT, null=True, blank=True)
-    header = models.ForeignKey(Header, on_delete=models.RESTRICT)
-    category = models.ForeignKey(Category, on_delete=models.RESTRICT)
-    subcategory = models.ForeignKey(Subcategory, on_delete=models.RESTRICT)
+    header = models.ForeignKey(Header, on_delete=models.RESTRICT, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.RESTRICT, null=True, blank=True)
+    subcategory = models.ForeignKey(Subcategory, on_delete=models.RESTRICT, null=True, blank=True)
     comment = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -100,10 +100,61 @@ class Transaction(models.Model):
     def get_total_balance():
         total_dict = {}
         total_summ = 0
-        query = Transaction.objects.values('operation_date').\
-            order_by('operation_date').\
+        query = Transaction.objects.values('operation_date'). \
+            order_by('operation_date'). \
             annotate(total=Sum('operation_summ'))
         for el in query:
             total_summ += float(el['total'])
             total_dict[el['operation_date'].strftime("%d-%m-%Y")] = total_summ
         return total_dict
+
+
+class Transfer:
+
+    def __init__(self, account_from, account_to, operation_date, operation_summ):
+        self.account_from = account_from
+        self.account_to = account_to
+        self.operation_date = operation_date
+        self.operation_summ = operation_summ
+
+    def create_transfer(self):
+        money_account_from = MoneyAccount.objects.get(pk=self.account_from)
+        money_account_to = MoneyAccount.objects.get(pk=self.account_to)
+        transfer_id = randint(0, 100000000)
+        transaction_from = Transaction(operation_date=self.operation_date,
+                                       account=money_account_from,
+                                       operation_summ=float(self.operation_summ) * -1,
+                                       transfer_id=transfer_id,
+                                       comment=f'Перевод на {money_account_to.name}')
+        transaction_to = Transaction(operation_date=self.operation_date,
+                                     account=money_account_to,
+                                     operation_summ=float(self.operation_summ),
+                                     transfer_id=transfer_id,
+                                     comment=f'Перевод с {money_account_from.name}')
+        transaction_from.save()
+        transaction_to.save()
+
+    def update_transfer(self, transfer_id):
+        transactions = Transaction.objects.filter(transfer_id=transfer_id)
+        transaction_from = None
+        transaction_to = None
+        for transaction in transactions:
+            if int(transaction.operation_summ < 0):
+                transaction_from = transaction
+            if int(transaction.operation_summ > 0):
+                transaction_to = transaction
+        transaction_from.operation_summ = float(self.operation_summ) * -1
+        transaction_from.account = MoneyAccount.objects.get(pk=self.account_from)
+        transaction_from.operation_date = self.operation_date
+        transaction_to.operation_summ = self.operation_summ
+        transaction_to.account = MoneyAccount.objects.get(pk=self.account_to)
+        transaction_to.operation_date = self.operation_date
+        transaction_from.save()
+        transaction_to.save()
+        pass
+
+    @staticmethod
+    def delete_transfer(transfer_id):
+        transactions = Transaction.objects.filter(transfer_id=transfer_id)
+        for transaction in transactions:
+            transaction.delete()

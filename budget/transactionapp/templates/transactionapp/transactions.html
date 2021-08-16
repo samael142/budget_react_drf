@@ -9,6 +9,7 @@
             <div class="total__box" id="{{ object.operation_date|date:"d-m-Y" }}">
                 <div class="t__left">
                     <div class="t__int">{{ object.operation_date|date:"d-m-Y" }}</div>
+                    <div class="t__str">{{ object.operation_date|date:"D" }}</div>
                 </div>
                 <div class="t__right">
                     <div class="t__str">Баланс:&nbsp;</div>
@@ -20,7 +21,11 @@
                 </div>
             </div>
         {% endifchanged %}
-        <a href="{% url 'transactions:transaction_update' object.pk %}"
+        <a href="{% if object.transfer_id %}
+                   {% url 'transactions:transfer_update' object.transfer_id %}
+                 {% else %}
+                   {% url 'transactions:transaction_update' object.pk %}
+                 {% endif %}"
            class="tr__box {% if object.transfer_id %}transfer__color{% endif %} {% if object.past == 1 %}past__color{% endif %}">
             <div class="tr__box__row">
                 <div><b>{% if not object.transfer_id %}{{ object.header }}{% else %}{{ object.comment }}{% endif %}</b>
@@ -37,7 +42,7 @@
             {% endif %}
             <div class="tr__box__row">
                 <div>
-                    {% if not object.transfer_id %}{{ object.subcategory }}{% else %}{{ object.header }}{% endif %}
+                    {% if not object.transfer_id %}{{ object.subcategory }}{% else %}{{ object.account }}{% endif %}
                 </div>
                 <div>{{ object.operation_date|date:"d-m-Y" }}</div>
             </div>
