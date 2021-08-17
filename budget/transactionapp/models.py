@@ -97,12 +97,17 @@ class Transaction(models.Model):
         return transaction_object
 
     @staticmethod
-    def get_total_balance():
+    def get_total_balance(pk=None):
         total_dict = {}
         total_summ = 0
-        query = Transaction.objects.values('operation_date'). \
-            order_by('operation_date'). \
-            annotate(total=Sum('operation_summ'))
+        if pk:
+            query = Transaction.objects.filter(account=pk).values('operation_date'). \
+                order_by('operation_date'). \
+                annotate(total=Sum('operation_summ'))
+        else:
+            query = Transaction.objects.exclude(account__is_visible=0).values('operation_date'). \
+                order_by('operation_date'). \
+                annotate(total=Sum('operation_summ'))
         for el in query:
             total_summ += float(el['total'])
             total_dict[el['operation_date'].strftime("%d-%m-%Y")] = total_summ

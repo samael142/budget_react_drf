@@ -1,0 +1,50 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+    <div class="container">
+        <br>
+        <div class="title__single">Список счетов</div>
+        <br>
+
+        {% for object in object_list %}
+        <div id="{{ object.account }}" class="double__button {% if object.account__is_visible == 0 %}past__color{% endif %}">
+            <div class="name__btn tr__box__acc black__color transparent__color">{{ object.account__name }}</div>
+            <a href="{% url 'maapp:detail_account' object.account year month%}"
+                class="num tr__box__acc {% if object.total_summ > 0 %}green__color{% else %}red__color{% endif %} transparent__color">{{ object.total_summ }}</a>
+        </div>
+        {% endfor %}
+        <br>
+        <div class="single__element__center">
+            <a href="{% url 'maapp:create_account' %}" class="footer__button">Добавить счёт</a>
+        </div>
+
+    </div>
+    {% include 'includes/inc_main_menu.html' %}
+    <script>
+
+        const btnAccounts = document.querySelectorAll('.name__btn');
+        for (let btnAccount of btnAccounts) {
+            let accountID = btnAccount.parentNode.id;
+            btnAccount.addEventListener('click', () => clickToAccount(accountID));
+        }
+        async function clickToAccount(accountID) {
+            let djangoUrl = "{% url 'maapp:hide' '10' %}"
+            let url = djangoUrl.replace('10', accountID)
+            let response = await fetch(url);
+            const account = document.getElementById(accountID);
+            if (!account.classList.contains('past__color')) {
+                account.classList.add('past__color');
+            } else {
+                account.classList.remove('past__color');
+            }
+        }
+    </script>
+    <script>
+        $('.num').each(function () {
+            this.innerHTML = parseFloat(this.textContent)
+                .toLocaleString('ru-RU')
+        })
+    </script>
+</body>
+{% endblock %}

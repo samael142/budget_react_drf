@@ -25,11 +25,18 @@ class TransactionsListView(MonthArchiveView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'транзакции'
-        context['total'] = Transaction.get_total_balance()
+        if 'pk' in self.kwargs:
+            context['total'] = Transaction.get_total_balance(self.kwargs['pk'])
+            context['account'] = self.kwargs['pk']
+        else:
+            context['total'] = Transaction.get_total_balance()
         return context
 
     def get_queryset(self):
-        queryset = Transaction.objects.all().order_by('operation_date')
+        if 'pk' in self.kwargs:
+            queryset = Transaction.objects.filter(account=self.kwargs['pk']).order_by('operation_date')
+        else:
+            queryset = Transaction.objects.all().order_by('operation_date')
         return queryset
 
 

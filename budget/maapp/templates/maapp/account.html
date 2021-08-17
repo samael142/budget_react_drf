@@ -1,0 +1,30 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+<div class="to__bottom">
+    <div class="container">
+        <div class="title__single">Новый счёт</div>
+        <br>
+        <br>
+        <form method="post">
+        {% csrf_token %}
+            <input type="text" name="name" class="form__control" placeholder="Название" required>
+            <br>
+            <h4 class="select__label">Валюта</h4>
+            <select name="currency" class="form__select" required>
+                {% for el in currency %}
+                <option value="{{ el.pk }}">{{ el.name }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <div class="tr__upper tr__upper__left">
+                <input type="submit" class="btn btn__green" value="Отправить">
+                <input type="button" class="btn btn__red" onclick="window.location.href='{% url 'maapp:accounts' %}';"
+                       value="Закрыть">
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+{% endblock %}
