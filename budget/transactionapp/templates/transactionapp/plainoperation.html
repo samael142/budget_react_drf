@@ -1,0 +1,57 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% load tr_tags %}
+{% block content %}
+<body>
+<div class="container">
+    <div class="title__single">Планируемая операция</div>
+    <br>
+    <form method="post">
+    {% csrf_token %}
+        <div class="tr__upper">
+            <select class="form__select form__sm row__2" name="operation_type">
+                        {% if object.operation_summ > 0 %}
+                            <option selected value="in">Приход</option>
+                        {% endif %}
+                        {% if object.operation_summ < 0 %}
+                            <option selected value="out">Расход</option>
+                        {% endif %}
+            </select>
+            <select name="period" class="form__select form__sm row__2" id="period">
+                <option selected value="{{ object.period }}">{{ period_name }}</option>
+            </select>
+        </div>
+        <div class="tr__upper">
+            <input class="form__control form__sm row__2" type="date" id="start" name="operation_date"
+                   value="{{ start_date }}">
+
+            <input class="form__control form__sm row__2" type="date" id="end"
+                   name="trip-end"
+                   value="{{ end_date }}" {% if period == "once" %}disabled{% endif %}>
+        </div>
+        <hr class="top__hr">
+        <input type="number" step="0.01" name="operation_summ" class="form__control" placeholder="Сумма"
+               value="{{ object.operation_summ|abs }}"
+               required>
+        <br>
+        <input type="text" name="header" class="form__control" value="{{ object.header }}" readonly>
+        <br>
+        <input type="text" name="category" class="form__control" value="{{ object.category }}" readonly>
+        <br>
+        <input type="text" name="subcategory" class="form__control" value="{{ object.subcategory }}" readonly>
+        <br>
+        <input type="text" name="comment" class="form__control" placeholder="Комментарий"
+               value="{{ plain_operation.comment }}">
+        <br>
+        <div class="tr__upper tr__upper__left">
+            <input type="submit" class="btn btn__green" value="Отправить" id="submit">
+            <input type="button" class="btn btn__red"
+                   onclick="window.location.href='{% url "transactions:plain_operation_delete" object.pk %}';"
+                   value="Удалить"/>
+            <input type="button" class="btn btn__red" onclick="window.location.href='{% url "transactions:plain_operations" %}';"
+                   value="Закрыть"/>
+        </div>
+    </form>
+</div>
+</body>
+{% endblock %}

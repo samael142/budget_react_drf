@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Sum
 
 from maapp.models import MoneyAccount
-from mainapp.models import Header, Category, Subcategory
+from budget.models import Header, Category, Subcategory
 
 
 # Create your models here.

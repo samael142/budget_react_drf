@@ -1,0 +1,29 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+ <br>
+    <br>
+    <div class="container no_footer">
+        <div class="title__single">Вход в систему</div>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <input id="id_username" type="text" name="username" class="form__control" placeholder="Логин" required>
+            <br>
+            <input type="password" name="password" class="form__control" placeholder="Пароль" required>
+            <br>
+            <br>
+            <div class="tr__upper tr__upper__left">
+                <input type="submit" class="btn btn__green" value="Войти">
+                <input type="button" class="btn btn__green"
+                        onclick="window.location.href='{% url 'accounts:register' %}';" value="Регистрация" />
+
+            </div>
+        </form>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+</body>
+{% endblock %}

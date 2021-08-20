@@ -8,7 +8,7 @@
         {% ifchanged object.operation_date %}
             <div class="total__box" id="{{ object.operation_date|date:"d-m-Y" }}">
                 <div class="t__left">
-                    <div class="t__int">{{ object.operation_date|date:"d-m-Y" }}</div>
+                    <div class="t__int">{{ object.operation_date|date:"d-m-Y" }}&nbsp;</div>
                     <div class="t__str">{{ object.operation_date|date:"D" }}</div>
                 </div>
                 <div class="t__right">
@@ -51,12 +51,12 @@
 </div>
 <div class="clear__block"></div>
 {% include 'includes/inc_main_menu.html' %}
-<script>
-    $('.num').each(function () {
-        this.innerHTML = parseFloat(this.textContent)
-            .toLocaleString('ru-RU')
-    })
-</script>
+{#<script>#}
+{#    $('.num').each(function () {#}
+{#        this.innerHTML = parseFloat(this.textContent)#}
+{#            .toLocaleString('ru-RU')#}
+{#    })#}
+{#</script>#}
 </body>
 {% endblock %}
 

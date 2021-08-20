@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db.models import Sum
 from maapp.models import MoneyAccount
-from mainapp.models import Header, Category, Subcategory
+from budget.models import Header, Category, Subcategory
 from .models import Transaction, PlainOperation, Transfer
 from django.http import JsonResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -12,6 +12,103 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.views.generic.base import TemplateView
 from django.shortcuts import redirect
+
+
+class PlainOperationsListView(ListView):
+    template_name = "transactionapp/plainoperations.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'плановые операции'
+        return context
+
+    def get_queryset(self):
+        queryset = []
+        queryset_element = {}
+        source_queryset = PlainOperation.objects.all()
+        for el in source_queryset:
+            transactions_array = Transaction.objects.filter(plain_id=el.pk).order_by('operation_date')
+            queryset_element['id'] = el.pk
+            queryset_element['header'] = el.header
+            queryset_element['category'] = el.category
+            queryset_element['subcategory'] = el.subcategory
+            queryset_element['summ'] = el.operation_summ
+            if len(transactions_array) != 0:
+                queryset_element['curr_date'] = transactions_array.first().operation_date
+                queryset_element['end_date'] = transactions_array.last().operation_date
+                queryset_element['disabled_status'] = 0
+            else:
+                queryset_element['curr_date'] = "--"
+                queryset_element['end_date'] = "--"
+                queryset_element['disabled_status'] = 1
+            queryset.append(queryset_element)
+            queryset_element = {}
+        return queryset
+
+
+class PlainOperationUpdateView(UpdateView):
+    model = PlainOperation
+    template_name = 'transactionapp/plainoperation.html'
+    fields = '__all__'
+    success_url = reverse_lazy('transactionapp:plain_operations')
+
+    def setup(self, request, *args, **kwargs):
+        self.request = request
+        self.args = args
+        self.kwargs = kwargs
+        self.transactions_array = Transaction.objects.filter(plain_id=self.kwargs['pk']).order_by('operation_date')
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        period_names = {'once': 'Разовая', 'daily':'Ежедневная', 'monthly':'Ежемесячная'}
+        context['title'] = 'плановая/редактирование'
+        context['period_name'] = period_names[self.get_object().period]
+
+        if len(self.transactions_array) != 0:
+            context['start_date'] = str(self.transactions_array.first().operation_date)
+            context['end_date'] = str(self.transactions_array.last().operation_date)
+        else:
+            context['start_date'] = datetime.today().strftime('%Y-%m-%d')
+            context['end_date'] = datetime.today().strftime('%Y-%m-%d')
+        return context
+
+    def post(self, request, **kwargs):
+        self.transactions_array.delete()
+        request.POST = request.POST.copy()
+        request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
+        request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
+        request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
+        if request.POST['operation_type'] == 'out':
+            operation_summ = float(request.POST['operation_summ']) * -1
+        else:
+            operation_summ = float(request.POST['operation_summ'])
+        request.POST['operation_summ'] = operation_summ
+        if request.POST['period'] != 'once':
+            request.POST['quantity'] = PlainOperation.quantity_count(request.POST['operation_date'],
+                                                                     request.POST['trip-end'],
+                                                                     request.POST['period'])
+        else:
+            request.POST['quantity'] = 1
+        return super(PlainOperationUpdateView, self).post(request, **kwargs)
+
+
+class PlainOperationDeleteView(DeleteView):
+    model = PlainOperation
+    success_url = reverse_lazy('transactions:plain_operations')
+
+    def setup(self, request, *args, **kwargs):
+        self.request = request
+        self.args = args
+        self.kwargs = kwargs
+        self.transactions_array = Transaction.objects.filter(plain_id=self.kwargs['pk']).order_by('operation_date')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.transactions_array.delete()
+        return self.delete(request, *args, **kwargs)
 
 
 class TransactionsListView(MonthArchiveView):
@@ -37,6 +134,8 @@ class TransactionsListView(MonthArchiveView):
             queryset = Transaction.objects.filter(account=self.kwargs['pk']).order_by('operation_date')
         else:
             queryset = Transaction.objects.all().order_by('operation_date')
+            if len(queryset) == 0:
+                self.allow_empty = True
         return queryset
 
 

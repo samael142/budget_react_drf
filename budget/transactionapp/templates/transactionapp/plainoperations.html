@@ -1,0 +1,33 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% load tr_tags %}
+{% block content %}
+<body>
+<div class="container">
+    {% for object in object_list %}
+    <a href="{% url 'transactionapp:plain_operation_update' object.id %}"
+       class="tr__box {% if object.disabled_status == 1 %}past__color{% endif %}">
+        <div class="tr__box__row">
+            <div class="tr__box__row__left">{{ object.header }}</div>
+            <div class="tr__box__row__right num {% if object.summ > 0 %}green__color{% else %}red__color{% endif %}">
+                {{ object.summ }}
+            </div>
+        </div>
+        <div class="tr__box__row">
+            <div class="tr__box__row__left">{{ object.category }}</div>
+            <div class="tr__box__row__right">Ближ: {{ object.curr_date|date:"d-m-Y" }}</div>
+        </div>
+        <div class="tr__box__row">
+            <div class="tr__box__row__left">{{ object.subcategory }}</div>
+            <div class="tr__box__row__right">Посл: {{ object.end_date|date:"d-m-Y" }}</div>
+        </div>
+    </a>
+    {% endfor %}
+    <br>
+    <br>
+    <br>
+    <br>
+</div>
+{% include 'includes/inc_main_menu.html' %}
+</body>
+{% endblock %}

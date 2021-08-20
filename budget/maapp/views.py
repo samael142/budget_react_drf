@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
 from transactionapp.models import Transaction
@@ -48,7 +47,7 @@ class AccountCreateView(CreateView):
     model = MoneyAccount
     template_name = 'maapp/account.html'
     fields = ('name', 'currency')
-    success_url = reverse_lazy('accounts:accounts')
+    success_url = reverse_lazy('money_accounts:accounts')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

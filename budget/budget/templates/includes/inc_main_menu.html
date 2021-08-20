@@ -27,12 +27,12 @@
                     </a>
                 </li>
                 <li class="nav__item">
-                    <a href="{% url 'accounts:accounts' %}" class="nav__link">
+                    <a href="{% url 'money_accounts:accounts' %}" class="nav__link">
                         <img src="{% static 'budget/img/accounts.svg' %}" alt="Баланс" class="nav__img">
                     </a>
                 </li>
                 <li class="nav__item">
-                    <a href="" class="nav__link">
+                    <a href="{% url 'transactions:plain_operations' %}" class="nav__link">
                         <img src="{% static 'budget/img/plain_list.svg' %}" alt="Планируемые" class="nav__img">
                     </a>
                 </li>
