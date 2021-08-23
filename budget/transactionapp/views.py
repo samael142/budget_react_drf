@@ -154,7 +154,7 @@ class TransactionCreateView(CreateView):
         context['subcategories'] = Subcategory.objects.all()
         context['date'] = datetime.today().strftime('%Y-%m-%d')
         if self.request.META.get('HTTP_REFERER'):
-            if 'transactions/create' in self.request.META.get('HTTP_REFERER'):
+            if 'transactionapp/create' in self.request.META.get('HTTP_REFERER'):
                 context['date'] = Transaction.get_last_transaction().operation_date.strftime('%Y-%m-%d')
                 context['default_account'] = Transaction.get_last_transaction().account
         return context
@@ -215,7 +215,7 @@ class TransactionUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'транзакция/редактирование'
         context['date'] = str(self.get_object().operation_date)
-        context['summ'] = self.get_object().operation_summ
+        context['operation_summ'] = self.get_object().operation_summ
         context['default_account'] = self.get_object().account
         context['header'] = self.get_object().header
         context['category'] = self.get_object().category

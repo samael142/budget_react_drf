@@ -1,0 +1,36 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+<div class="container">
+    <br>
+    <form method="post">
+    {% csrf_token %}
+        {% for object in object_list %}
+            <div class="report">
+                <input name="cat_checkbox" class="form__check form__check__big tr__box__acc" type="checkbox"
+                       value="{{ object.pk }}"
+                       id="{{ object.pk }}">
+                <label class="tr__box__acc transparent__color" for="{{ object.pk }}">{{ object.name }}</label>
+            </div>
+        {% endfor %}
+        <br>
+        <input type="number" step="0.01" name="summ" class="form__control" placeholder="Сумма для сравнения"
+               value="" required>
+        <br>
+        <div class="tr__upper">
+            <input class="form__control form__sm row__2" type="date" id="start" name="trip-start"
+                   value="{{ start_date }}">
+            <input class="form__control form__sm row__2" type="date" id="end" name="trip-end"
+                   value="{{ end_date }}">
+        </div>
+        <input type="submit" class="btn btn__green" value="Отправить" id="submit">
+    </form>
+</div>
+<br>
+<br>
+<br>
+<br>
+{% include 'includes/inc_main_menu.html' %}
+</body>
+{% endblock %}

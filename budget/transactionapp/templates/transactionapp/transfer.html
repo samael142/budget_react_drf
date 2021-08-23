@@ -2,6 +2,7 @@
 {% load static %}
 {% load tr_tags %}
 {% block content %}
+{% load l10n %}
     <body>
     <div class="container">
         <div class="title__single">Перевод</div>
@@ -15,7 +16,7 @@
 
             <hr class="top__hr">
             <input onfocus="this.select();" type="number" step="0.01" name="summ" class="form__control"
-                   placeholder="Сумма" value="{{ summ }}" required><br>
+                   placeholder="Сумма" value="{% localize off %}{{ summ }}{% endlocalize %}" required><br>
             <h4 class="select__label">Откуда</h4>
             <select name="money_account_from" class="form__select form__sm">
                 <option selected value="{{ account_from.pk }}">{{ account_from.name }}</option>

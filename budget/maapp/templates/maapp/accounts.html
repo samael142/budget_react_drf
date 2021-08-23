@@ -1,6 +1,7 @@
 {% extends 'budget/base.html' %}
 {% load static %}
 {% block content %}
+{% load humanize %}
 <body>
     <div class="container">
         <br>
@@ -11,7 +12,7 @@
         <div id="{{ object.account }}" class="double__button {% if object.account__is_visible == 0 %}past__color{% endif %}">
             <div class="name__btn tr__box__acc black__color transparent__color">{{ object.account__name }}</div>
             <a href="{% url 'maapp:detail_account' object.account year month%}"
-                class="num tr__box__acc {% if object.total_summ > 0 %}green__color{% else %}red__color{% endif %} transparent__color">{{ object.total_summ }}</a>
+                class="num tr__box__acc {% if object.total_summ > 0 %}green__color{% else %}red__color{% endif %} transparent__color">{{ object.total_summ|intcomma }}</a>
         </div>
         {% endfor %}
         <br>

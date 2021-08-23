@@ -2,6 +2,7 @@
 {% load static %}
 {% load tr_tags %}
 {% block content %}
+    {% load l10n %}
 <body>
         <div class="container">
             <div class="title__single">Транзакция</div>
@@ -23,11 +24,47 @@
                     </select>
                 </div>
                 <hr class="top__hr">
-                <input onfocus="this.select();" type="number" step="0.01" name="operation_summ" class="form__control form__sm" placeholder="Сумма"
+
+                <div class="input__group">
+
+                <input onfocus="this.select();" id="summ" type="number" step="0.01" name="operation_summ" class="form__control form__sm" placeholder="Сумма"
                        {% if request.resolver_match.url_name == 'transaction_update' %}
-                       value="{{ summ|abs }}"
+                       value="{% localize off %}{{ operation_summ|abs }}{% endlocalize %}"
                        {% endif %}
                        required>
+
+                <input id="showCalculator" class="form__control" type="button" value="->">
+                </div>
+
+                <div id="calculatorBox" class="calculator__body hide">
+                    <div class="calculator-grid">
+                        <div class="output">
+                            <div data-previous-operand class="previous-operand"></div>
+                            <div data-current-operand class="current-operand"></div>
+                        </div>
+                        <div data-all-clear class="span-two bbb">AC</div>
+                        <div class="bbb" data-delete>DEL</div>
+                        <div class="bbb orange" data-operation>÷</div>
+                        <div class="bbb" data-number>1</div>
+                        <div class="bbb" data-number>2</div>
+                        <div class="bbb" data-number>3</div>
+                        <div class="bbb orange" data-operation>*</div>
+                        <div class="bbb" data-number>4</div>
+                        <div class="bbb" data-number>5</div>
+                        <div class="bbb" data-number>6</div>
+                        <div class="bbb orange" data-operation>+</div>
+                        <div class="bbb" data-number>7</div>
+                        <div class="bbb" data-number>8</div>
+                        <div class="bbb" data-number>9</div>
+                        <div class="bbb orange" data-operation>-</div>
+                        <div class="bbb dot" data-number>.</div>
+                        <div class="bbb " data-number>0</div>
+                        <div data-equals class="span-two bbb orange eq">=</div>
+
+                    </div>
+                </div>
+
+
                 <h5 class="select__label">Счёт</h5>
                 <select name="account" class="form__select form__sm" id="account">
 
@@ -216,5 +253,143 @@
                 })}
             }
         </script>
+<script>
+        class Calculator {
+            constructor(previousOperandTextElement, currentOperandTextElement) {
+                this.previousOperandTextElement = previousOperandTextElement
+                this.currentOperandTextElement = currentOperandTextElement
+                this.clear()
+            }
+
+            clear() {
+                this.currentOperand = ''
+                this.previousOperand = ''
+                this.operation = undefined
+                this.summField = document.getElementById('summ')
+                this.calcBox = document.getElementById('calculatorBox')
+                this.calcButton = document.getElementById('showCalculator')
+                this.calcButton.addEventListener( "click" , () => this.calcBox.classList.toggle('hide'));
+            }
+
+            delete() {
+                this.currentOperand = this.currentOperand.toString().slice(0, -1)
+            }
+
+            appendNumber(number) {
+                if (number === '.' && this.currentOperand.includes('.')) return
+                this.currentOperand = this.currentOperand.toString() + number.toString()
+            }
+
+            chooseOperation(operation) {
+                if (this.currentOperand === '') return
+                if (this.previousOperand !== '') {
+                    this.compute()
+                }
+                this.operation = operation
+                this.previousOperand = this.currentOperand
+                this.currentOperand = ''
+            }
+
+            compute() {
+                let computation
+                const prev = parseFloat(this.previousOperand)
+                const current = parseFloat(this.currentOperand)
+                if (isNaN(prev) || isNaN(current)) return
+                switch (this.operation) {
+                    case '+':
+                        computation = prev + current
+                        break
+                    case '-':
+                        computation = prev - current
+                        break
+                    case '*':
+                        computation = prev * current
+                        break
+                    case '÷':
+                        computation = prev / current
+                        break
+                    default:
+                        return
+                }
+                this.currentOperand = computation
+                this.operation = undefined
+                this.previousOperand = ''
+            }
+
+            getDisplayNumber(number) {
+                const stringNumber = number.toString()
+                const integerDigits = parseFloat(stringNumber.split('.')[0])
+                const decimalDigits = stringNumber.split('.')[1]
+                let integerDisplay
+                if (isNaN(integerDigits)) {
+                    integerDisplay = ''
+                } else {
+                    integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
+                }
+                if (decimalDigits != null) {
+                    return `${integerDisplay}.${decimalDigits}`
+                } else {
+                    return integerDisplay
+                }
+            }
+
+            updateDisplay() {
+                this.currentOperandTextElement.innerText =
+                    this.getDisplayNumber(this.currentOperand)
+                if (this.operation != null) {
+                    this.previousOperandTextElement.innerText =
+                        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
+                } else {
+                    this.previousOperandTextElement.innerText = ''
+                }
+            }
+
+            getEqual() {
+                this.summField.value = this.currentOperand
+                this.calcBox.classList.toggle('hide')
+            }
+        }
+
+
+        const numberButtons = document.querySelectorAll('[data-number]')
+        const operationButtons = document.querySelectorAll('[data-operation]')
+        const equalsButton = document.querySelector('[data-equals]')
+        const deleteButton = document.querySelector('[data-delete]')
+        const allClearButton = document.querySelector('[data-all-clear]')
+        const previousOperandTextElement = document.querySelector('[data-previous-operand]')
+        const currentOperandTextElement = document.querySelector('[data-current-operand]')
+
+        const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement)
+
+        numberButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.appendNumber(button.innerText)
+                calculator.updateDisplay()
+            })
+        })
+
+        operationButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.chooseOperation(button.innerText)
+                calculator.updateDisplay()
+            })
+        })
+
+        equalsButton.addEventListener('click', button => {
+            calculator.compute()
+            calculator.updateDisplay()
+            calculator.getEqual()
+        })
+
+        allClearButton.addEventListener('click', button => {
+            calculator.clear()
+            calculator.updateDisplay()
+        })
+
+        deleteButton.addEventListener('click', button => {
+            calculator.delete()
+            calculator.updateDisplay()
+        })
+    </script>
 </body>
 {% endblock %}

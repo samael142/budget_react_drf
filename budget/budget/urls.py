@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import index
+from .views import index, ReportView, GeneratedReportView, DetailReportView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +23,7 @@ urlpatterns = [
     path('transactionapp/', include('transactionapp.urls', namespace='transactions')),
     path('maapp/', include('maapp.urls', namespace='money_accounts')),
     path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('report/', ReportView.as_view(), name='report'),
+    path('generated_report/', GeneratedReportView.as_view(), name='generated_report'),
+    path('generated_report/<date>', DetailReportView.as_view(), name='detail_report'),
     ]

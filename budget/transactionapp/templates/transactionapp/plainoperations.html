@@ -2,6 +2,7 @@
 {% load static %}
 {% load tr_tags %}
 {% block content %}
+{% load humanize %}
 <body>
 <div class="container">
     {% for object in object_list %}
@@ -10,7 +11,7 @@
         <div class="tr__box__row">
             <div class="tr__box__row__left">{{ object.header }}</div>
             <div class="tr__box__row__right num {% if object.summ > 0 %}green__color{% else %}red__color{% endif %}">
-                {{ object.summ }}
+                {{ object.summ|intcomma }}
             </div>
         </div>
         <div class="tr__box__row">

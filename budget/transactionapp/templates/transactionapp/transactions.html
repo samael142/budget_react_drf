@@ -2,6 +2,7 @@
 {% load static %}
 {% load tr_tags %}
 {% block content %}
+{% load humanize %}
 <body>
 <div class="container">
     {% for object in object_list %}
@@ -15,7 +16,7 @@
                     <div class="t__str">Баланс:&nbsp;</div>
                     {% with date=object.operation_date|date:"d-m-Y" %}
                     <div class="t__int num {% if total|get_item:date > 0 %}green__color{% else %}red__color{% endif %}">
-                        {{ total|get_item:date }}
+                        {{ total|get_item:date|intcomma }}
                     </div>
                     {% endwith %}
                 </div>
@@ -31,7 +32,7 @@
                 <div><b>{% if not object.transfer_id %}{{ object.header }}{% else %}{{ object.comment }}{% endif %}</b>
                 </div>
                 <div class="num {% if object.operation_summ > 0 %}green__color{% else %}red__color{% endif %}">
-                    {{ object.operation_summ }}
+                    {{ object.operation_summ|intcomma }}
                 </div>
             </div>
             {% if not object.transfer_id %}

@@ -1,0 +1,81 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+    <body>
+    <br>
+    <div class="container">
+        <div class="double__button no__radius">
+            <div class="report__box transparent__color border__right">Дата</div>
+            <div class="report__box transparent__color border__right">Расход</div>
+            <div class="report__box transparent__color border__right">Экономия</div>
+            <div class="report__box end__text transparent__color">Итог</div>
+        </div>
+        {% for object in object_list %}
+        <div class="double__button no__radius {% if object.economy < 0 %}back__red{% else %}back__green{% endif %}"
+            id="{{ object.operation_date|date:"Y-m-d" }}">
+            <div class="report__box transparent__color border__right">{{ object.operation_date|date:"d-m-Y" }}</div>
+            <div class="num report__box transparent__color border__right">{{ object.total_summ }}</div>
+            <div class="num report__box transparent__color border__right">{{ object.economy }}</div>
+            <div class="num report__box end__text {% if object.total_economy > 0 %}green__color{% else %}red__color{% endif %}">{{ object.total_economy }}</div>
+        </div>
+        {% endfor %}
+        <br>
+        <input type="button" class="btn btn__red" onclick="window.location.href='{% url 'report' %}';" value="Закрыть" />
+    </div>
+    <div id="modal" class="">
+        <!--Dynamic content-->
+    </div>
+    {% include 'includes/inc_main_menu.html' %}
+<script>
+        "use strict";
+        const flowWindow = {
+            windowElement: document.getElementById("modal"),
+            parentElement: document.querySelector('.container'),
+            opacity: 0,
+            fadeFunction(opacity) {
+                self = this
+                if (opacity < 1) {
+                    opacity += .075;
+                    setTimeout(function () { self.fadeFunction(opacity) }, 15);
+                }
+                this.windowElement.style.opacity = opacity;
+            },
+            clickEvent() {
+                this.parentElement.addEventListener('click', (event) => {
+                    this.clickHandler(event)
+                })
+            },
+            clickHandler(event) {
+                if (!event.target.classList.contains('report__box')) return;
+                let rowId = event.target.parentNode.id;
+                if (rowId) {
+                    this.render(rowId)
+                }
+            },
+            render(rowId) {
+                let djangoUrl = "{% url 'detail_report' 'date' %}";
+                let url = djangoUrl.replace('date', rowId);
+                this.windowElement.className = "show max__heigh__50vh";
+                fetch(url).then((response) => {
+                    return response.text();
+                }).then((html) => { this.windowElement.innerHTML = html });
+                this.fadeFunction(0)
+                this.closeWindow()
+            },
+            closeWindow() {
+                this.windowElement.addEventListener('click', (event) => {
+                    this.windowElement.innerHTML = ""
+                    this.windowElement.className = ""
+                })
+            },
+        }
+        flowWindow.clickEvent();
+    </script>
+    <script>
+        $('.num').each(function () {
+            this.innerHTML = parseFloat(this.textContent)
+                .toLocaleString('ru-RU')
+        })
+    </script>
+</body>
+{% endblock %}

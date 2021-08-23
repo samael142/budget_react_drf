@@ -2,6 +2,7 @@
 {% load static %}
 {% load tr_tags %}
 {% block content %}
+{% load l10n %}
 <body>
 <div class="container">
     <div class="title__single">Планируемая операция</div>
@@ -31,7 +32,7 @@
         </div>
         <hr class="top__hr">
         <input type="number" step="0.01" name="operation_summ" class="form__control" placeholder="Сумма"
-               value="{{ object.operation_summ|abs }}"
+               value="{% localize off %}{{ object.operation_summ|abs }}{% endlocalize %}"
                required>
         <br>
         <input type="text" name="header" class="form__control" value="{{ object.header }}" readonly>

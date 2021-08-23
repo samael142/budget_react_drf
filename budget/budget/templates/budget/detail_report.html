@@ -1,0 +1,20 @@
+{% load static %}
+{% load humanize %}
+{% for object in object_list %}
+<div class="tr__box height__63 no__shadow">
+    <div class="tr__box__row">
+        <div><b>{{ object.header }}</b></div>
+        <div class="num {% if object.operation_summ > 0 %}green__color{% else %}red__color{% endif %}">
+            {{ object.operation_summ|intcomma }}
+        </div>
+    </div>
+    <div class="tr__box__row">
+        <div>{{ object.category }}</div>
+        <div>{{ object.money_account }}</div>
+    </div>
+    <div class="tr__box__row">
+        <div>{{ object.subcategory }}</div>
+        <div>{{ object.operation_date|date:"d-m-Y" }}</div>
+    </div>
+</div>
+{% endfor %}
