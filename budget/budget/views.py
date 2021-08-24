@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 
 from .models import Category
 
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from transactionapp.models import Transaction
 
 
@@ -89,3 +89,40 @@ class DetailReportView(ListView):
     def get_queryset(self):
         queryset = Transaction.objects.filter(operation_date=self.kwargs['date'], category__in=self.categories, past=0)
         return queryset
+
+
+class SettingsView(TemplateView):
+    template_name = 'budget/settings.html'
+
+
+class StatisticView(ListView):
+    template_name = 'budget/statistic.html'
+    start_date = datetime.today().strftime('%Y-%m-%d').split("-")
+    start_date[2] = '01'
+    start_date = "-".join(start_date)
+    end_date = datetime.today().strftime('%Y-%m-%d')
+
+    def get_queryset(self):
+        queryset = Transaction.objects.filter(past=0, operation_date__range=(self.start_date, self.end_date)).\
+            values('category__name', 'subcategory__name', 'category').\
+            annotate(total_summ=Sum('operation_summ')).order_by('category__name', 'total_summ')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        categories_dict = {}
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'статистика'
+        context['start_date'] = self.start_date
+        context['end_date'] = self.end_date
+        categories = Transaction.objects.filter(past=0, operation_date__range=(self.start_date, self.end_date)).\
+            values('category__name').\
+            annotate(total_summ=Sum('operation_summ'))
+        for el in categories:
+            categories_dict[el['category__name']] = float(el['total_summ'])
+        context['categories_dict'] = categories_dict
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.start_date = request.POST['trip-start']
+        self.end_date = request.POST['trip-end']
+        return self.get(self, request, *args, **kwargs)

@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
 import calendar
 from random import randint
-
 from django.db import models
 from django.db.models import Sum
-
 from maapp.models import MoneyAccount
 from budget.models import Header, Category, Subcategory
 

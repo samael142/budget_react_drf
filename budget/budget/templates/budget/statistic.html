@@ -1,0 +1,62 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load tr_tags %}
+{% block content %}
+<body>
+<div class="container">
+        {% for object in object_list %}
+            {% if object.category__name %}
+            {% ifchanged object.category__name %}
+        <div class="double__button" data-id="{{ object.category }}">
+            <div class="tr__box__acc"><b>{{ object.category__name }}</b></div>
+            {% with cat=object.category__name %}
+            <div class="num tr__box__acc"><b>{{ categories_dict|get_item:cat|intcomma }}</b></div>
+            {% endwith %}
+        </div>
+            {% endifchanged %}
+        <div class="double__button">
+            <div class="tr__box__acc">&nbsp;&bull;&nbsp;{{ object.subcategory__name }}</div>
+            <div class="num tr__box__acc">{{ object.total_summ|intcomma }}</div>
+        </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="fix__footer height__100 container">
+        <form method="post" id="formPost">
+            {% csrf_token %}
+            <div class="tr__upper">
+                <input class="form__control form__sm row__2" type="date" id="start" name="trip-start"
+                    value="{{ start_date }}">
+                <input class="form__control form__sm row__2" type="date" id="end" name="trip-end"
+                    value="{{ end_date }}">
+            </div>
+        </form>
+    </div>
+    {% include 'includes/inc_main_menu.html' %}
+<script>
+        const formSubmitter = {
+            startDate: document.querySelector("#start"),
+            stopDate: document.querySelector("#end"),
+            formPost: document.querySelector("#formPost"),
+            addChangeEvent() {
+                this.startDate.addEventListener('change', (event) => {
+                    this.submitForm()
+                })
+                this.stopDate.addEventListener('change', (event) => {
+                    this.submitForm()
+                })
+            },
+            submitForm() {
+                this.formPost.submit()
+            },
+        }
+        formSubmitter.addChangeEvent()
+    </script>
+</body>
+{% endblock %}

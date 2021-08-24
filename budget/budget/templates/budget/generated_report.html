@@ -1,5 +1,6 @@
 {% extends 'budget/base.html' %}
 {% load static %}
+{% load humanize %}
 {% block content %}
     <body>
     <br>
@@ -14,9 +15,9 @@
         <div class="double__button no__radius {% if object.economy < 0 %}back__red{% else %}back__green{% endif %}"
             id="{{ object.operation_date|date:"Y-m-d" }}">
             <div class="report__box transparent__color border__right">{{ object.operation_date|date:"d-m-Y" }}</div>
-            <div class="num report__box transparent__color border__right">{{ object.total_summ }}</div>
-            <div class="num report__box transparent__color border__right">{{ object.economy }}</div>
-            <div class="num report__box end__text {% if object.total_economy > 0 %}green__color{% else %}red__color{% endif %}">{{ object.total_economy }}</div>
+            <div class="num report__box transparent__color border__right">{{ object.total_summ|intcomma }}</div>
+            <div class="num report__box transparent__color border__right">{{ object.economy|intcomma }}</div>
+            <div class="num report__box end__text {% if object.total_economy > 0 %}green__color{% else %}red__color{% endif %}">{{ object.total_economy|intcomma }}</div>
         </div>
         {% endfor %}
         <br>
@@ -71,11 +72,6 @@
         }
         flowWindow.clickEvent();
     </script>
-    <script>
-        $('.num').each(function () {
-            this.innerHTML = parseFloat(this.textContent)
-                .toLocaleString('ru-RU')
-        })
-    </script>
+
 </body>
 {% endblock %}

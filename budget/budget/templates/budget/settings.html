@@ -1,0 +1,15 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+<div class="container">
+        <div class="settings__menu">
+            <a href="{% url 'statistic' %}" class="settings__pt tr__box">Статистика</a>
+            <a href="#" class="settings__pt tr__box">Бюджет</a>
+            <a href="#" class="settings__pt tr__box">Последние 20 транзакций</a>
+            <a href="#" class="settings__pt tr__box">Выборка с фильтром</a>
+        </div>
+    </div>
+    {% include 'includes/inc_main_menu.html' %}
+</body>
+{% endblock %}
