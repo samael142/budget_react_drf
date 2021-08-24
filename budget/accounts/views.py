@@ -14,7 +14,6 @@ from django.views.generic import CreateView, TemplateView
 
 from budget import settings
 from .forms import UserRegisterForm
-from .decorators import check_recaptcha
 
 
 class RegisterView(CreateView):
@@ -29,25 +28,20 @@ class RegisterView(CreateView):
             return super().form_valid(form)
         return self.render_to_response(self.get_context_data(form=form))
 
-    @staticmethod
-    @receiver(pre_save, sender=User)
-    def set_new_user_inactive(sender, instance, **kwargs):
-        mail_subject = 'Activate budget account.'
-        message = render_to_string('accounts/email_admin_activation_body.html', {
-            'username': instance.username,
-            'email': instance.email,
-        })
-        to_email = settings.EMAIL_HOST_USER
-        email = EmailMessage(
-            mail_subject, message, to=[to_email]
-        )
-        email.send()
-        return HttpResponse('Please confirm your email address to complete the registration')
-
-    @staticmethod
     @receiver(post_save, sender=User)
-    def set_new_user_inactive(sender, instance, **kwargs):
-        print(instance.email)
+    def user_to_inactive(sender, instance, created, update_fields, **kwargs):
+        if created:
+            instance.is_active = False
+            mail_subject = 'Activate budget account.'
+            message = render_to_string('accounts/email_admin_activation_body.html', {
+                'username': instance.username,
+                'email': instance.email,
+            })
+            to_email = settings.EMAIL_HOST_USER
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
 
 
 class LoginView(TemplateView):

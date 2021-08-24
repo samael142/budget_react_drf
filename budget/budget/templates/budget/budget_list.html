@@ -1,0 +1,30 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load tr_tags %}
+{% block content %}
+<body>
+<div class="container">
+        {% for object in object_list %}
+        <a href="#" class="tr__box">
+            <div class="tr__box__row">
+                <div><b>{{ object.name }}</b></div>
+            </div>
+            <div class="tr__box__row">
+                {% with start_date=object.start_date|date:"Y-m-d" end_date=object.end_date|date:"Y-m-d" %}
+                <div>{{ weekdays|get_item:start_date }},&nbsp;{{ object.start_date|date:"d-m-Y" }}&nbsp;-&nbsp;{{ weekdays|get_item:end_date }},&nbsp;{{ object.end_date|date:"d-m-Y" }}</div>
+                {% endwith %}
+            </div>
+            <div class="tr__box__row">
+                <div>Категория:&nbsp;{{ object.category }}</div>
+            </div>
+        </a>
+        {% endfor %}
+        <br>
+        <div class="single__element__center">
+            <a href="{% url 'budget_create' %}" class="footer__button">Новый бюджет</a>
+        </div>
+    </div>
+{% include 'includes/inc_main_menu.html' %}
+</body>
+{% endblock %}

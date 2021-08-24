@@ -28,4 +28,6 @@ urlpatterns = [
     path('generated_report/<date>', DetailReportView.as_view(), name='detail_report'),
     path('settings', SettingsView.as_view(), name='settings'),
     path('settings/statistic/', StatisticView.as_view(), name='statistic'),
+    path('budget/budget_list/', BudgetListView.as_view(), name='budget_list'),
+    path('budget/create/', CreateBudgetView.as_view(), name='budget_create'),
     ]

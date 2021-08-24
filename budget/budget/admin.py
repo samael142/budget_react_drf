@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(Header)
 admin.site.register(Category)
 admin.site.register(Subcategory)
+admin.site.register(BudgetPeriod)

@@ -51,3 +51,11 @@ class Subcategory(models.Model):
         new_subcategory = Subcategory(name=subcategory)
         new_subcategory.save()
         return new_subcategory.pk
+
+
+class BudgetPeriod(models.Model):
+    name = models.CharField(verbose_name='название', max_length=64)
+    plain_summ = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
+    start_date = models.DateField(verbose_name='дата начала')
+    end_date = models.DateField(verbose_name='дата конца')
+    category = models.ForeignKey(Category, on_delete=models.RESTRICT)
