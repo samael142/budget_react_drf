@@ -28,6 +28,12 @@ urlpatterns = [
     path('generated_report/<date>', DetailReportView.as_view(), name='detail_report'),
     path('settings', SettingsView.as_view(), name='settings'),
     path('settings/statistic/', StatisticView.as_view(), name='statistic'),
+    path('settings/filter/', FilterSettingsView.as_view(), name='filter'),
+    path('settings/generated_filter/', GeneratedFilterView.as_view(), name='generated_filter'),
+    path('settings/last20/', Last20View.as_view(), name='last20'),
     path('budget/budget_list/', BudgetListView.as_view(), name='budget_list'),
-    path('budget/create/', CreateBudgetView.as_view(), name='budget_create'),
+    path('budget/create/', BudgetCreateView.as_view(), name='budget_create'),
+    path('budget/detail/<int:pk>/', BudgetDetailView.as_view(), name='budget_detail'),
+    path('budget/update/<int:pk>/', BudgetEditView.as_view(), name='budget_edit'),
+    path('budget/delete/<int:pk>/', BudgetDeleteView.as_view(), name='budget_delete'),
     ]

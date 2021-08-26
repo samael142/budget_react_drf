@@ -1,0 +1,40 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load tr_tags %}
+{% block content %}
+    <body>
+    <div class="container">
+        {% for article in articles %}
+            <a href="{% url 'budget_edit' object.pk %}"
+               class="tr__box {% if article.3 < 0 %}light__red{% else %}transfer__color{% endif %}"
+               id="{{ forloop.counter }}">
+                <div class="tr__box__row budget__row">
+                    <div><b>{{ object.name }}</b>&nbsp;&nbsp;Категория:&nbsp;{{ object.category }}</div>
+                </div>
+                <div class="tr__box__row budget__row">
+                    <div>{{ article.4 }}&nbsp;->&nbsp;{{ article.5 }}</div>
+                </div>
+                <div class="tr__box__row budget__row">
+                    <div><b class="num font__13 {% if article.3 < 0 %}red__color{% else %}green__color{% endif %}">{{ article.3|intcomma }}</b>&nbsp;</div>
+                    <div>(<span class="num">{{ article.0|intcomma }}</span>&nbsp;+&nbsp;</div>
+                    <div><span class="num">{{ article.2|intcomma }}</span>)&nbsp;</div>
+                    <div>+&nbsp;<span class="num">{{ article.1|intcomma }}</span></div>
+                </div>
+            </a>
+    {% endfor %}
+    </div>
+
+    {% include 'includes/inc_main_menu.html' %}
+    <script>
+        var anchor = '{{ anchor }}'
+        if (anchor !== 'None') {
+            if (!document.location.hash) {
+                document.location.hash = anchor;
+            }
+            let currentBox = document.getElementById(anchor);
+            currentBox.classList.add("border__5px");
+        }
+    </script>
+    </body>
+{% endblock %}

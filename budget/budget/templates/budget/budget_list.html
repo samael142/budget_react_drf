@@ -6,7 +6,7 @@
 <body>
 <div class="container">
         {% for object in object_list %}
-        <a href="#" class="tr__box">
+        <a href="{% url 'budget_detail' object.pk %}" class="tr__box">
             <div class="tr__box__row">
                 <div><b>{{ object.name }}</b></div>
             </div>

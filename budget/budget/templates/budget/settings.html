@@ -6,8 +6,8 @@
         <div class="settings__menu">
             <a href="{% url 'statistic' %}" class="settings__pt tr__box">Статистика</a>
             <a href="{% url 'budget_list' %}" class="settings__pt tr__box">Бюджет</a>
-            <a href="#" class="settings__pt tr__box">Последние 20 транзакций</a>
-            <a href="#" class="settings__pt tr__box">Выборка с фильтром</a>
+            <a href="{% url 'last20' %}" class="settings__pt tr__box">Последние 20 транзакций</a>
+            <a href="{% url 'filter' %}" class="settings__pt tr__box">Выборка с фильтром</a>
         </div>
     </div>
     {% include 'includes/inc_main_menu.html' %}

@@ -6,12 +6,14 @@
 <body>
 <div class="container">
     {% for object in object_list %}
+        {% if request.resolver_match.url_name != 'last20' %}
         {% ifchanged object.operation_date %}
             <div class="total__box" id="{{ object.operation_date|date:"d-m-Y" }}">
                 <div class="t__left">
                     <div class="t__int">{{ object.operation_date|date:"d-m-Y" }}&nbsp;</div>
                     <div class="t__str">{{ object.operation_date|date:"D" }}</div>
                 </div>
+                {% if request.resolver_match.url_name == 'page' or request.resolver_match.url_name == 'detail_account'%}
                 <div class="t__right">
                     <div class="t__str">Баланс:&nbsp;</div>
                     {% with date=object.operation_date|date:"d-m-Y" %}
@@ -20,8 +22,10 @@
                     </div>
                     {% endwith %}
                 </div>
+                {% endif %}
             </div>
         {% endifchanged %}
+        {% endif %}
         <a href="{% if object.transfer_id %}
                    {% url 'transactions:transfer_update' object.transfer_id %}
                  {% else %}

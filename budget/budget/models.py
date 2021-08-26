@@ -10,6 +10,7 @@ class Header(models.Model):
 
     @staticmethod
     def add_header_to_transaction(header):
+        header = header.lstrip().rstrip().capitalize()
         headers_list = Header.objects.all()
         for el in headers_list:
             if el.name == header:
@@ -27,6 +28,7 @@ class Category(models.Model):
 
     @staticmethod
     def add_category_to_transaction(category):
+        category = category.lstrip().rstrip().capitalize()
         categories_list = Category.objects.all()
         for el in categories_list:
             if el.name == category:
@@ -44,6 +46,7 @@ class Subcategory(models.Model):
 
     @staticmethod
     def add_subcategory_to_transaction(subcategory):
+        subcategory = subcategory.lstrip().rstrip().capitalize()
         subcategories_list = Subcategory.objects.all()
         for el in subcategories_list:
             if el.name == subcategory:

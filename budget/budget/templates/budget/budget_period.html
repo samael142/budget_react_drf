@@ -7,23 +7,35 @@
         <br>
         <form method="post">
         {% csrf_token %}
-            <input type="text" name="name" class="form__control" placeholder="Название" value="{{name}}" required>
+            <input type="text" name="name" class="form__control" placeholder="Название" value="{{ object.name }}" required>
             <h5 class="select__label">Категория</h5>
             <select name="category" class="form__select" id="category" required>
+                <option selected value="{{ category.pk }}">{{ category.name }}</option>
+
                 {% for el in categories %}
                 <option value="{{ el.id }}">{{ el.name }}</option>
                 {% endfor %}
             </select>
             <br>
             <input onfocus="this.select();" type="number" step="0.01" name="plain_summ" class="form__control"
-                placeholder="Планируемая сумма" required>
+                placeholder="Планируемая сумма" value="{{ object.plain_summ|add:"0" }}" required>
             <br>
             <div class="tr__upper">
-                <input class="form__control form__sm row__2" type="date" id="start" name="start_date">
-                <input class="form__control form__sm row__2" type="date" id="end" name="end_date">
+                <input class="form__control form__sm row__2" type="date" id="start" name="start_date" value="{{ object.start_date|date:"Y-m-d" }}">
+                <input class="form__control form__sm row__2" type="date" id="end" name="end_date" value="{{ object.end_date|date:"Y-m-d" }}">
             </div>
             <input type="submit" class="btn btn__green" value="Отправить" id="submit">
+
+            {% if request.resolver_match.url_name == 'budget_edit' %}
+            <input type="button" class="btn btn__red"
+                onclick="window.location.href='{% url 'budget_delete' object.pk %}';" value="Удалить" />
+            {% endif %}
+            {% if request.resolver_match.url_name == 'budget_edit' %}
+            <input type="button" class="btn btn__red" onclick="window.location.href='{% url 'budget_detail' object.pk %}';"
+                value="Закрыть" />
+            {% else %}
             <input type="button" class="btn btn__red" onclick="window.location.href='{% url 'budget_list' %}';" value="Закрыть" />
+            {% endif %}
         </form>
     </div>
 </body>

@@ -1,0 +1,147 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+
+<body>
+<div class="container">
+    <br>
+    <form method="post">
+    {% csrf_token %}
+        <div class="accordion">
+            <div class="report">
+                <input name="header_all" class="form__check form__check__big tr__box__acc accordion__checkbox"
+                       type="checkbox"
+                       id="header_all">
+                <div class="tr__box__acc transparent__color accordion__button">Заголовки</div>
+            </div>
+        </div>
+        <div class="panel">
+            {% for header in headers %}
+                <div class="report">
+                    <input name="header_checkbox" class="form__check form__check__big tr__box__acc" type="checkbox"
+                           value="{{ header.pk }}"
+                           id="header_{{ header.pk }}">
+                    <label class="tr__box__acc transparent__color"
+                           for="header_{{ header.pk }}">{{ header.name }}</label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="accordion">
+            <div class="report">
+                <input name="cat_all" class="form__check form__check__big tr__box__acc accordion__checkbox"
+                       type="checkbox"
+                       id="cat_all">
+                <div class="tr__box__acc transparent__color accordion__button">Категории</div>
+            </div>
+        </div>
+        <div class="panel">
+            {% for category in categories %}
+                <div class="report">
+                    <input name="cat_checkbox" class="form__check form__check__big tr__box__acc" type="checkbox"
+                           value="{{ category.pk }}"
+                           id="cat_{{ category.pk }}">
+                    <label class="tr__box__acc transparent__color"
+                           for="cat_{{ category.pk }}">{{ category.name }}</label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="accordion">
+            <div class="report">
+                <input name="subcat_all" class="form__check form__check__big tr__box__acc accordion__checkbox"
+                       type="checkbox"
+                       id="subcat_all">
+                <div class="tr__box__acc transparent__color accordion__button">Подкатегории</div>
+            </div>
+        </div>
+        <div class="panel">
+            {% for subcategory in subcategories %}
+                <div class="report">
+                    <input name="subcat_checkbox" class="form__check form__check__big tr__box__acc" type="checkbox"
+                           value="{{ subcategory.pk }}"
+                           id="subcat_{{ subcategory.pk }}">
+                    <label class="tr__box__acc transparent__color"
+                           for="subcat_{{ subcategory.pk }}">{{ subcategory.name }}</label>
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+        <div class="tr__upper">
+            <input class="form__control form__sm row__2" type="date" id="start" name="trip-start"
+                   value="{{ dates.0 }}">
+            <input class="form__control form__sm row__2" type="date" id="end" name="trip-end" value="{{ dates.1 }}">
+        </div>
+        <input type="submit" class="btn btn__green" value="Отправить" id="submit">
+    </form>
+</div>
+<br>
+<br>
+<br>
+<br>
+{% include 'includes/inc_main_menu.html' %}
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    let button = document.getElementsByClassName("accordion__button");
+    let checkbox = document.getElementsByClassName("accordion__checkbox");
+    let allCheckboxes = document.getElementsByClassName("panel");
+    var i;
+
+    for (element of allCheckboxes) {
+        element.addEventListener("click", (event) => {
+            addCheckColor(event)
+        })
+    }
+
+    function addCheckColor(event) {
+        arrayOfCheckboxes = document.getElementsByName(event.target.name)
+        var m = 1
+        for (element of arrayOfCheckboxes) {
+            if (element.checked) {
+                accordion = element.closest(".panel").previousElementSibling
+                accordion.classList.add('selected')
+                m = 0
+                break
+            }
+        }
+        if (m === 1) {
+            accordion = arrayOfCheckboxes[0].closest(".panel").previousElementSibling
+            accordion.classList.remove('selected')
+            m = 0
+        }
+    }
+
+    for (i = 0; i < acc.length; i++) {
+        let x = acc[i]
+        button[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var panel = x.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+
+        checkbox[i].addEventListener("change", function () {
+            var panel = x.nextElementSibling;
+            let checkboxes = [...panel.getElementsByTagName("input")]
+            if (this.checked) {
+                x.classList.add('selected')
+                checkboxes.forEach((el) => {
+                    el.checked = true
+                });
+            } else {
+                x.classList.remove('selected')
+                checkboxes.forEach((el) => {
+                    el.checked = false
+                });
+            }
+
+        });
+
+    }
+</script>
+</body>
+
+{% endblock %}
