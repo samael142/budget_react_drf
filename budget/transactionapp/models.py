@@ -108,7 +108,7 @@ class Transaction(models.Model):
                 annotate(total=Sum('operation_summ'))
         for el in query:
             total_summ += float(el['total'])
-            total_dict[el['operation_date'].strftime("%d-%m-%Y")] = total_summ
+            total_dict[el['operation_date'].strftime("%d-%m-%Y")] = round(total_summ, 2)
         return total_dict
 
 

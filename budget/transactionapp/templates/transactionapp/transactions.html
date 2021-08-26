@@ -17,7 +17,7 @@
                 <div class="t__right">
                     <div class="t__str">Баланс:&nbsp;</div>
                     {% with date=object.operation_date|date:"d-m-Y" %}
-                    <div class="t__int num {% if total|get_item:item.date > 0 %}green__color{% else %}red__color{% endif %}">
+                    <div class="t__int num {% if total|get_item:date > 0 %}green__color{% else %}red__color{% endif %}">
                         {{ total|get_item:date|intcomma }}
                     </div>
                     {% endwith %}

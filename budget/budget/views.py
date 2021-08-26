@@ -272,9 +272,6 @@ class FilterSettingsView(TemplateView):
 
 class GeneratedFilterView(ListView):
     template_name = 'transactionapp/transactions.html'
-    headers = [el.pk for el in Header.objects.all()]
-    categories = [el.pk for el in Category.objects.all()]
-    subcategories = [el.pk for el in Subcategory.objects.all()]
 
     def setup(self, request, *args, **kwargs):
         self.request = request
@@ -282,12 +279,9 @@ class GeneratedFilterView(ListView):
         self.kwargs = kwargs
         self.start_date = request.session['filter_data_start_date']
         self.end_date = request.session['filter_data_end_date']
-        self.headers = request.session['filter_data_headers'] \
-            if len(request.session['filter_data_headers']) != 0 else self.headers
-        self.categories = request.session['filter_data_categories'] \
-            if len(request.session['filter_data_categories']) != 0 else self.categories
-        self.subcategories = request.session['filter_data_subcategories'] \
-            if len(request.session['filter_data_subcategories']) != 0 else self.subcategories
+        self.headers = request.session['filter_data_headers']
+        self.categories = request.session['filter_data_categories']
+        self.subcategories = request.session['filter_data_subcategories']
 
     def get_queryset(self):
         queryset = Transaction.objects.filter(header__in=self.headers,
