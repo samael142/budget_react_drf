@@ -108,7 +108,6 @@ class Transaction(models.Model):
         for el in query:
             total_summ += float(el['total'])
             total_dict[el['operation_date'].strftime("%d-%m-%Y")] = round(total_summ, 2)
-        print(total_dict)
         return total_dict
 
 
