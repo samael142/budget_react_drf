@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /.idea/
+my.cnf
+docker_compose.yml
+Dockerfile

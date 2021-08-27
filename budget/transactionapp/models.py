@@ -43,7 +43,6 @@ class PlainOperation(models.Model):
     @staticmethod
     def add_plain_transactions():
         plain_operation_object = PlainOperation.objects.latest('id')
-        print(plain_operation_object)
         if plain_operation_object.period == 'once':
             transaction = Transaction(operation_date=plain_operation_object.operation_date,
                                       operation_summ=plain_operation_object.operation_summ,
@@ -76,7 +75,7 @@ class PlainOperation(models.Model):
 
 
 class Transaction(models.Model):
-    operation_date = models.DateField(verbose_name='дата')
+    operation_date = models.DateField(verbose_name='дата', db_index=True)
     operation_summ = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
     account = models.ForeignKey(MoneyAccount, on_delete=models.RESTRICT, null=True, blank=True)
     header = models.ForeignKey(Header, on_delete=models.RESTRICT, null=True, blank=True)
@@ -109,6 +108,7 @@ class Transaction(models.Model):
         for el in query:
             total_summ += float(el['total'])
             total_dict[el['operation_date'].strftime("%d-%m-%Y")] = round(total_summ, 2)
+        print(total_dict)
         return total_dict
 
 

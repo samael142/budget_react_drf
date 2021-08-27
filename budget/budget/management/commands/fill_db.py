@@ -105,12 +105,12 @@ class Command(BaseCommand):
             new_transaction = Transaction(**transaction)
             new_transaction.save()
 
-        budgets = load_from_json('budget')
-        BudgetPeriod.objects.all().delete()
-        for budget in budgets:
-            category_pk = budget['category']
-            _category = Category.objects.get(pk=category_pk)
-            budget['category'] = _category
-
-            new_budget = BudgetPeriod(**budget)
-            new_budget.save()
+        # budgets = load_from_json('budget')
+        # BudgetPeriod.objects.all().delete()
+        # for budget in budgets:
+        #     category_pk = budget['category']
+        #     _category = Category.objects.get(pk=category_pk)
+        #     budget['category'] = _category
+        #
+        #     new_budget = BudgetPeriod(**budget)
+        #     new_budget.save()

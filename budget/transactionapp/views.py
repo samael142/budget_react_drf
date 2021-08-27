@@ -112,12 +112,11 @@ class PlainOperationDeleteView(DeleteView):
 
 
 class TransactionsListView(MonthArchiveView):
-    # queryset = Transaction.objects.all()
     date_field = "operation_date"
     allow_future = True
     template_name = "transactionapp/transactions.html"
     month_format = '%m'
-    # year = datetime.now().strftime('%Y')
+    allow_empty = True
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -131,12 +130,12 @@ class TransactionsListView(MonthArchiveView):
 
     def get_queryset(self):
         if 'pk' in self.kwargs:
-            queryset = Transaction.objects.filter(account=self.kwargs['pk']).order_by('operation_date')
+            return Transaction.objects.filter(account=self.kwargs['pk'],
+                                              operation_date__year=self.kwargs['year'],
+                                              operation_date__month=self.kwargs['month']).order_by('operation_date')
         else:
-            queryset = Transaction.objects.all().order_by('operation_date')
-            if len(queryset) == 0:
-                self.allow_empty = True
-        return queryset
+            return Transaction.objects.filter(operation_date__year=self.kwargs['year'],
+                                              operation_date__month=self.kwargs['month']).order_by('operation_date')
 
 
 class TransactionCreateView(CreateView):
