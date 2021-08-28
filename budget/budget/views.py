@@ -166,6 +166,7 @@ class BudgetCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'бюджет/создание'
         context['categories'] = Category.objects.all()
+        context['date'] = datetime.today().strftime('%Y-%m-%d')
         return context
 
 

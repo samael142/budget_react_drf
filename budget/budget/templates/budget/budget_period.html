@@ -21,8 +21,8 @@
                 placeholder="Планируемая сумма" value="{{ object.plain_summ|add:"0" }}" required>
             <br>
             <div class="tr__upper">
-                <input class="form__control form__sm row__2" type="date" id="start" name="start_date" value="{{ object.start_date|date:"Y-m-d" }}">
-                <input class="form__control form__sm row__2" type="date" id="end" name="end_date" value="{{ object.end_date|date:"Y-m-d" }}">
+                <input class="form__control form__sm row__2" type="date" id="start" name="start_date" value="{% if object %}{{ object.start_date|date:"Y-m-d" }}{% else %}{{ date }}{% endif %}">
+                <input class="form__control form__sm row__2" type="date" id="end" name="end_date" value="{% if object %}{{ object.end_date|date:"Y-m-d" }}{% else %}{{ date }}{% endif %}">
             </div>
             <input type="submit" class="btn btn__green" value="Отправить" id="submit">
 
