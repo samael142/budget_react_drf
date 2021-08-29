@@ -298,5 +298,5 @@ class Last20View(ListView):
     template_name = 'transactionapp/transactions.html'
 
     def get_queryset(self):
-        queryset = Transaction.objects.all().order_by('-created')[:20]
+        queryset = Transaction.objects.all().order_by('-updated')[:20]
         return queryset
