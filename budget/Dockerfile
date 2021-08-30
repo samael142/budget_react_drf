@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 RUN pip install gunicorn
 ADD . /app
 WORKDIR /app
-COPY ../budget /
+COPY . .
 COPY entrypoint.sh /
 RUN chmod a+x ./entrypoint.sh
 

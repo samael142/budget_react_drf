@@ -54,7 +54,7 @@
                 <li class="nav__item right__arrow">
                     <a href="
                             {% if next_month %}
-                                {% if 'maapp' in request.path%}
+                                {% if 'maapp' in request.path %}
                                     {% url 'maapp:detail_account' account next_month|date:"Y" next_month|date:"m" %}
                                     {% else %}
                                     {% url 'transactionapp:page' next_month|date:"Y" next_month|date:"m" %}

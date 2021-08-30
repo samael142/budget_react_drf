@@ -14,11 +14,8 @@ body {
 
 .container {
     max-width: 720px;
-    padding-left: 5px;
-    padding-right: 5px;
     display: block;
     flex: 1 0 auto;
-    margin: 2px;
     padding: 5px;
     margin: 0 auto;
 }

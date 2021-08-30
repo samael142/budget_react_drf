@@ -132,10 +132,10 @@ class TransactionsListView(MonthArchiveView):
         if 'pk' in self.kwargs:
             return Transaction.objects.filter(account=self.kwargs['pk'],
                                               operation_date__year=self.kwargs['year'],
-                                              operation_date__month=self.kwargs['month']).order_by('operation_date')
+                                              operation_date__month=self.kwargs['month']).order_by('operation_date', '-updated')
         else:
             return Transaction.objects.filter(operation_date__year=self.kwargs['year'],
-                                              operation_date__month=self.kwargs['month']).order_by('operation_date')
+                                              operation_date__month=self.kwargs['month']).order_by('operation_date', '-updated')
 
 
 class TransactionCreateView(CreateView):
@@ -147,10 +147,10 @@ class TransactionCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'транзакция/создание'
-        context['money_accounts'] = MoneyAccount.objects.all()
+        context['money_accounts'] = MoneyAccount.objects.all().order_by('name')
         context['headers'] = Header.objects.all()
-        context['categories'] = Category.objects.all()
-        context['subcategories'] = Subcategory.objects.all()
+        context['categories'] = Category.objects.all().order_by('name')
+        context['subcategories'] = Subcategory.objects.all().order_by('name')
         context['date'] = datetime.today().strftime('%Y-%m-%d')
         if self.request.META.get('HTTP_REFERER'):
             if 'transactionapp/create' in self.request.META.get('HTTP_REFERER'):
@@ -221,10 +221,10 @@ class TransactionUpdateView(UpdateView):
         context['subcategory'] = self.get_object().subcategory
         context['past'] = self.get_object().past
         context['comment'] = self.get_object().comment
-        context['money_accounts'] = MoneyAccount.objects.all()
+        context['money_accounts'] = MoneyAccount.objects.all().order_by('name')
         context['headers'] = Header.objects.all()
-        context['categories'] = Category.objects.all()
-        context['subcategories'] = Subcategory.objects.all()
+        context['categories'] = Category.objects.all().order_by('name')
+        context['subcategories'] = Subcategory.objects.all().order_by('name')
         return context
 
     def post(self, request, **kwargs):

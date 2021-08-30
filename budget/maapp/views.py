@@ -31,6 +31,8 @@ class AccountsListView(ListView):
             filter(past=0). \
             values('account__name', 'account__is_visible', 'account'). \
             annotate(total_summ=Sum('operation_summ'))
+        for el in queryset:
+            el['total_summ'] = round(float(el['total_summ']), 2)
         return queryset
 
     @staticmethod
