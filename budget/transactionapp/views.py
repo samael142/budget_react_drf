@@ -197,7 +197,7 @@ class TransactionCreateView(CreateView):
         formObj = {'cat': '', 'subcat': ''}
         try:
             header = Header.objects.filter(name=header_name).first()
-            transaction = Transaction.objects.filter(header=header.pk).first()
+            transaction = Transaction.objects.filter(header=header.pk, past=0).order_by('-operation_date').first()
             formObj = {'cat': str(transaction.category), 'subcat': str(transaction.subcategory)}
         except:
             pass
