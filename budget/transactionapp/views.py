@@ -237,6 +237,8 @@ class TransactionUpdateView(UpdateView):
         request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
         request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
         request.POST['operation_summ'] = operation_summ
+        if self.get_object().past:
+            request.POST['past'] = True
         if 'deactivate' in request.POST:
             request.POST['past'] = True
             request.POST['account'] = None

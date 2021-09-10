@@ -12,10 +12,10 @@
                     <input class="form__control form__sm row__2" type="date" id="start" name="operation_date"
                         value="{{ date }}">
                     <select class="form__select form__sm row__2" name="operation_type">
-                        {% if summ > 0 %}
+                        {% if operation_summ > 0 %}
                             <option selected value="in">Приход</option>
                         {% endif %}
-                        {% if summ < 0 %}
+                        {% if operation_summ < 0 %}
                             <option selected value="out">Расход</option>
                         {% endif %}
 
