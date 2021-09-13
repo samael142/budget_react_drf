@@ -64,12 +64,23 @@ class GeneratedReportView(ListView):
         self.summ = request.session['report_data_summ']
 
     def get_queryset(self):
+        temp_dataset = {}
+        dates_list = []
+        start_day = datetime.strptime(self.start_date, '%Y-%m-%d')
+        end_day = datetime.strptime(self.end_date, '%Y-%m-%d')
+        while start_day <= end_day:
+            dates_list.append({'operation_date': start_day.date(), 'total_summ': 0.0})
+            start_day = start_day + timedelta(days=1)
         queryset = []
         source_queryset = Transaction.objects. \
             filter(category__in=self.categories, past=0, operation_date__range=(self.start_date, self.end_date)). \
             values('operation_date').annotate(total_summ=Sum('operation_summ'))
+        for el_source_queryset in source_queryset:
+            temp_dataset[el_source_queryset['operation_date']] = el_source_queryset['total_summ']
+        for el_dates_list in dates_list:
+            el_dates_list['total_summ'] = temp_dataset.get(el_dates_list['operation_date'], 0.0)
         total_summ = 0
-        for el in source_queryset:
+        for el in dates_list:
             total_summ += round((float(self.summ) + float(el['total_summ'])), 2)
             el['economy'] = round((float(self.summ) + float(el['total_summ'])), 2)
             el['total_economy'] = round(total_summ, 2)
