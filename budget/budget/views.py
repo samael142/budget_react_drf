@@ -70,6 +70,8 @@ class GeneratedReportView(ListView):
         end_day = datetime.strptime(self.end_date, '%Y-%m-%d')
         while start_day <= end_day:
             dates_list.append({'operation_date': start_day.date(), 'total_summ': 0.0})
+            if start_day.strftime("%Y-%m-%d") == datetime.today().strftime("%Y-%m-%d"):
+                break
             start_day = start_day + timedelta(days=1)
         queryset = []
         source_queryset = Transaction.objects. \
