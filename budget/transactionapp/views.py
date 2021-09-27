@@ -118,6 +118,11 @@ class TransactionsListView(MonthArchiveView):
     month_format = '%m'
     allow_empty = True
 
+    # def setup(self, request, *args, **kwargs):
+    #     self.request = request
+    #     self.args = args
+    #     self.kwargs = kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'транзакции'
@@ -130,12 +135,15 @@ class TransactionsListView(MonthArchiveView):
 
     def get_queryset(self):
         if 'pk' in self.kwargs:
-            return Transaction.objects.filter(account=self.kwargs['pk'],
-                                              operation_date__year=self.kwargs['year'],
-                                              operation_date__month=self.kwargs['month']).order_by('operation_date', '-updated')
+            return Transaction.objects.\
+                prefetch_related('header', 'category', 'subcategory', 'account__transaction_set').\
+                filter(account=self.kwargs['pk'], operation_date__year=self.kwargs['year'], operation_date__month=self.kwargs['month']).\
+                order_by('operation_date', '-updated')
         else:
-            return Transaction.objects.filter(operation_date__year=self.kwargs['year'],
-                                              operation_date__month=self.kwargs['month']).order_by('operation_date', '-updated')
+            return Transaction.objects.\
+                prefetch_related('header', 'category', 'subcategory', 'account__transaction_set').\
+                filter(operation_date__year=self.kwargs['year'], operation_date__month=self.kwargs['month']).\
+                order_by('operation_date', '-updated')
 
 
 class TransactionCreateView(CreateView):
