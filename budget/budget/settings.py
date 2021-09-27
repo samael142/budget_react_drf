@@ -157,10 +157,3 @@ EMAIL_HOST_USER = os.environ['LOGIN_GMAIL']
 EMAIL_HOST_PASSWORD = os.environ['PASSWORD_GMAIL']
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-    }
-}
