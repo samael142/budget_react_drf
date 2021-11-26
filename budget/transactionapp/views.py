@@ -136,12 +136,12 @@ class TransactionsListView(MonthArchiveView):
     def get_queryset(self):
         if 'pk' in self.kwargs:
             return Transaction.objects.\
-                prefetch_related('header', 'category', 'subcategory', 'account__transaction_set').\
+                select_related('header', 'category', 'subcategory', 'account', 'plain_id').\
                 filter(account=self.kwargs['pk'], operation_date__year=self.kwargs['year'], operation_date__month=self.kwargs['month']).\
                 order_by('operation_date', '-updated')
         else:
             return Transaction.objects.\
-                prefetch_related('header', 'category', 'subcategory', 'account__transaction_set').\
+                select_related('header', 'category', 'subcategory', 'account', 'plain_id').\
                 filter(operation_date__year=self.kwargs['year'], operation_date__month=self.kwargs['month']).\
                 order_by('operation_date', '-updated')
 
