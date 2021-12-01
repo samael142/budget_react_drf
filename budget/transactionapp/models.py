@@ -41,8 +41,8 @@ class PlainOperation(models.Model):
             return delta + 1
 
     @staticmethod
-    def add_plain_transactions():
-        plain_operation_object = PlainOperation.objects.latest('id')
+    def add_plain_transactions(instance):
+        plain_operation_object = instance
         if plain_operation_object.period == 'once':
             transaction = Transaction(operation_date=plain_operation_object.operation_date,
                                       operation_summ=plain_operation_object.operation_summ,

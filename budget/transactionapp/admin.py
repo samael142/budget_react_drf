@@ -11,5 +11,9 @@ class TransactionAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(PlainOperation)
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ('operation_date', 'operation_summ', 'header', 'category', 'subcategory', 'period', 'quantity')
+    pass
 # admin.site.register(Transaction)
-admin.site.register(PlainOperation)
+# admin.site.register(PlainOperation)

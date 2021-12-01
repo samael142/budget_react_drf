@@ -76,9 +76,18 @@ class PlainOperationUpdateView(UpdateView):
     def post(self, request, **kwargs):
         self.transactions_array.delete()
         request.POST = request.POST.copy()
-        request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
-        request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
-        request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
+        request.POST['header'], created = Header.objects.get_or_create(
+            name=request.POST['header'].lstrip().rstrip().capitalize()
+        )
+        request.POST['category'], created = Category.objects.get_or_create(
+            name=request.POST['category'].lstrip().rstrip().capitalize()
+        )
+        request.POST['subcategory'], created = Subcategory.objects.get_or_create(
+            name=request.POST['subcategory'].lstrip().rstrip().capitalize()
+        )
+        # request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
+        # request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
+        # request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
         if request.POST['operation_type'] == 'out':
             operation_summ = float(request.POST['operation_summ']) * -1
         else:
@@ -172,9 +181,18 @@ class TransactionCreateView(CreateView):
             operation_summ = float(request.POST['operation_summ']) * -1
         else:
             operation_summ = float(request.POST['operation_summ'])
-        request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
-        request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
-        request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
+        request.POST['header'], created = Header.objects.get_or_create(
+            name=request.POST['header'].lstrip().rstrip().capitalize()
+        )
+        request.POST['category'], created = Category.objects.get_or_create(
+            name=request.POST['category'].lstrip().rstrip().capitalize()
+        )
+        request.POST['subcategory'], created = Subcategory.objects.get_or_create(
+            name=request.POST['subcategory'].lstrip().rstrip().capitalize()
+        )
+        # request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
+        # request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
+        # request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
         request.POST['operation_summ'] = operation_summ
         if 'plain' in request.POST:
             if request.POST['period'] != 'once':
@@ -198,7 +216,7 @@ class TransactionCreateView(CreateView):
     @staticmethod
     @receiver(post_save, sender=PlainOperation)
     def add_plain_transactions(sender, **kwargs):
-        PlainOperation.add_plain_transactions()
+        PlainOperation.add_plain_transactions(kwargs['instance'])
 
     @staticmethod
     def transaction_autoform(request, header_name):
@@ -241,9 +259,18 @@ class TransactionUpdateView(UpdateView):
             operation_summ = float(request.POST['operation_summ']) * -1
         else:
             operation_summ = float(request.POST['operation_summ'])
-        request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
-        request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
-        request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
+        request.POST['header'], created = Header.objects.get_or_create(
+            name=request.POST['header'].lstrip().rstrip().capitalize()
+        )
+        request.POST['category'], created = Category.objects.get_or_create(
+            name=request.POST['category'].lstrip().rstrip().capitalize()
+        )
+        request.POST['subcategory'], created = Subcategory.objects.get_or_create(
+            name=request.POST['subcategory'].lstrip().rstrip().capitalize()
+        )
+        # request.POST['header'] = Header.add_header_to_transaction(request.POST['header'])
+        # request.POST['category'] = Category.add_category_to_transaction(request.POST['category'])
+        # request.POST['subcategory'] = Subcategory.add_subcategory_to_transaction(request.POST['subcategory'])
         request.POST['operation_summ'] = operation_summ
         if self.get_object().past:
             request.POST['past'] = True
