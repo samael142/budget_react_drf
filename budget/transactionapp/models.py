@@ -111,6 +111,24 @@ class Transaction(models.Model):
         return total_dict
 
 
+class TotalBalance(models.Model):
+    operation_date = models.DateField(verbose_name='дата', db_index=True)
+    total = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
+
+    class Meta:
+        managed = False
+        db_table = 'total_balance'
+
+class TotalBalancePerAccount(models.Model):
+    operation_date = models.DateField(verbose_name='дата', db_index=True)
+    total = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
+    account = models.ForeignKey(MoneyAccount, on_delete=models.RESTRICT, null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'total_balance_per_account'
+
+
 class Transfer:
 
     def __init__(self, account_from, account_to, operation_date, operation_summ):

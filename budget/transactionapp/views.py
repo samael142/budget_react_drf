@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db.models import Sum
 from maapp.models import MoneyAccount
 from budget.models import Header, Category, Subcategory
-from .models import Transaction, PlainOperation, Transfer
+from .models import Transaction, PlainOperation, Transfer, TotalBalance, TotalBalancePerAccount
 from django.http import JsonResponse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.dates import MonthArchiveView
@@ -136,10 +136,22 @@ class TransactionsListView(MonthArchiveView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'транзакции'
         if 'pk' in self.kwargs:
-            context['total'] = Transaction.get_total_balance(self.kwargs['pk'])
+            # context['total'] = Transaction.get_total_balance(self.kwargs['pk'])
             context['account'] = self.kwargs['pk']
+            total = TotalBalancePerAccount.objects.\
+                filter(account=self.kwargs['pk'],
+                       operation_date__year=self.kwargs['year'],
+                       operation_date__month=self.kwargs['month']).\
+                values_list('operation_date', 'total')
         else:
-            context['total'] = Transaction.get_total_balance()
+            # context['total'] = Transaction.get_total_balance()
+            total = TotalBalance.objects.\
+                filter(operation_date__year=self.kwargs['year'],
+                       operation_date__month=self.kwargs['month']).\
+                values_list('operation_date', 'total')
+        context['total'] = {el[0].strftime("%d-%m-%Y"): float(el[1]) for el in total}
+        # print(context['new_total'])
+        # print(context['total'])
         return context
 
     def get_queryset(self):
