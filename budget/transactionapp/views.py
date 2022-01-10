@@ -314,7 +314,6 @@ class TransferCreateView(TemplateView):
         context['date'] = datetime.today().strftime('%Y-%m-%d')
         return context
 
-
     def post(self, request, **kwargs):
         account_from = request.POST['money_account_from']
         account_to = request.POST['money_account_to']
