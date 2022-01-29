@@ -16,9 +16,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=
-      - POSTGRES_PASSWORD=
-      - POSTGRES_DB=
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=2967431Qwe2
+      - POSTGRES_DB=budget_django
   nginx:
     build: ../nginx
     ports:
@@ -31,3 +31,4 @@ services:
 volumes:
   base_volume:
   postgres_data:
+  
