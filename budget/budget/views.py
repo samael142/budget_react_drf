@@ -1,11 +1,8 @@
 from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, reverse
-
 from django.urls import reverse_lazy
-
 from .models import Category, BudgetPeriod, Header, Subcategory
-
 from django.views.generic import ListView, TemplateView, CreateView, DetailView, UpdateView, DeleteView
 from transactionapp.models import Transaction
 from datetime import datetime, date, timedelta
@@ -20,10 +17,11 @@ def index(request):
 
 
 class ReportView(ListView):
-    model = Category
-    template_name = 'budget/report.html'
+    # model = Category
+    template_name = 'budget/report_v2.html'
     allow_empty = True
     success_url = reverse_lazy('generated_report')
+    queryset = Category.objects.all().order_by('name')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -46,7 +44,8 @@ class ReportView(ListView):
         request.session['report_data_start_date'] = request.POST['trip-start']
         request.session['report_data_end_date'] = request.POST['trip-end']
         request.session['report_data_summ'] = request.POST['summ']
-        request.session['report_data_categories'] = request.POST.getlist('cat_checkbox')
+        request.session['report_data_category'] = request.POST['category']
+        # request.session['report_data_categories'] = request.POST.getlist('cat_checkbox')
         request.session.modified = True
         return HttpResponseRedirect(reverse('generated_report'))
 
@@ -58,7 +57,8 @@ class GeneratedReportView(ListView):
         self.request = request
         self.args = args
         self.kwargs = kwargs
-        self.categories = request.session['report_data_categories']
+        self.category = request.session['report_data_category']
+        # self.categories = request.session['report_data_categories']
         self.start_date = request.session['report_data_start_date']
         self.end_date = request.session['report_data_end_date']
         self.summ = request.session['report_data_summ']
@@ -75,7 +75,7 @@ class GeneratedReportView(ListView):
             start_day = start_day + timedelta(days=1)
         queryset = []
         source_queryset = Transaction.objects. \
-            filter(category__in=self.categories, past=0, operation_date__range=(self.start_date, self.end_date)). \
+            filter(category__name=self.category, past=0, operation_date__range=(self.start_date, self.end_date)). \
             values('operation_date').annotate(total_summ=Sum('operation_summ'))
         for el_source_queryset in source_queryset:
             temp_dataset[el_source_queryset['operation_date']] = el_source_queryset['total_summ']
@@ -264,22 +264,25 @@ class BudgetDetailView(DetailView):
 
 
 class FilterSettingsView(TemplateView):
-    template_name = 'budget/filter_settings.html'
+    template_name = 'budget/filter_settings_v2.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['headers'] = Header.objects.all()
-        context['categories'] = Category.objects.all()
-        context['subcategories'] = Subcategory.objects.all()
+        context['headers'] = Header.objects.all().order_by('name')
+        context['categories'] = Category.objects.all().order_by('name')
+        context['subcategories'] = Subcategory.objects.all().order_by('name')
         context['dates'] = ReportView.get_current_week()
         return context
 
     def post(self, request, **kwargs):
         request.session['filter_data_start_date'] = request.POST['trip-start']
         request.session['filter_data_end_date'] = request.POST['trip-end']
-        request.session['filter_data_headers'] = request.POST.getlist('header_checkbox')
-        request.session['filter_data_categories'] = request.POST.getlist('cat_checkbox')
-        request.session['filter_data_subcategories'] = request.POST.getlist('subcat_checkbox')
+        # request.session['filter_data_headers'] = request.POST.getlist('header_checkbox')
+        # request.session['filter_data_categories'] = request.POST.getlist('cat_checkbox')
+        # request.session['filter_data_subcategories'] = request.POST.getlist('subcat_checkbox')
+        request.session['filter_data_header'] = request.POST['header']
+        request.session['filter_data_category'] = request.POST['category']
+        request.session['filter_data_subcategory'] = request.POST['subcategory']
         request.session.modified = True
         return HttpResponseRedirect(reverse('generated_filter'))
 
@@ -293,14 +296,33 @@ class GeneratedFilterView(ListView):
         self.kwargs = kwargs
         self.start_date = request.session['filter_data_start_date']
         self.end_date = request.session['filter_data_end_date']
-        self.headers = request.session['filter_data_headers']
-        self.categories = request.session['filter_data_categories']
-        self.subcategories = request.session['filter_data_subcategories']
+        # self.headers = request.session['filter_data_headers']
+        # self.categories = request.session['filter_data_categories']
+        # self.subcategories = request.session['filter_data_subcategories']
+        self.header = request.session['filter_data_header']
+        self.category = request.session['filter_data_category']
+        self.subcategory = request.session['filter_data_subcategory']
 
     def get_queryset(self):
-        queryset = Transaction.objects.filter(header__in=self.headers,
-                                              category__in=self.categories,
-                                              subcategory__in=self.subcategories,
+        headers = []
+        categories = []
+        subcategories = []
+        if self.header == '':
+            headers = Header.objects.values_list('name')
+        else:
+            headers.append(self.header)
+        if self.category == '':
+            categories = Category.objects.values_list('name')
+        else:
+            categories.append(self.category)
+        if self.subcategory == '':
+            subcategories = Subcategory.objects.values_list('name')
+        else:
+            subcategories.append(self.subcategory)
+
+        queryset = Transaction.objects.filter(header__name__in=headers,
+                                              category__name__in=categories,
+                                              subcategory__name__in=subcategories,
                                               past=0,
                                               operation_date__range=(self.start_date, self.end_date)). \
             order_by('operation_date').all()

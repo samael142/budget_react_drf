@@ -310,7 +310,7 @@ class TransferCreateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'перевод/создание'
-        context['money_accounts'] = MoneyAccount.objects.all()
+        context['money_accounts'] = MoneyAccount.objects.all().order_by('name')
         context['date'] = datetime.today().strftime('%Y-%m-%d')
         return context
 
@@ -346,7 +346,7 @@ class TransferUpdateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'перевод/изменение'
-        context['money_accounts'] = MoneyAccount.objects.all()
+        context['money_accounts'] = MoneyAccount.objects.all().order_by('name')
         context['summ'] = self.kwargs['operation_summ']
         context['date'] = self.kwargs['operation_date']
         context['account_from'] = self.kwargs['account_from']

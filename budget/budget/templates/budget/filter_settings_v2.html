@@ -1,0 +1,103 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+
+<body>
+<div class="container">
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        {% comment %} <h5 class="select__label">Фильтр по:</h5>
+        <select onchange="myFunction()" name="mode" class="form__select" id="mode">
+            <option value="header">Заголовок</option>
+            <option value="category">Категория</option>
+            <option value="subcategory">Подкатегория</option>
+        </select>
+        <br> {% endcomment %}
+        <!--dynamic data start-->
+        <div id="dynamic">
+            <input type="text" name="header" class="form__control" list="datalistOptions1"
+                    placeholder="Заголовок" autocomplete="off" minlength="2">
+            <datalist id="datalistOptions1" style="height:5.1em; overflow: hidden;">
+                {% for object in headers %}
+                <option value="{{ object.name }}">
+                    {% endfor %}
+            </datalist>
+            <br>
+            <input type="text" name="category" class="form__control" list="datalistOptions2"
+                   placeholder="Категория" autocomplete="off" minlength="2">
+            <datalist id="datalistOptions2" style="height:5.1em; overflow: hidden;">
+                {% for object in categories %}
+                <option value="{{ object.name }}">
+                    {% endfor %}
+            </datalist>
+            <br>
+            <input type="text" name="subcategory" class="form__control" list="datalistOptions3"
+                   placeholder="Подкатегория" autocomplete="off" minlength="2">
+            <datalist id="datalistOptions3" style="height:5.1em; overflow: hidden;">
+                {% for object in subcategories %}
+                <option value="{{ object.name }}">
+                    {% endfor %}
+            </datalist>
+            <br>
+        </div>
+        <!--dynamic data end-->
+        <div class="tr__upper">
+            <input class="form__control form__sm row__2" type="date" id="start" name="trip-start"
+                   value="{{ dates.0 }}">
+            <input class="form__control form__sm row__2" type="date" id="end" name="trip-end" value="{{ dates.1 }}">
+        </div>
+        <input type="submit" class="btn btn__green" value="Отправить" id="submit">
+    </form>
+</div>
+<br>
+<br>
+<br>
+<br>
+{% include 'includes/inc_main_menu.html' %}
+{% comment %} <script>
+    function myFunction() {
+        let mode = document.getElementById("mode").value;
+        let dynamic = document.getElementById("dynamic")
+        const headerMode = `<input type="text" name="item" class="form__control" list="datalistOptions"
+                            id="reportCategory" placeholder="Заголовок" autocomplete="off" minlength="2" required>
+                            <datalist id="datalistOptions" style="height:5.1em; overflow: hidden;">
+                             {% for object in headers %}
+                             <option value="{{ object.name }}">
+                             {% endfor %}
+                            </datalist>
+                            <br>`
+        const categoryMode = `<input type="text" name="item" class="form__control" list="datalistOptions"
+                            id="reportCategory" placeholder="Категория" autocomplete="off" minlength="2" required>
+                            <datalist id="datalistOptions" style="height:5.1em; overflow: hidden;">
+                             {% for object in categories %}
+                             <option value="{{ object.name }}">
+                             {% endfor %}
+                            </datalist>
+                            <br>`
+        const subCategoryMode = `<input type="text" name="item" class="form__control" list="datalistOptions"
+                            id="reportCategory" placeholder="Подкатегория" autocomplete="off" minlength="2" required>
+                            <datalist id="datalistOptions" style="height:5.1em; overflow: hidden;">
+                             {% for object in subcategories %}
+                             <option value="{{ object.name }}">
+                             {% endfor %}
+                            </datalist>
+                            <br>`
+        switch (mode) {
+            case 'header':
+                dynamic.innerHTML = headerMode
+                break;
+            case 'category':
+                dynamic.innerHTML = categoryMode
+                break;
+            case 'subcategory':
+                dynamic.innerHTML = subCategoryMode
+                break;
+            default:
+                break;
+        }
+    }
+</script> {% endcomment %}
+</body>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'budget/base.html' %}
+{% load static %}
+{% block content %}
+<body onload="getData()">
+<div class="container">
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="category" class="form__control" list="datalistOptions"
+               id="reportCategory" placeholder="Категория" autocomplete="off" minlength="2" required>
+        <datalist id="datalistOptions" style="height:5.1em; overflow: hidden;">
+            {% for object in object_list %}
+            <option value="{{ object.name }}">
+            {% endfor %}
+        </datalist>
+        <br>
+        <input type="number" step="0.01" name="summ" class="form__control" placeholder="Сумма для сравнения"
+               value="" id="reportSum" required>
+        <br>
+        <div class="tr__upper">
+            <input class="form__control form__sm row__2" type="date" id="start" name="trip-start"
+                   value="{{ start_date }}">
+            <input class="form__control form__sm row__2" type="date" id="end" name="trip-end"
+                   value="{{ end_date }}">
+        </div>
+        <input onclick="setData()" type="submit" class="btn btn__green" value="Отправить" id="submit">
+    </form>
+</div>
+<br>
+<br>
+<br>
+<br>
+{% include 'includes/inc_main_menu.html' %}
+<script>
+  function setData() {
+    let reportCategory = document.getElementById("reportCategory").value;
+    let reportSum = document.getElementById("reportSum").value;
+    localStorage.setItem('reportCategory', reportCategory);
+    localStorage.setItem('reportSum', reportSum);
+  }
+  function getData() {
+    let reportCategory = localStorage.getItem('reportCategory');
+    let reportSum = localStorage.getItem('reportSum');
+    document.getElementById("reportCategory").value = reportCategory;
+    document.getElementById("reportSum").value = reportSum;
+  }
+</script>
+</body>
+{% endblock %}
