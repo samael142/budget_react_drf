@@ -97,10 +97,10 @@ class DetailReportView(ListView):
         self.request = request
         self.args = args
         self.kwargs = kwargs
-        self.categories = request.session['report_data_categories']
+        self.category = request.session['report_data_category']
 
     def get_queryset(self):
-        queryset = Transaction.objects.filter(operation_date=self.kwargs['date'], category__in=self.categories, past=0)
+        queryset = Transaction.objects.filter(operation_date=self.kwargs['date'], category__name=self.category, past=0)
         return queryset
 
 
