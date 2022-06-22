@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
 from transactionapp.models import Transaction
-from .models import MoneyAccount, Currency
+from .models import MoneyAccount, Currency, MaInfo
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView
@@ -26,13 +26,20 @@ class AccountsListView(ListView):
         return context
 
     def get_queryset(self):
-        queryset = Transaction.objects. \
-            select_related('account'). \
-            filter(past=0). \
-            values('account__name', 'account__is_visible', 'account'). \
-            annotate(total_summ=Sum('operation_summ'))
-        for el in queryset:
-            el['total_summ'] = round(float(el['total_summ']), 2)
+        # queryset = Transaction.objects. \
+        #     select_related('account'). \
+        #     filter(past=0). \
+        #     values('account__name', 'account__is_visible', 'account'). \
+        #     annotate(total_summ=Sum('operation_summ'))
+        # for el in queryset:
+        #     el['total_summ'] = round(float(el['total_summ']), 2)
+
+        queryset = MaInfo.objects.all().order_by('name')
+        # for el in queryset:
+        #     if el.sum is None:
+        #         el.sum = 0
+            # else:
+            #     el.sum = round(float(el.sum), 2)
         return queryset
 
     @staticmethod

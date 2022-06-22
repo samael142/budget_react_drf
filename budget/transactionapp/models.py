@@ -22,13 +22,14 @@ class PlainOperation(models.Model):
     comment = models.TextField(blank=True)
     period = models.CharField(max_length=10, choices=PeriodType.choices)
     quantity = models.PositiveSmallIntegerField(verbose_name="количество операций", default=1)
+    count = models.PositiveSmallIntegerField(null=True, blank=True, default=1)
 
     @staticmethod
-    def quantity_count(start_date, end_date, per):
+    def quantity_count(start_date, end_date, per, count):
         datetime_start_date = datetime.strptime(start_date, "%Y-%m-%d")
         datetime_end_date = datetime.strptime(end_date, "%Y-%m-%d")
         if per == "daily":
-            return abs((datetime_end_date - datetime_start_date).days) + 1
+            return ((abs((datetime_end_date - datetime_start_date).days)) // int(count)) + 1
         elif per == "monthly":
             delta = 0
             while True:
@@ -38,7 +39,7 @@ class PlainOperation(models.Model):
                     delta += 1
                 else:
                     break
-            return delta + 1
+            return (delta // int(count)) + 1
 
     @staticmethod
     def add_plain_transactions(instance):
@@ -68,16 +69,17 @@ class PlainOperation(models.Model):
                                           plain_id=plain_operation_object, )
                 transaction.save()
                 if plain_operation_object.period == 'daily':
-                    operation_date = operation_date + timedelta(days=1)
+                    operation_date = operation_date + timedelta(days=plain_operation_object.count)
                 else:
-                    days_in_month = calendar.monthrange(operation_date.year, operation_date.month)[1]
-                    operation_date = operation_date + timedelta(days=days_in_month)
+                    for _ in range(plain_operation_object.count):
+                        days_in_month = calendar.monthrange(operation_date.year, operation_date.month)[1]
+                        operation_date = operation_date + timedelta(days=days_in_month)
 
 
 class Transaction(models.Model):
     operation_date = models.DateField(verbose_name='дата', db_index=True)
     operation_summ = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
-    account = models.ForeignKey(MoneyAccount, on_delete=models.RESTRICT, null=True, blank=True)
+    account = models.ForeignKey(MoneyAccount, on_delete=models.RESTRICT, null=True, blank=True, related_name="ma")
     header = models.ForeignKey(Header, on_delete=models.RESTRICT, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT, null=True, blank=True)
     subcategory = models.ForeignKey(Subcategory, on_delete=models.RESTRICT, null=True, blank=True)
@@ -118,6 +120,7 @@ class TotalBalance(models.Model):
     class Meta:
         managed = False
         db_table = 'total_balance'
+
 
 class TotalBalancePerAccount(models.Model):
     operation_date = models.DateField(verbose_name='дата', db_index=True)

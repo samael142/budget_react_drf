@@ -106,7 +106,7 @@
                 <br>
                 <br>
                 {% endif %}
-                {% if request.resolver_match.url_name == 'transaction_update' and past == 1%}
+                {% if request.resolver_match.url_name == 'transaction_update' and past == 1 %}
                 <input name="activate" class="form__check" type="checkbox" value="0" id="activate">
                 <label class="form-check-label" for="activate">Активировать</label>
                 <br>
@@ -126,8 +126,13 @@
                     </select>
                     <input class="form__control form__sm trip-end row__2 plain__fields hide" type="date" id="end"
                         name="trip-end" value="{{ default_date }}" disabled>
+                    <input class="form__control form__sm trip-end row__2 plain__fields hide" style="width: 20%" type="number" id="count"
+                        name="count" value="1" disabled>
                 </div>
+
                 {% endif %}
+<!--                <br class="plain__fields hide">-->
+<!--                <br class="plain__fields hide">-->
                 <div class="tr__upper tr__upper__left">
                     <input type="submit" class="btn btn__green" name="add" value="Отправить" id="submit">
                     {% if request.resolver_match.url_name == 'transaction_create' %}
@@ -142,7 +147,6 @@
                 </div>
             </form>
         </div>
-
         <script>
             $("#submit").click(function () {
                 var checkbox_state = $("#activate").prop('checked');

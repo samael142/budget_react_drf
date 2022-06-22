@@ -30,6 +30,8 @@
                    name="trip-end"
                    value="{{ end_date }}" {% if period == "once" %}disabled{% endif %}>
         </div>
+        <input type="number" name="count" class="form__control form__sm"
+               value="{{ object.count }}">
         <hr class="top__hr">
         <input type="number" step="0.01" name="operation_summ" class="form__control" placeholder="Сумма"
                value="{% localize off %}{{ object.operation_summ|abs }}{% endlocalize %}"

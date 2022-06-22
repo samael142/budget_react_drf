@@ -8,6 +8,7 @@
         <div class="title__single">Список счетов</div>
         <br>
 
+        {% comment %}
         {% for object in object_list %}
         <div id="{{ object.account }}" class="double__button {% if object.account__is_visible == 0 %}past__color{% endif %}">
             <div class="name__btn tr__box__acc black__color transparent__color">{{ object.account__name }}</div>
@@ -15,10 +16,21 @@
                 class="num tr__box__acc {% if object.total_summ > 0 %}green__color{% else %}red__color{% endif %} transparent__color">{{ object.total_summ|intcomma }}</a>
         </div>
         {% endfor %}
+        {% endcomment %}
+
+        {% for object in object_list %}
+        <div id="{{ object.id }}" class="double__button {% if object.is_visible == 0 %}past__color{% endif %}">
+            <div class="name__btn tr__box__acc black__color transparent__color">{{ object.name }}</div>
+            <a href="{% url 'maapp:detail_account' object.id year month%}"
+                class="num tr__box__acc {% if object.sum > 0 %}green__color{% else %}red__color{% endif %} transparent__color">{{ object.sum|intcomma }}</a>
+        </div>
+        {% endfor %}
+
         <br>
         <div class="single__element__center">
             <a href="{% url 'maapp:create_account' %}" class="footer__button">Добавить счёт</a>
         </div>
+        <div class="clear__block"></div>
 
     </div>
     {% include 'includes/inc_main_menu.html' %}

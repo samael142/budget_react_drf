@@ -12,6 +12,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.views.generic.base import TemplateView
 from django.shortcuts import redirect
+from django.db.models import Count
+from django.db.models import Q
 
 
 class PlainOperationsListView(ListView):
@@ -96,7 +98,8 @@ class PlainOperationUpdateView(UpdateView):
         if request.POST['period'] != 'once':
             request.POST['quantity'] = PlainOperation.quantity_count(request.POST['operation_date'],
                                                                      request.POST['trip-end'],
-                                                                     request.POST['period'])
+                                                                     request.POST['period'],
+                                                                     request.POST['count'])
         else:
             request.POST['quantity'] = 1
         return super(PlainOperationUpdateView, self).post(request, **kwargs)
@@ -176,7 +179,7 @@ class TransactionCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'транзакция/создание'
-        context['money_accounts'] = MoneyAccount.objects.all().order_by('name')
+        # context['money_accounts'] = MoneyAccount.objects.all().order_by('name')
         context['headers'] = Header.objects.all()
         context['categories'] = Category.objects.all().order_by('name')
         context['subcategories'] = Subcategory.objects.all().order_by('name')
@@ -185,6 +188,17 @@ class TransactionCreateView(CreateView):
             if 'transactionapp/create' in self.request.META.get('HTTP_REFERER'):
                 context['date'] = Transaction.get_last_transaction().operation_date.strftime('%Y-%m-%d')
                 context['default_account'] = Transaction.get_last_transaction().account
+        group_accounts = list(Transaction.objects.select_related('account').
+                              filter(~Q(account=None)).
+                              values('account', 'account__name').
+                              annotate(count=Count('account__name')).order_by('-count'))
+        accounts = list(MoneyAccount.objects.all().values('pk', 'name').order_by('name'))
+        temp_group_accounts = [{'pk': el['account'], 'name': el['account__name']} for el in group_accounts]
+        temp_accounts = [{'pk': el['pk'], 'name': el['name']} for el in accounts]
+        for el in temp_accounts:
+            if el not in temp_group_accounts:
+                temp_group_accounts.append(el)
+        context['money_accounts'] = temp_group_accounts
         return context
 
     def post(self, request, **kwargs):
@@ -210,12 +224,13 @@ class TransactionCreateView(CreateView):
             if request.POST['period'] != 'once':
                 request.POST['quantity'] = PlainOperation.quantity_count(request.POST['operation_date'],
                                                                          request.POST['trip-end'],
-                                                                         request.POST['period'])
+                                                                         request.POST['period'],
+                                                                         request.POST['count'])
             else:
                 request.POST['quantity'] = 1
             self.model = PlainOperation
             self.fields = ('operation_date', 'operation_summ', 'header',
-                           'category', 'subcategory', 'comment', 'period', 'quantity')
+                           'category', 'subcategory', 'comment', 'period', 'quantity', 'count')
         return super(TransactionCreateView, self).post(request, **kwargs)
 
     def get_success_url(self):

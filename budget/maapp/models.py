@@ -16,3 +16,14 @@ class MoneyAccount(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MaInfo(models.Model):
+    # ma_id = models.BigIntegerField(verbose_name='pk')
+    name = models.CharField(verbose_name='название', max_length=64)
+    sum = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
+    is_visible = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'ma_info'
