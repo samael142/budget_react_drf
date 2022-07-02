@@ -16,6 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .views import *
+from rest_framework.routers import DefaultRouter
+import api.views as api
+
+router = DefaultRouter()
+router.register('headers', api.HeaderModelViewSet)
+router.register('categories', api.CategoryModelViewSet)
+router.register('subcategories', api.SubcategoryModelViewSet)
+router.register('transactions', api.TransactionModelViewSet)
+router.register('ma_list', api.MoneyAccountListViewSet)
+router.register('total_balance', api.TotalBalanceModelViewset)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,4 +46,6 @@ urlpatterns = [
     path('budget/detail/<int:pk>/', BudgetDetailView.as_view(), name='budget_detail'),
     path('budget/update/<int:pk>/', BudgetEditView.as_view(), name='budget_edit'),
     path('budget/delete/<int:pk>/', BudgetDeleteView.as_view(), name='budget_delete'),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/', include(router.urls)),
     ]

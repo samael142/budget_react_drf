@@ -10,7 +10,7 @@ class LoginRequiredMiddleware:
         return self.get_response(request)
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if request.user.is_authenticated or 'register' in request.path:
+        if request.user.is_authenticated or 'register' in request.path or 'api' in request.path:
             return
         else:
             while not (request.path == reverse_lazy('accounts:login')):

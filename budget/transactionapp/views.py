@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.db.models import Sum
 from maapp.models import MoneyAccount
 from budget.models import Header, Category, Subcategory
 from .models import Transaction, PlainOperation, Transfer, TotalBalance, TotalBalancePerAccount

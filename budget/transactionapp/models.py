@@ -116,6 +116,7 @@ class Transaction(models.Model):
 class TotalBalance(models.Model):
     operation_date = models.DateField(verbose_name='дата', db_index=True)
     total = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
+    case = models.CharField(verbose_name='день', max_length=7)
 
     class Meta:
         managed = False
@@ -126,6 +127,7 @@ class TotalBalancePerAccount(models.Model):
     operation_date = models.DateField(verbose_name='дата', db_index=True)
     total = models.DecimalField(verbose_name="сумма", max_digits=10, decimal_places=2)
     account = models.ForeignKey(MoneyAccount, on_delete=models.RESTRICT, null=True, blank=True)
+    case = models.CharField(verbose_name='день', max_length=7)
 
     class Meta:
         managed = False
