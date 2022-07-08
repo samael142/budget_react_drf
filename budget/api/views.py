@@ -6,8 +6,9 @@ from .serializers import HeaderModelSerializer, \
     TransactionModelListSerializer, \
     TransactionModelSerializer, \
     MoneyAccountListModelSerializer, \
-    TotalBalanceModelSerializer
-from budget.models import Header, Category, Subcategory
+    TotalBalanceModelSerializer, \
+    LastHeadersModelSerializer
+from budget.models import Header, Category, Subcategory, LastHeaders
 from transactionapp.models import Transaction, TotalBalance
 from maapp.models import MaInfo
 from .filters import DateFilter
@@ -47,7 +48,7 @@ class MoneyAccountListViewSet(ReadOnlyModelViewSet):
     serializer_class = MoneyAccountListModelSerializer
 
 
-class TotalBalanceModelViewset(ModelViewSet):
+class TotalBalanceModelViewSet(ModelViewSet):
     queryset = TotalBalance.objects.values_list('operation_date', 'total', 'case')
     serializer_class = TotalBalanceModelSerializer
     filterset_class = DateFilter
@@ -55,4 +56,14 @@ class TotalBalanceModelViewset(ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         out_qs = [{'operation_date': el[0], 'total': el[1], 'day': el[2]} for el in queryset]
+        return Response(out_qs)
+
+
+class LastHeadersModelViewSet(ModelViewSet):
+    queryset = LastHeaders.objects.values_list('header', 'category', 'subcategory')
+    serializer_class = LastHeadersModelSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        out_qs = [{'header': el[0], 'category': el[1], 'subcategory': el[2]} for el in queryset]
         return Response(out_qs)

@@ -3,16 +3,26 @@ import ApiService from './components/API/ApiService';
 import './styles/App.css'
 import SwiperTest from './components/SwiperTest';
 import MainMenu from './components/MainMenu';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import TransactionForm from './components/TransactionForm';
 
 function App() {
 
   const [onScreenDate, SetOnScreenDate] = useState(new Date())
   const [transactions, setTransactions] = useState([])
   const [totals, setTotals] = useState([])
+  const [headers, setHeaders] = useState([])
+  const [categories, setCategories] = useState([])
+  const [subcategories, setSubcategories] = useState([])
+  const [moneyAccounts, setMoneyAccounts] = useState([])
 
   useEffect(() => {
     fetchTransactions()
   }, [onScreenDate])
+
+  useEffect(() => {
+    getTransactionParameters()
+  }, [])
 
   async function fetchTransactions() {
     const transactions = await ApiService.getTransactions(onScreenDate);
@@ -21,18 +31,39 @@ function App() {
     setTotals(totals)
   }
 
+  async function getTransactionParameters() {
+    const headers = await ApiService.getHeaders()
+    const categories = await ApiService.getCategories()
+    const subcategories = await ApiService.getSubcategories()
+    const moneyAccounts = await ApiService.getMoneyAccounts()
+    setHeaders(headers)
+    setCategories(categories)
+    setSubcategories(subcategories)
+    setMoneyAccounts(moneyAccounts)
+  }
+
   return (
-    <div className="App container">
-      <SwiperTest
-        totals={totals}
-        transactions={transactions}
-        SetOnScreenDate={SetOnScreenDate}
-        onScreenDate={onScreenDate}
-      />
-      <MainMenu
-        SetOnScreenDate={SetOnScreenDate}
-      />
-    </div>
+    <Router>
+      <div className="App container">
+        <Routes>
+          <Route path="/" element={<SwiperTest
+            totals={totals}
+            transactions={transactions}
+            SetOnScreenDate={SetOnScreenDate}
+            onScreenDate={onScreenDate}
+          />} />
+          <Route path="/transaction" element={<TransactionForm
+            headers={headers}
+            categories={categories}
+            subcategories={subcategories}
+            moneyAccounts={moneyAccounts}
+          />} />
+        </Routes>
+        <MainMenu
+          SetOnScreenDate={SetOnScreenDate}
+        />
+      </div>
+    </Router>
   );
 }
 

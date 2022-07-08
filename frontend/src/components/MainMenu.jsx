@@ -1,19 +1,11 @@
 import React from "react";
-import { scroller } from "react-scroll";
+import { Link } from 'react-router-dom'
 
 
 const MainMenu = ({ SetOnScreenDate }) => {
 
-    // const scrollToSection = () => {
-    //     scroller.scrollTo("current__date", {
-    //         duration: 400,
-    //         smooth: "easeInOutQuart",
-    //     });
-    // };
-
     const homeClick = () => {
         SetOnScreenDate(new Date())
-        // setTimeout(scrollToSection, 1000)
     }
 
     return (
@@ -28,9 +20,9 @@ const MainMenu = ({ SetOnScreenDate }) => {
                             </div>
                         </li>
                         <li className="nav__item">
-                            <div className="nav__link">
+                            <Link to="/transaction" className="nav__link">
                                 <img src="/static/transaction.svg" alt="Транзнакция" className="nav__img" />
-                            </div>
+                            </Link>
                         </li>
                         <li className="nav__item">
                             <div className="nav__link">
@@ -48,9 +40,9 @@ const MainMenu = ({ SetOnScreenDate }) => {
                             </div>
                         </li>
                         <li className="nav__item">
-                            <div className="nav__link" onClick={homeClick}>
+                            <Link to="/" className="nav__link" onClick={homeClick}>
                                 <img src="/static/home.svg" alt="Домашняя" className="nav__img" />
-                            </div>
+                            </Link>
                         </li>
                         <li className="nav__item right__arrow">
                             <div

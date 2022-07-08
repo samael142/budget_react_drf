@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from budget.models import Header, Category, Subcategory
+from budget.models import Header, Category, Subcategory, LastHeaders
 from transactionapp.models import Transaction, TotalBalance, TotalBalancePerAccount
 from maapp.models import MaInfo, MoneyAccount
 
@@ -55,3 +55,10 @@ class TotalBalanceModelSerializer(ModelSerializer):
     class Meta:
         model = TotalBalance
         fields = ['operation_date', 'total', 'case']
+
+
+class LastHeadersModelSerializer(ModelSerializer):
+    class Meta:
+        model = LastHeaders
+        fields = ['header', 'category', 'subcategory']
+
