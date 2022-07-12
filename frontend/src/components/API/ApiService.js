@@ -37,4 +37,9 @@ export default class ApiService {
         const responseMoneyAccounts = await axios.get(`${ApiService.getUrl()}ma_list/`)
         return responseMoneyAccounts.data
     }
+
+    static async getLastHeaders() {
+        const lastHeaders = await axios.get(`${ApiService.getUrl()}last_headers/`)
+        return lastHeaders.data
+    }
 }

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import useDebounce from "../hooks/useDebounce";
+import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 
-const TransactionForm = ({ headers, categories, subcategories, moneyAccounts }) => {
+const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, lastHeaders }) => {
+
+    const navigate = useNavigate();
 
     const currentDate = new Date()
     const yyyy = currentDate.getFullYear()
@@ -19,24 +23,66 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts }) 
         subcategory: '',
         comment: ''
     })
+    const [lastHeader, setLastHeader] = useState()
     const [operationType, setOperationType] = useState('out')
+    const [allowSave, setAllowSave] = useState(false)
     const debValue = useDebounce(transaction.header, 1000)
 
     useEffect(() => {
-        console.log(debValue)
+        searchExsistingHeader(debValue)
     }, [debValue])
 
-    const summComvert = (summ) => {
+    useEffect(() => {
+        autosetTransactionFields()
+    }, [lastHeader])
+
+    const navigateHome = () => {
+        navigate('/');
+    };
+
+    const searchExsistingHeader = (header) => {
+        let capHeader = header.charAt(0).toUpperCase() + header.slice(1);
+        let searchingExsistingHeader = headers.find(o => o.name === capHeader)
+        if (searchingExsistingHeader) {
+            setLastHeader(searchingExsistingHeader)
+        }
+    }
+
+    const autosetTransactionFields = () => {
+        if (lastHeader) {
+            let lastFields = lastHeaders.find(o => o.header === lastHeader.name)
+            setTransaction({ ...transaction, header: lastFields.header, category: lastFields.category, subcategory: lastFields.subcategory })
+        }
+    }
+
+    const summConvert = (summ) => {
         if (operationType === "out") {
             return "-" + summ
         }
         return summ
     }
 
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        setTransaction({
+            ...transaction,
+            header: transaction.header.charAt(0).toUpperCase() + transaction.header.slice(1).trim(),
+            category: transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1).trim(),
+            subcategory: transaction.subcategory.charAt(0).toUpperCase() + transaction.subcategory.slice(1).trim()
+        })
+        console.log(event.nativeEvent.submitter.name);
+        createTransaction(transaction)
+    }
+
+    const createTransaction = (transaction) => {
+        axios.post(`http://127.0.0.1:8000/api/transactions/`, transaction)
+    }
+
+
     return (
         <>
             <div className="title__single">Транзакция</div>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="tr__upper">
                     <input className="form__control form__sm row__2" type="date" id="start" name="operation_date"
                         onChange={e => setTransaction({ ...transaction, operation_date: e.target.value })}
@@ -95,6 +141,9 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts }) 
                     onChange={e => setTransaction({ ...transaction, comment: e.target.value })}
                     value={transaction.comment} />
                 <br />
+                <button type="submit" name="add" className="btn btn__green">Отправить</button>
+                <button type="submit" name="copy" className="btn btn__green">+Отправить</button>
+                <button type="button" onClick={navigateHome} className="btn btn__red">Закрыть</button>
             </form>
         </>
     )

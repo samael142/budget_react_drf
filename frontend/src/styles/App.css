@@ -226,3 +226,55 @@ body {
     text-align: center;
     vertical-align: middle;
 }
+
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid black;
+    background: transparent;
+    padding: 6px 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.btn__green {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn__green:hover {
+    background-color: #12643e;
+}
+
+.btn__red {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn__red:hover {
+    background-color: #8a1723;
+}
+
+.btn__green + .btn__red {
+    margin-left: 10px;
+}
+
+.btn__green + .btn__green {
+    margin-left: 10px;
+}
+
+.btn__green + .btn__red + .btn__red {
+    margin-left: 10px;
+}
+
+.btn__green + .btn__green + .btn__red {
+    margin-left: 10px;
+}

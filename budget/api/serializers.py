@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, CharField
 from budget.models import Header, Category, Subcategory, LastHeaders
 from transactionapp.models import Transaction, TotalBalance, TotalBalancePerAccount
 from maapp.models import MaInfo, MoneyAccount
@@ -23,6 +23,23 @@ class SubcategoryModelSerializer(ModelSerializer):
 
 
 class TransactionModelSerializer(ModelSerializer):
+    header = CharField()
+    category = CharField()
+    subcategory = CharField()
+
+    def create(self, validated_data):
+        header = validated_data.pop('header')
+        category = validated_data.pop('category')
+        subcategory = validated_data.pop('subcategory')
+        header_instance, created = Header.objects.get_or_create(name=header)
+        category_instance, created = Category.objects.get_or_create(name=category)
+        subcategory_instance, created = Subcategory.objects.get_or_create(name=subcategory)
+        transaction_instance = Transaction.objects.create(**validated_data,
+                                                          header=header_instance,
+                                                          category=category_instance,
+                                                          subcategory=subcategory_instance)
+        return transaction_instance
+
     class Meta:
         model = Transaction
         fields = '__all__'
@@ -61,4 +78,3 @@ class LastHeadersModelSerializer(ModelSerializer):
     class Meta:
         model = LastHeaders
         fields = ['header', 'category', 'subcategory']
-

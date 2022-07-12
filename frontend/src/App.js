@@ -15,6 +15,7 @@ function App() {
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [moneyAccounts, setMoneyAccounts] = useState([])
+  const [lastHeaders, setLastHeaders] = useState([])
 
   useEffect(() => {
     fetchTransactions()
@@ -36,10 +37,12 @@ function App() {
     const categories = await ApiService.getCategories()
     const subcategories = await ApiService.getSubcategories()
     const moneyAccounts = await ApiService.getMoneyAccounts()
+    const lastHeaders = await ApiService.getLastHeaders()
     setHeaders(headers)
     setCategories(categories)
     setSubcategories(subcategories)
     setMoneyAccounts(moneyAccounts)
+    setLastHeaders(lastHeaders)
   }
 
   return (
@@ -57,6 +60,7 @@ function App() {
             categories={categories}
             subcategories={subcategories}
             moneyAccounts={moneyAccounts}
+            lastHeaders={lastHeaders}
           />} />
         </Routes>
         <MainMenu
