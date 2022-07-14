@@ -201,7 +201,7 @@ body {
     font-size: 14px;
 }
 
-.row__2 + .row__2 {
+.row__2+.row__2 {
     margin-left: 20px;
 }
 
@@ -263,18 +263,36 @@ body {
     background-color: #8a1723;
 }
 
-.btn__green + .btn__red {
+.btn__green+.btn__red {
     margin-left: 10px;
 }
 
-.btn__green + .btn__green {
+.btn__green+.btn__green {
     margin-left: 10px;
 }
 
-.btn__green + .btn__red + .btn__red {
+.btn__green+.btn__red+.btn__red {
     margin-left: 10px;
 }
 
-.btn__green + .btn__green + .btn__red {
+.btn__green+.btn__green+.btn__red {
     margin-left: 10px;
+}
+
+.transition__box-enter {
+    opacity: 0;
+}
+
+.transition__box-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+
+.transition__box-exit {
+    opacity: 1;
+}
+
+.transition__box-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
 }

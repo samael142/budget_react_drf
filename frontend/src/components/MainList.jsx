@@ -2,30 +2,33 @@ import React, { useEffect } from 'react';
 import TotalItem from "./TotalItem";
 import TransactionItem from "./TransactionItem";
 import { scroller } from "react-scroll";
+import { CSSTransition } from 'react-transition-group';
 
 
-const MainList = ({ transactions, totals }) => {
+const MainList = ({ transactions, totals, setShow, show }) => {
 
     let currentMonthMarker = false
+
+    useEffect(() => {
+        setShow(true);
+    }, [totals])
+
 
     const mainList = []
 
     const scrollToSection = () => {
-        scroller.scrollTo("current__date", {
-            duration: 400,
-            smooth: "easeInOutQuart",
-        });
+        scroller.scrollTo("current__date");
     };
 
-    // useEffect(() => {
-    //     const timer = setTimeout(() => {
-    //         scrollToSection()
-    //     }, 1000);
-    //     return () => clearTimeout(timer);
-    // }, []);
+    const scrollToTop = () => {
+        scroller.scrollTo("container");
+    };
+
     useEffect(() => {
         if (mainList.length && currentMonthMarker) {
             scrollToSection()
+        } else {
+            scrollToTop()
         }
     }, [mainList]);
 
@@ -36,7 +39,7 @@ const MainList = ({ transactions, totals }) => {
     const stringDate = [yyyy, (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join("-")
 
     for (const totalElement of totals) {
-        mainList.push(<TotalItem total={totalElement} key={totalElement.operation_date} currentDate={stringDate} />)
+        mainList.push(<TotalItem total={totalElement} currentDate={stringDate} key={totalElement.operation_date} />)
         if (totalElement.operation_date === stringDate) {
             currentMonthMarker = true
         }
@@ -49,9 +52,15 @@ const MainList = ({ transactions, totals }) => {
 
     return (
         <>
-            <div>
-                {mainList}
-            </div>
+            <CSSTransition
+                unmountOnExit
+                in={show}
+                timeout={300}
+                classNames="transition__box">
+                <div className='transition__box'>
+                    {mainList}
+                </div>
+            </CSSTransition>
             <div className='clear__block'></div>
         </>
     )

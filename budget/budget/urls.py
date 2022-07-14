@@ -27,6 +27,7 @@ router.register('transactions', api.TransactionModelViewSet)
 router.register('ma_list', api.MoneyAccountListViewSet)
 router.register('total_balance', api.TotalBalanceModelViewSet)
 router.register('last_headers', api.LastHeadersModelViewSet)
+router.register('plain_operations', api.PlainOperationModelViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

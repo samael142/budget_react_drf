@@ -4,7 +4,7 @@ import DateConvert from "./DateConverter";
 const TransactionItem = (props) => {
     if (!props.transaction.transfer_id) {
         return (
-            <div onClick={() => console.log(props.transaction.id)} className={"tr__box " + (props.transaction.past ? "past__color" : "")}>
+            <div onClick={() => console.log(props.transaction)} className={"tr__box " + (props.transaction.past ? "past__color" : "")}>
                 <div className="tr__box__row">
                     <div><b>{props.transaction.header ? props.transaction.header.name : ""}</b>
                     </div>

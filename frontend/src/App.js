@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import ApiService from './components/API/ApiService';
 import './styles/App.css'
-import SwiperTest from './components/SwiperTest';
 import MainMenu from './components/MainMenu';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import TransactionForm from './components/TransactionForm';
+import MainList from './components/MainList';
+import AddForm from './components/AddForm';
 
 function App() {
 
-  const [onScreenDate, SetOnScreenDate] = useState(new Date())
+  const [onScreenDate, setOnScreenDate] = useState(new Date())
   const [transactions, setTransactions] = useState([])
   const [totals, setTotals] = useState([])
   const [headers, setHeaders] = useState([])
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [moneyAccounts, setMoneyAccounts] = useState([])
-  const [lastHeaders, setLastHeaders] = useState([])
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     fetchTransactions()
@@ -37,34 +38,37 @@ function App() {
     const categories = await ApiService.getCategories()
     const subcategories = await ApiService.getSubcategories()
     const moneyAccounts = await ApiService.getMoneyAccounts()
-    const lastHeaders = await ApiService.getLastHeaders()
     setHeaders(headers)
     setCategories(categories)
     setSubcategories(subcategories)
     setMoneyAccounts(moneyAccounts)
-    setLastHeaders(lastHeaders)
   }
 
   return (
     <Router>
       <div className="App container">
         <Routes>
-          <Route path="/" element={<SwiperTest
+          <Route path="/" element={<MainList
             totals={totals}
             transactions={transactions}
-            SetOnScreenDate={SetOnScreenDate}
-            onScreenDate={onScreenDate}
+            setShow={setShow}
+            show={show}
           />} />
-          <Route path="/transaction" element={<TransactionForm
+          <Route path="/transaction" element={<AddForm
             headers={headers}
             categories={categories}
             subcategories={subcategories}
             moneyAccounts={moneyAccounts}
-            lastHeaders={lastHeaders}
+            setOnScreenDate={setOnScreenDate}
+            setHeaders={setHeaders}
+            setCategories={setCategories}
+            setSubcategories={setSubcategories}
           />} />
         </Routes>
         <MainMenu
-          SetOnScreenDate={SetOnScreenDate}
+          SetOnScreenDate={setOnScreenDate}
+          onScreenDate={onScreenDate}
+          setShow={setShow}
         />
       </div>
     </Router>

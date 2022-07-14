@@ -7,9 +7,11 @@ from .serializers import HeaderModelSerializer, \
     TransactionModelSerializer, \
     MoneyAccountListModelSerializer, \
     TotalBalanceModelSerializer, \
-    LastHeadersModelSerializer
+    LastHeadersModelSerializer, \
+    PlainOperationModelListSerializer, \
+    PlainOperationModelSerializer
 from budget.models import Header, Category, Subcategory, LastHeaders
-from transactionapp.models import Transaction, TotalBalance
+from transactionapp.models import Transaction, TotalBalance, PlainOperation
 from maapp.models import MaInfo
 from .filters import DateFilter
 import itertools
@@ -36,6 +38,15 @@ class TransactionModelViewSet(ModelViewSet):
                 order_by('operation_date', '-updated')
     filterset_class = DateFilter
     serializer_class = TransactionModelSerializer
+
+    def list(self, request):
+        header = request.GET.get('header', None)
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = TransactionModelListSerializer(queryset, many=True)
+        if header:
+            queryset = Transaction.objects.filter(header__name=header, past=0).order_by('-operation_date').first()
+            serializer = TransactionModelListSerializer(queryset)
+        return Response(serializer.data)
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -67,3 +78,15 @@ class LastHeadersModelViewSet(ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         out_qs = [{'header': el[0], 'category': el[1], 'subcategory': el[2]} for el in queryset]
         return Response(out_qs)
+
+
+class PlainOperationModelViewSet(ModelViewSet):
+    queryset = PlainOperation.objects.\
+                select_related('header', 'category', 'subcategory').\
+                order_by('operation_date')
+    serializer_class = PlainOperationModelSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return PlainOperationModelListSerializer
+        return PlainOperationModelSerializer

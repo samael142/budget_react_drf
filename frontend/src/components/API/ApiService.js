@@ -20,17 +20,17 @@ export default class ApiService {
 
     static async getHeaders() {
         const responseHeaders = await axios.get(`${ApiService.getUrl()}headers/`)
-        return responseHeaders.data
+        return Array.from(responseHeaders.data, x => x.name)
     }
 
     static async getCategories() {
         const responseCategories = await axios.get(`${ApiService.getUrl()}categories/`)
-        return responseCategories.data
+        return Array.from(responseCategories.data, x => x.name)
     }
 
     static async getSubcategories() {
         const responseSubcategories = await axios.get(`${ApiService.getUrl()}subcategories/`)
-        return responseSubcategories.data
+        return Array.from(responseSubcategories.data, x => x.name)
     }
 
     static async getMoneyAccounts() {
@@ -38,8 +38,17 @@ export default class ApiService {
         return responseMoneyAccounts.data
     }
 
-    static async getLastHeaders() {
-        const lastHeaders = await axios.get(`${ApiService.getUrl()}last_headers/`)
-        return lastHeaders.data
+    static async postTransaction(transaction) {
+        axios.post(`${ApiService.getUrl()}transactions/`, transaction)
+    }
+
+    static async postPlainOperation(transaction) {
+        axios.post(`${ApiService.getUrl()}plain_operations/`, transaction)
+    }
+
+    static async getLastHeaderTransaction(header) {
+        const response = await axios.get(`${ApiService.getUrl()}transactions/`,
+            { params: { 'header': header } })
+        return response
     }
 }

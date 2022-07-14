@@ -2,10 +2,20 @@ import React from "react";
 import { Link } from 'react-router-dom'
 
 
-const MainMenu = ({ SetOnScreenDate }) => {
+const MainMenu = ({ SetOnScreenDate, onScreenDate, setShow }) => {
 
     const homeClick = () => {
         SetOnScreenDate(new Date())
+    }
+
+    const rightArrowClick = () => {
+        setShow(false)
+        SetOnScreenDate(new Date(onScreenDate.setMonth(onScreenDate.getMonth() + 1)))
+    }
+
+    const leftArrowClick = () => {
+        setShow(false)
+        SetOnScreenDate(new Date(onScreenDate.setMonth(onScreenDate.getMonth() - 1)))
     }
 
     return (
@@ -14,7 +24,7 @@ const MainMenu = ({ SetOnScreenDate }) => {
                 <div className="down__menu1">
                     <ul className="new__nav">
                         <li className="nav__item left__arrow">
-                            <div
+                            <div onClick={leftArrowClick}
                                 className="nav__link left__arrow">
                                 <img src="/static/left.svg" alt="Назад" className="nav__img" />
                             </div>
@@ -45,7 +55,7 @@ const MainMenu = ({ SetOnScreenDate }) => {
                             </Link>
                         </li>
                         <li className="nav__item right__arrow">
-                            <div
+                            <div onClick={rightArrowClick}
                                 className="nav__link right__arrow">
                                 <img src="/static/right.svg" alt="Вперёд" className="nav__img" />
                             </div>

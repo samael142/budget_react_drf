@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import useDebounce from "../hooks/useDebounce";
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import ApiService from "./API/ApiService";
 
-const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, lastHeaders }) => {
+const TransactionForm = ({ headers, categories, subcategories, moneyAccounts,
+    setOnScreenDate, setHeaders, setCategories, setSubcategories }) => {
 
     const navigate = useNavigate();
 
@@ -23,10 +24,20 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, la
         subcategory: '',
         comment: ''
     })
+
+    const initialState = {
+        operation_date: transaction.operation_date,
+        operation_summ: '',
+        account: transaction.account,
+        header: '',
+        category: '',
+        subcategory: '',
+        comment: ''
+    }
+
     const [lastHeader, setLastHeader] = useState()
     const [operationType, setOperationType] = useState('out')
-    const [allowSave, setAllowSave] = useState(false)
-    const debValue = useDebounce(transaction.header, 1000)
+    const debValue = useDebounce(transaction.header, 500)
 
     useEffect(() => {
         searchExsistingHeader(debValue)
@@ -37,21 +48,29 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, la
     }, [lastHeader])
 
     const navigateHome = () => {
+        setOnScreenDate(new Date())
         navigate('/');
     };
 
     const searchExsistingHeader = (header) => {
         let capHeader = header.charAt(0).toUpperCase() + header.slice(1);
-        let searchingExsistingHeader = headers.find(o => o.name === capHeader)
+        let searchingExsistingHeader = headers.find(o => o === capHeader)
         if (searchingExsistingHeader) {
             setLastHeader(searchingExsistingHeader)
         }
     }
 
-    const autosetTransactionFields = () => {
+    const autosetTransactionFields = async () => {
         if (lastHeader) {
-            let lastFields = lastHeaders.find(o => o.header === lastHeader.name)
-            setTransaction({ ...transaction, header: lastFields.header, category: lastFields.category, subcategory: lastFields.subcategory })
+            const lastTransaction = await ApiService.getLastHeaderTransaction(lastHeader)
+            if (lastTransaction.data.header.name) {
+                setTransaction({
+                    ...transaction,
+                    header: lastTransaction.data.header.name,
+                    category: lastTransaction.data.category.name,
+                    subcategory: lastTransaction.data.subcategory.name
+                })
+            }
         }
     }
 
@@ -64,24 +83,36 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, la
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        setTransaction({
+        const transactionForSave = {
             ...transaction,
+            operation_summ: summConvert(transaction.operation_summ),
             header: transaction.header.charAt(0).toUpperCase() + transaction.header.slice(1).trim(),
             category: transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1).trim(),
             subcategory: transaction.subcategory.charAt(0).toUpperCase() + transaction.subcategory.slice(1).trim()
-        })
-        console.log(event.nativeEvent.submitter.name);
-        createTransaction(transaction)
+        }
+        ApiService.postTransaction(transactionForSave)
+        addNewTransactionParameters(transactionForSave.header, transactionForSave.category, transactionForSave.subcategory)
+        if (event.nativeEvent.submitter.name === 'add') {
+            navigateHome()
+        } else {
+            setTransaction({ ...initialState })
+        }
     }
 
-    const createTransaction = (transaction) => {
-        axios.post(`http://127.0.0.1:8000/api/transactions/`, transaction)
+    const addNewTransactionParameters = (header, category, subcategory) => {
+        if (!headers.includes(header)) {
+            setHeaders([...headers, header])
+        }
+        if (!categories.includes(category)) {
+            setCategories([...categories, category])
+        }
+        if (!subcategories.includes(subcategory)) {
+            setSubcategories([...subcategories, subcategory])
+        }
     }
-
 
     return (
         <>
-            <div className="title__single">Транзакция</div>
             <form onSubmit={handleSubmit}>
                 <div className="tr__upper">
                     <input className="form__control form__sm row__2" type="date" id="start" name="operation_date"
@@ -98,6 +129,7 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, la
                 <div className="input__group">
                     <input onFocus={(event) => { event.target.select() }}
                         onChange={e => setTransaction({ ...transaction, operation_summ: e.target.value })}
+                        value={transaction.operation_summ}
                         type="number" step="0.01" name="operation_summ" className="form__control form__sm" placeholder="Сумма"
                         required />
                     <input id="showCalculator" className="form__control" type="button" value="->"></input>
@@ -105,7 +137,6 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, la
 
                 <h5 className="select__label">Счёт</h5>
                 <select
-                    name="account"
                     className="form__select form__sm"
                     style={{ backgroundImage: "url(/static/select.svg)" }}
                     onChange={e => setTransaction({ ...transaction, account: e.target.value })}
@@ -121,22 +152,29 @@ const TransactionForm = ({ headers, categories, subcategories, moneyAccounts, la
                     value={transaction.header} required
                     onChange={e => setTransaction({ ...transaction, header: e.target.value })} />
                 <datalist id="headers">
-                    {headers.map((header) => <option value={header.name} key={header.name} />)}
+                    {headers.map((header) => <option value={header} key={header} />)}
                 </datalist>
                 <br />
-                <input onFocus={(event) => { event.target.select() }} type="text" name="category" className="form__control form__sm" list="categories"
-                    placeholder="Категория" value={transaction.category} required onChange={e => setTransaction({ ...transaction, category: e.target.value })} />
+                <input onFocus={(event) => { event.target.select() }}
+                    type="text" name="category"
+                    className="form__control form__sm" list="categories"
+                    placeholder="Категория"
+                    value={transaction.category} required
+                    onChange={e => setTransaction({ ...transaction, category: e.target.value })} />
                 <datalist id="categories">
-                    {categories.map((category) => <option value={category.name} key={category.name} />)}
+                    {categories.map((category) => <option value={category} key={category} />)}
                 </datalist>
                 <br />
-                <input onFocus={(event) => { event.target.select() }} type="text" name="subcategory" className="form__control form__sm" list="subcategories"
-                    placeholder="Подкатегория" value={transaction.subcategory} required onChange={e => setTransaction({ ...transaction, subcategory: e.target.value })} />
+                <input onFocus={(event) => { event.target.select() }}
+                    type="text" name="subcategory"
+                    className="form__control form__sm" list="subcategories"
+                    placeholder="Подкатегория"
+                    value={transaction.subcategory} required
+                    onChange={e => setTransaction({ ...transaction, subcategory: e.target.value })} />
                 <datalist id="subcategories">
-                    {subcategories.map((subcategory) => <option value={subcategory.name} key={subcategory.name} />)}
+                    {subcategories.map((subcategory) => <option value={subcategory} key={subcategory} />)}
                 </datalist>
                 <br />
-
                 <input type="text" name="comment" className="form__control form__sm" placeholder="Комментарий"
                     onChange={e => setTransaction({ ...transaction, comment: e.target.value })}
                     value={transaction.comment} />

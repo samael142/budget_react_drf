@@ -7,7 +7,6 @@ from maapp.models import MoneyAccount
 from budget.models import Header, Category, Subcategory
 
 
-# Create your models here.
 class PlainOperation(models.Model):
     class PeriodType(models.TextChoices):
         once = "once"
