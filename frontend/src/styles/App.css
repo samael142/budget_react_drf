@@ -279,6 +279,35 @@ body {
     margin-left: 10px;
 }
 
+.transition__item-enter {
+    opacity: 0;
+}
+
+.transition__item-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+
+.transition__item-exit {
+    opacity: 1;
+}
+
+.transition__item-exit-active {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.form__check {
+    width: 16px;
+    height: 16px;
+    vertical-align: top;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid rgba(0, 0, 0, .25);
+}
+
 .transition__box-enter {
     opacity: 0;
 }
@@ -295,4 +324,30 @@ body {
 .transition__box-exit-active {
     opacity: 0;
     transition: opacity 500ms ease-in;
+}
+
+.double__button {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 4px;
+}
+
+.black__color {
+    color: black;
+}
+
+.transparent__color {
+    background-color: transparent !important;
+}
+
+.tr__box__acc {
+    text-decoration: none;
+    font-size: 18px;
+    background-color: white;
+    padding: 0 5px;
+    min-height: 40px;
+    display: inline-block;
+    line-height: 40px;
 }

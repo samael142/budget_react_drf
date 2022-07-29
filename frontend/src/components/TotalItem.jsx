@@ -4,7 +4,7 @@ import DateConvert from "./DateConverter";
 const TotalItem = (props) => {
 
     return (
-        <div className={"total__box " + (props.total.operation_date === props.currentDate ? "current__date" : "")}>
+        <div className={"transition__item total__box " + (props.total.operation_date === props.currentDate ? "current__date" : "")}>
             <div className="t__left">
                 <div className="t__int">{DateConvert(props.total.operation_date)}&nbsp;</div>
                 <div className="t__str">{props.total.day}</div>

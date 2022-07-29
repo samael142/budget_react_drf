@@ -27,6 +27,7 @@ class PlainOperationsListView(ListView):
         queryset = []
         queryset_element = {}
         source_queryset = PlainOperation.objects.all()
+        print(source_queryset.query)
         for el in source_queryset:
             transactions_array = Transaction.objects.filter(plain_id=el.pk).order_by('operation_date')
             queryset_element['id'] = el.pk

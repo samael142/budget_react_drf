@@ -8,15 +8,34 @@ export default class ApiService {
 
     static async getTransactions(date) {
         const responseTransactions = await axios.get(`${ApiService.getUrl()}transactions/`,
-            { params: { 'year': date.getFullYear(), month: date.getMonth() + 1 } })
+            {
+                params: {
+                    year: date.getFullYear(),
+                    month: date.getMonth() + 1
+                }
+            })
         return responseTransactions.data
     }
 
+    // static getTransactions(date) {
+    //     return axios.get(`${ApiService.getUrl()}transactions/`,
+    //         { params: { 'year': date.getFullYear(), month: date.getMonth() + 1 } })
+    //     // return responseTransactions.data
+    // }
+
     static async getTotals(date) {
         const responseTotals = await axios.get(`${ApiService.getUrl()}total_balance/`,
-            { params: { 'year': date.getFullYear(), month: date.getMonth() + 1 } })
+            { params: { 
+                year: date.getFullYear(), 
+                month: date.getMonth() + 1 
+            } })
         return responseTotals.data
     }
+
+    // static getTotals(date) {
+    //     return axios.get(`${ApiService.getUrl()}total_balance/`,
+    //         { params: { 'year': date.getFullYear(), month: date.getMonth() + 1 } })
+    // }
 
     static async getHeaders() {
         const responseHeaders = await axios.get(`${ApiService.getUrl()}headers/`)
@@ -39,16 +58,51 @@ export default class ApiService {
     }
 
     static async postTransaction(transaction) {
-        axios.post(`${ApiService.getUrl()}transactions/`, transaction)
+        const resp = await axios.post(`${ApiService.getUrl()}transactions/`, transaction)
+        return resp
     }
 
-    static async postPlainOperation(transaction) {
+    static async patchTransaction(transaction, id) {
+        const resp = await axios.patch(`${ApiService.getUrl()}transactions/${id}/`, transaction)
+        return resp
+    }
+
+    static async patchMoneyAccount(moneyAccount, id) {
+        const resp = await axios.patch(`${ApiService.getUrl()}money_accounts/${id}/`, moneyAccount)
+        return resp
+    }
+
+    static async deleteTransaction(id) {
+        const resp = await axios.delete(`${ApiService.getUrl()}transactions/${id}/`)
+        return resp
+    }
+
+    static async deleteTransfer(id) {
+        const resp = await axios.delete(`${ApiService.getUrl()}transactions/`,
+        { params: { 'transfer_id': id } })
+        return resp
+    }
+
+
+    static postPlainOperation(transaction) {
         axios.post(`${ApiService.getUrl()}plain_operations/`, transaction)
     }
 
     static async getLastHeaderTransaction(header) {
         const response = await axios.get(`${ApiService.getUrl()}transactions/`,
-            { params: { 'header': header } })
+            { params: { 'last_header': header } })
         return response
+    }
+
+    static async getTransactionById(transactionId) {
+        const response = await axios.get(`${ApiService.getUrl()}transactions/`,
+            { params: { 'transaction_id': transactionId } })
+        return response
+    }
+
+    static async getTransfer(transferId) {
+        const response = await axios.get(`${ApiService.getUrl()}transactions/`,
+            { params: { 'transfer_id': transferId } })
+        return response.data
     }
 }

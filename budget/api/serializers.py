@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, CharField
-from budget.models import Header, Category, Subcategory, LastHeaders
+from budget.models import Header, Category, Subcategory
 from transactionapp.models import Transaction, TotalBalance, TotalBalancePerAccount, PlainOperation
 from maapp.models import MaInfo, MoneyAccount
 
@@ -43,6 +43,22 @@ class TransactionModelSerializer(ModelSerializer):
             transaction_instance = Transaction.objects.create(**validated_data)
         return transaction_instance
 
+    def update(self, instance, validated_data):
+        try:
+            header = validated_data.pop('header')
+            category = validated_data.pop('category')
+            subcategory = validated_data.pop('subcategory')
+            instance.header, created = Header.objects.get_or_create(name=header)
+            instance.category, created = Category.objects.get_or_create(name=category)
+            instance.subcategory, created = Subcategory.objects.get_or_create(name=subcategory)
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+        except KeyError:
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+        instance.save()
+        return instance
+
     class Meta:
         model = Transaction
         fields = '__all__'
@@ -57,7 +73,7 @@ class MoneyAccountListModelSerializer(ModelSerializer):
 class MoneyAccountModelSerializer(ModelSerializer):
     class Meta:
         model = MoneyAccount
-        fields = ['name']
+        fields = ['id', 'name', 'is_visible']
 
 
 class TransactionModelListSerializer(ModelSerializer):
@@ -87,10 +103,10 @@ class TotalBalanceModelSerializer(ModelSerializer):
         fields = ['operation_date', 'total', 'case']
 
 
-class LastHeadersModelSerializer(ModelSerializer):
-    class Meta:
-        model = LastHeaders
-        fields = ['header', 'category', 'subcategory']
+# class LastHeadersModelSerializer(ModelSerializer):
+#     class Meta:
+#         model = LastHeaders
+#         fields = ['header', 'category', 'subcategory']
 
 
 class PlainOperationModelSerializer(ModelSerializer):

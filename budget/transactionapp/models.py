@@ -21,7 +21,7 @@ class PlainOperation(models.Model):
     comment = models.TextField(blank=True)
     period = models.CharField(max_length=10, choices=PeriodType.choices)
     quantity = models.PositiveSmallIntegerField(verbose_name="количество операций", default=1)
-    count = models.PositiveSmallIntegerField(null=True, blank=True, default=1)
+    # count = models.PositiveSmallIntegerField(null=True, blank=True, default=1)
 
     @staticmethod
     def quantity_count(start_date, end_date, per, count):

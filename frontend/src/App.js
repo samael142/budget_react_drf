@@ -3,35 +3,24 @@ import ApiService from './components/API/ApiService';
 import './styles/App.css'
 import MainMenu from './components/MainMenu';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import TransactionForm from './components/TransactionForm';
-import MainList from './components/MainList';
-import AddForm from './components/AddForm';
+import TransactionsList from './components/pages/TransactionsList';
+import TransactionForm from './components/pages/TransactionForm';
+import TransferForm from './components/pages/TransferForm';
+import PlainOperationForm from './components/pages/PlainOperationForm';
+import MoneyAccounts from './components/pages/moneyAccounts';
+import { MainContext } from './context'
 
 function App() {
 
   const [onScreenDate, setOnScreenDate] = useState(new Date())
-  const [transactions, setTransactions] = useState([])
-  const [totals, setTotals] = useState([])
   const [headers, setHeaders] = useState([])
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [moneyAccounts, setMoneyAccounts] = useState([])
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    fetchTransactions()
-  }, [onScreenDate])
 
   useEffect(() => {
     getTransactionParameters()
   }, [])
-
-  async function fetchTransactions() {
-    const transactions = await ApiService.getTransactions(onScreenDate);
-    const totals = await ApiService.getTotals(onScreenDate);
-    setTransactions(transactions)
-    setTotals(totals)
-  }
 
   async function getTransactionParameters() {
     const headers = await ApiService.getHeaders()
@@ -45,33 +34,44 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App container">
-        <Routes>
-          <Route path="/" element={<MainList
-            totals={totals}
-            transactions={transactions}
-            setShow={setShow}
-            show={show}
-          />} />
-          <Route path="/transaction" element={<AddForm
-            headers={headers}
-            categories={categories}
-            subcategories={subcategories}
-            moneyAccounts={moneyAccounts}
-            setOnScreenDate={setOnScreenDate}
-            setHeaders={setHeaders}
-            setCategories={setCategories}
-            setSubcategories={setSubcategories}
-          />} />
-        </Routes>
-        <MainMenu
-          SetOnScreenDate={setOnScreenDate}
-          onScreenDate={onScreenDate}
-          setShow={setShow}
-        />
-      </div>
-    </Router>
+    <MainContext.Provider value={{
+      headers,
+      categories,
+      subcategories,
+      moneyAccounts,
+      setHeaders,
+      setCategories,
+      setSubcategories,
+      setOnScreenDate,
+      setMoneyAccounts,
+    }}>
+      <Router>
+        <div className="App container">
+          <Routes>
+            <Route path="/" element={<TransactionsList onScreenDate={onScreenDate} />} />
+            <Route path="transaction">
+              <Route path="new" element={<TransactionForm />} />
+              <Route path=":transactionId" element={<TransactionForm />} />
+            </Route>
+            <Route path="transfer">
+              <Route path="new" element={<TransferForm />} />
+              <Route path=":transferId" element={<TransferForm />} />
+            </Route>
+            <Route path="plain">
+              <Route path="new" element={<PlainOperationForm />} />
+            </Route>
+            <Route path="money_accounts">
+              <Route path="list" element={<MoneyAccounts />} />
+              <Route path="new" element={<MoneyAccounts />} />
+            </Route>
+          </Routes>
+          <MainMenu
+            SetOnScreenDate={setOnScreenDate}
+            onScreenDate={onScreenDate}
+          />
+        </div>
+      </Router>
+    </MainContext.Provider>
   );
 }
 

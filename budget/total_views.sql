@@ -73,16 +73,16 @@ group by
 order by
   count DESC;
 
-CREATE or REPLACE VIEW last_headers AS
-select distinct on (header) * from (
-select distinct on (tr.header_id, tr.operation_date)
-	h.name as header,
-	cat.name as category,
-	subcat.name as subcategory
-from transactionapp_transaction as tr
-JOIN budget_header as h on h.id = tr.header_id
-JOIN budget_subcategory as subcat on subcat.id = tr.subcategory_id
-JOIN budget_category as cat on cat.id = tr.category_id
-WHERE tr.past = false
-order by tr.header_id, tr.operation_date DESC) as foo
-order by header;
+--CREATE or REPLACE VIEW last_headers AS
+--select distinct on (header) * from (
+--select distinct on (tr.header_id, tr.operation_date)
+--	h.name as header,
+--	cat.name as category,
+--	subcat.name as subcategory
+--from transactionapp_transaction as tr
+--JOIN budget_header as h on h.id = tr.header_id
+--JOIN budget_subcategory as subcat on subcat.id = tr.subcategory_id
+--JOIN budget_category as cat on cat.id = tr.category_id
+--WHERE tr.past = false
+--order by tr.header_id, tr.operation_date DESC) as foo
+--order by header;
