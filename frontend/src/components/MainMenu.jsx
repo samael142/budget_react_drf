@@ -46,14 +46,14 @@ const MainMenu = ({ SetOnScreenDate, onScreenDate }) => {
                             </Link>
                         </li>
                         <li className="nav__item">
-                            <div className="nav__link">
+                            <Link to="/report" className="nav__link">
                                 <img src="/static/report.svg" alt="Отчёт" className="nav__img" />
-                            </div>
+                            </Link>
                         </li>
                         <li className="nav__item">
-                            <div className="nav__link">
+                            <Link to='/settings' className="nav__link">
                                 <img src="/static/settings.svg" alt="Настройки" className="nav__img" />
-                            </div>
+                            </Link>
                         </li>
                         <li className="nav__item">
                             <Link to="/" className="nav__link" onClick={homeClick} id="homeButton">

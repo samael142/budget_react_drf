@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import DateConvert from "./DateConverter";
+import { DateConvert } from "./utils/utils";
 
 const TransactionItem = (props) => {
     if (!props.transaction.transfer_id) {

@@ -9,6 +9,14 @@ import TransferForm from './components/pages/TransferForm';
 import PlainOperationForm from './components/pages/PlainOperationForm';
 import MoneyAccounts from './components/pages/moneyAccounts';
 import { MainContext } from './context'
+import ReportSettings from './components/pages/ReportSettings';
+import GeneratedReport from './components/pages/GenedatedReport';
+import MoneyAccountForm from './components/pages/MoneyAccountForm';
+import Settings from './components/pages/Settings';
+import Statistic from './components/pages/Statistic';
+import Last20 from './components/pages/last20';
+import Filter from './components/pages/Filter';
+import GeneratedFilter from './components/pages/GeneratedFilter';
 
 function App() {
 
@@ -30,6 +38,11 @@ function App() {
     setHeaders(headers)
     setCategories(categories)
     setSubcategories(subcategories)
+    setMoneyAccounts(moneyAccounts)
+  }
+
+  async function getMoneyAccountsList() {
+    const moneyAccounts = await ApiService.getMoneyAccounts()
     setMoneyAccounts(moneyAccounts)
   }
 
@@ -62,8 +75,25 @@ function App() {
             </Route>
             <Route path="money_accounts">
               <Route path="list" element={<MoneyAccounts />} />
-              <Route path="new" element={<MoneyAccounts />} />
+              <Route path="new" element={<MoneyAccountForm getMoneyAccountsList={getMoneyAccountsList} />} />
+              <Route path=":accountId" element={<TransactionsList onScreenDate={onScreenDate} />} />
             </Route>
+            <Route path="report">
+              <Route path="" element={<ReportSettings />} />
+              <Route path="generated_report" element={<GeneratedReport />} />
+            </Route>
+            <Route path='settings'>
+              <Route path="" element={<Settings />} />
+              <Route path="statistic" element={<Statistic />} />
+              <Route path="budget" element={<MoneyAccounts />} />
+              <Route path="last20" element={<Last20 />} />
+              <Route path="filter" >
+                <Route path="" element={<Filter />} />
+                <Route path="generated_filter" element={<GeneratedFilter />} />
+              </Route>
+              <Route path="past" element={<MoneyAccounts />} />
+            </Route>
+            <Route />
           </Routes>
           <MainMenu
             SetOnScreenDate={setOnScreenDate}

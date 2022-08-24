@@ -87,7 +87,7 @@ body {
 }
 
 .clear__block {
-    height: 15vh;
+    height: 17vh;
 }
 
 .fix__footer {
@@ -326,12 +326,8 @@ body {
     transition: opacity 500ms ease-in;
 }
 
-.double__button {
-    display: flex;
-    justify-content: space-between;
-    background-color: white;
-    border: 1px solid rgba(0, 0, 0, .125);
-    border-radius: 4px;
+.no__radius {
+    border-radius: 0px !important;
 }
 
 .black__color {
@@ -350,4 +346,120 @@ body {
     min-height: 40px;
     display: inline-block;
     line-height: 40px;
+}
+
+.report__box {
+    text-decoration: none;
+    font-size: 14px;
+    background-color: white;
+    padding: 0 5px;
+    min-height: 40px;
+    display: inline-block;
+    line-height: 40px;
+    width: 33%;
+}
+
+.border__right {
+    border-right: 1px solid rgba(0, 0, 0, .125);
+}
+
+.end__text {
+    text-align: end;
+}
+
+.back__red {
+    background-color: lightcoral !important;
+}
+
+.back__green {
+    background-color: lightgreen !important;
+}
+
+.modal {
+    margin-top: 20px;
+    background: white;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    width: 90vw;
+    max-width: 680px;
+    transform: translateX(-50%);
+    z-index: 200;
+    overflow: auto;
+    display: block;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0.1em 0.1em 5px rgba(122, 122, 122, 0.5);
+    border: 1px solid rgba(0, 0, 0, .125);
+    max-height: 50vh;
+}
+
+.height__63 {
+    height: 63px !important;
+}
+
+.no__shadow {
+    box-shadow: unset !important;
+}
+
+.double__button {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: 4px;
+}
+
+.footer__button {
+    text-decoration: none;
+    text-align: center;
+    border: black 1px solid;
+    padding: 7px;
+    border-radius: 4px;
+    color: black;
+}
+
+
+.single__element__center {
+    display: flex;
+    justify-content: center;
+}
+
+.tr__upper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.tr__upper__left {
+    justify-content: left;
+}
+
+.settings__menu {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+}
+
+.settings__pt {
+    font-size: 24px;
+}
+
+.fix__footer {
+    height: 65px;
+    background: white;
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+    bottom: 0;
+    justify-content: space-between;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    border-top: black 1px solid;
+}
+
+.height__100 {
+    height: 110px;
 }

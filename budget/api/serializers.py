@@ -73,7 +73,7 @@ class MoneyAccountListModelSerializer(ModelSerializer):
 class MoneyAccountModelSerializer(ModelSerializer):
     class Meta:
         model = MoneyAccount
-        fields = ['id', 'name', 'is_visible']
+        fields = '__all__'
 
 
 class TransactionModelListSerializer(ModelSerializer):
@@ -85,6 +85,21 @@ class TransactionModelListSerializer(ModelSerializer):
     class Meta:
         model = Transaction
         exclude = ['created', 'updated']
+
+
+class ReportSerializer(ModelSerializer):
+    category = CategoryModelSerializer()
+    subcategory = SubcategoryModelSerializer()
+
+    class Meta:
+        model = Transaction
+        fields = ['operation_date', 'operation_summ']
+
+
+class StatisticSerializer(ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['category', 'subcategory', 'operation_summ']
 
 
 class PlainOperationModelListSerializer(ModelSerializer):
@@ -101,6 +116,12 @@ class TotalBalanceModelSerializer(ModelSerializer):
     class Meta:
         model = TotalBalance
         fields = ['operation_date', 'total', 'case']
+
+
+class TotalBalancePerAccountModelSerializer(ModelSerializer):
+    class Meta:
+        model = TotalBalancePerAccount
+        fields = ['account', 'operation_date', 'total', 'case']
 
 
 # class LastHeadersModelSerializer(ModelSerializer):
@@ -122,9 +143,9 @@ class PlainOperationModelSerializer(ModelSerializer):
         category_instance, created = Category.objects.get_or_create(name=category)
         subcategory_instance, created = Subcategory.objects.get_or_create(name=subcategory)
         transaction_instance = PlainOperation.objects.create(**validated_data,
-                                                              header=header_instance,
-                                                              category=category_instance,
-                                                              subcategory=subcategory_instance)
+                                                             header=header_instance,
+                                                             category=category_instance,
+                                                             subcategory=subcategory_instance)
         return transaction_instance
 
     class Meta:

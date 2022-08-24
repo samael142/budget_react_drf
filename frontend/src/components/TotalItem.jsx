@@ -1,5 +1,5 @@
 import React from "react";
-import DateConvert from "./DateConverter";
+import { DateConvert } from "./utils/utils";
 
 const TotalItem = (props) => {
 

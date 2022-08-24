@@ -150,7 +150,6 @@ class BudgetListView(ListView):
         context = super().get_context_data(**kwargs)
         budget_dates = []
         articles = BudgetPeriod.objects.all()
-        print(articles)
         for el in articles:
             budget_dates.append(str(el.start_date))
             budget_dates.append(str(el.end_date))
@@ -165,7 +164,6 @@ class BudgetListView(ListView):
         for el in days:
             day = list(map(int, el.split('-')))
             dict_of_days[el] = weekdays[date(*day).weekday()]
-        print(dict_of_days)
         return dict_of_days
 
 

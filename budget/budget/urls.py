@@ -26,8 +26,11 @@ router.register('subcategories', api.SubcategoryModelViewSet)
 router.register('transactions', api.TransactionModelViewSet)
 router.register('ma_list', api.MoneyAccountListViewSet)
 router.register('total_balance', api.TotalBalanceModelViewSet)
+router.register('total_balance_per_account', api.TotalBalancePerAccountModelViewSet)
 router.register('plain_operations', api.PlainOperationModelViewSet)
 router.register('money_accounts', api.MoneyAccountModelViewSet)
+router.register('report', api.ReportViewSet)
+router.register('statistic', api.StatisticViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
