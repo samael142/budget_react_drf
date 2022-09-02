@@ -467,3 +467,21 @@ body {
 .select__label {
     margin-bottom: 10px;
 }
+
+.budget__row {
+    justify-content: flex-start !important;
+    font-size: 12px !important;
+    background: transparent;
+}
+
+.font__13 {
+    font-size: 14px;
+}
+
+.light__red {
+    background: pink;
+}
+
+.border__5px {
+    border: 5px solid black;
+}

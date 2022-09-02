@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import ApiService from "../API/ApiService";
 import { useLocation } from "react-router-dom";
+import BudgetDetailItem from "../BudgetDetailItem";
 
 const BudgetDeatil = () => {
 
@@ -14,11 +15,13 @@ const BudgetDeatil = () => {
 
     useEffect(() => {
         fetchData()
-        // console.log(state);
     }, [])
 
     return (
-        <h1>budget detail</h1>
+        <div className="container">
+            {data.map(item => <BudgetDetailItem item={item} category={state.category.name} name={state.name} key={item[4]} />)}
+            <div className="clear__block"></div>
+        </div>
     )
 }
 
