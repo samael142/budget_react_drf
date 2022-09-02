@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.db.models import Sum
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -14,8 +16,11 @@ from .serializers import HeaderModelSerializer, \
     PlainOperationModelSerializer, \
     MoneyAccountModelSerializer, \
     ReportSerializer, \
-    StatisticSerializer
-from budget.models import Header, Category, Subcategory
+    StatisticSerializer, \
+    BudgetModelListSerializer, \
+    BudgetModelSerializer, \
+    BudgetDetailSerializer
+from budget.models import Header, Category, Subcategory, BudgetPeriod
 from transactionapp.models import Transaction, TotalBalance, PlainOperation, TotalBalancePerAccount
 from maapp.models import MaInfo, MoneyAccount
 from .filters import DateFilter
@@ -54,6 +59,7 @@ class TransactionModelViewSet(ModelViewSet):
         transaction_id = request.GET.get('transaction_id', None)
         transfer_id = request.GET.get('transfer_id', None)
         last20 = request.GET.get('last20', None)
+        filter = request.GET.get('filter', None)
         queryset = self.filter_queryset(self.get_queryset())
         serializer = TransactionModelListSerializer(queryset, many=True)
         if header:
@@ -68,6 +74,35 @@ class TransactionModelViewSet(ModelViewSet):
         if last20:
             queryset = Transaction.objects.all().order_by('-updated')[:20]
             serializer = TransactionModelListSerializer(queryset, many=True)
+        if filter:
+            filter_header = request.GET.get('filterHeader', None)
+            filter_category = request.GET.get('filterCategory', None)
+            filter_subcategory = request.GET.get('filterSubcategory', None)
+            start = request.GET.get('start', None)
+            end = request.GET.get('end', None)
+            headers = []
+            categories = []
+            subcategories = []
+            if filter_header == '':
+                headers = Header.objects.values_list('name')
+            else:
+                headers.append(filter_header)
+            if filter_category == '':
+                categories = Category.objects.values_list('name')
+            else:
+                categories.append(filter_category)
+            if filter_subcategory == '':
+                subcategories = Subcategory.objects.values_list('name')
+            else:
+                subcategories.append(filter_subcategory)
+            queryset = Transaction.objects.filter(header__name__in=headers,
+                                                  category__name__in=categories,
+                                                  subcategory__name__in=subcategories,
+                                                  past=0,
+                                                  operation_date__range=(start, end)). \
+                order_by('operation_date').all()
+            serializer = TransactionModelListSerializer(queryset, many=True)
+            # print(filter_header, filter_category, filter_subcategory, start, end)
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=False)
@@ -156,11 +191,68 @@ class StatisticViewSet(ModelViewSet):
         start_date = request.GET.get('start', None)
         end_date = request.GET.get('end', None)
         if category:
-            qs = Transaction.objects.filter(category__name=category, past=0, operation_date__range=(start_date, end_date)). \
+            qs = Transaction.objects.filter(category__name=category, past=0,
+                                            operation_date__range=(start_date, end_date)). \
                 values('category__name', 'subcategory__name'). \
                 annotate(total_summ=Sum('operation_summ')).order_by('category__name', 'total_summ')
         else:
             qs = Transaction.objects.filter(past=0, operation_date__range=(start_date, end_date)). \
                 values('category__name', 'subcategory__name'). \
                 annotate(total_summ=Sum('operation_summ')).order_by('category__name', 'total_summ')
-        return  Response(qs)
+        return Response(qs)
+
+
+class BudgetModelViewSet(ModelViewSet):
+    queryset = BudgetPeriod.objects.all()
+    serializer_class = BudgetModelSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return BudgetModelListSerializer
+        return BudgetModelSerializer
+
+
+class BudgetDetailModelViewSet(ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = BudgetDetailSerializer
+
+    def list(self, request):
+        category = request.GET.get('category', None)
+        start_date = request.GET.get('start', None)
+        end_date = request.GET.get('end', None)
+        plain_summ = int(request.GET.get('summ', None).split('.')[0])
+        start_day = datetime.strptime(start_date, '%Y-%m-%d')
+        end_day = datetime.strptime(end_date, '%Y-%m-%d')
+        result = []
+        result_part = []
+        list_of_budget = []
+        budget_summ = 0
+        anchor = False
+        while start_day <= end_day:
+            result_part.append(start_day.strftime('%Y-%m-%d'))
+            if start_day.strftime('%A') == 'Sunday':
+                result.append(result_part)
+                result_part = []
+            start_day = start_day + timedelta(days=1)
+        if len(result_part) != 0:
+            result.append(result_part)
+
+        for el in result:
+            if datetime.today().strftime('%Y-%m-%d') in el:
+                anchor = True
+
+            articles_summ = Transaction.objects. \
+                filter(category__name=category, operation_date__in=el, past=0).aggregate(Sum('operation_summ'))
+
+            if articles_summ['operation_summ__sum']:
+                appended_digit = float(articles_summ['operation_summ__sum'])
+            else:
+                appended_digit = 0
+            weekly_budget = [budget_summ, plain_summ, appended_digit,
+                             round((budget_summ + plain_summ + appended_digit), 2),
+                             el[0], el[-1], anchor]
+            list_of_budget.append(weekly_budget)
+            budget_summ = round((budget_summ + plain_summ + appended_digit), 2)
+            anchor = False
+
+        return Response(list_of_budget)

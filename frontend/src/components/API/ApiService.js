@@ -31,20 +31,24 @@ export default class ApiService {
 
     static async getTotals(date) {
         const responseTotals = await axios.get(`${ApiService.getUrl()}total_balance/`,
-            { params: { 
-                year: date.getFullYear(), 
-                month: date.getMonth() + 1 
-            } })
+            {
+                params: {
+                    year: date.getFullYear(),
+                    month: date.getMonth() + 1
+                }
+            })
         return responseTotals.data
     }
 
     static async getTotalsPerAccount(date, accountId) {
         const responseTotals = await axios.get(`${ApiService.getUrl()}total_balance_per_account/`,
-            { params: { 
-                year: date.getFullYear(), 
-                month: date.getMonth() + 1,
-                acc: accountId
-            } })
+            {
+                params: {
+                    year: date.getFullYear(),
+                    month: date.getMonth() + 1,
+                    acc: accountId
+                }
+            })
         return responseTotals.data
     }
 
@@ -90,9 +94,9 @@ export default class ApiService {
 
     static async deleteTransfer(id) {
         const resp = await axios.delete(`${ApiService.getUrl()}transactions/`,
-        { params: { 'transfer_id': id } })
+            { params: { 'transfer_id': id } })
         return resp
-    }   
+    }
 
 
     static postPlainOperation(transaction) {
@@ -127,7 +131,7 @@ export default class ApiService {
                 }
             })
         return responseTransactions.data
-    }    
+    }
 
     static async getTransactionsForModal(category, operationDate) {
         const responseTransactions = await axios.get(`${ApiService.getUrl()}transactions/`,
@@ -157,12 +161,46 @@ export default class ApiService {
             })
         return responseTransactions.data
     }
-    
+
     static async getTransactionsForLast20() {
         const responseTransactions = await axios.get(`${ApiService.getUrl()}transactions/`,
             {
                 params: {
                     last20: true
+                }
+            })
+        return responseTransactions.data
+    }
+
+    static async getTransactionsForFilter(params) {
+        const responseTransactions = await axios.get(`${ApiService.getUrl()}transactions/`,
+            {
+                params: {
+                    ...params,
+                    filter: true
+                }
+            })
+        return responseTransactions.data
+    }
+
+    static async getBudgets() {
+        const response = await axios.get(`${ApiService.getUrl()}budget/`)
+        return response.data
+    }
+
+    static async postBudget(budget) {
+        const resp = await axios.post(`${ApiService.getUrl()}budget/`, budget)
+        return resp
+    }
+
+    static async getBudgetDetail(start, end, category, summ) {
+        const responseTransactions = await axios.get(`${ApiService.getUrl()}budget_detail/`,
+            {
+                params: {
+                    start: start,
+                    end: end,
+                    category: category,
+                    summ: summ
                 }
             })
         return responseTransactions.data

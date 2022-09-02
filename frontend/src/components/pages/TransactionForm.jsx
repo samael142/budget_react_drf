@@ -140,20 +140,13 @@ const TransactionForm = () => {
             transactionForSave.past = true
             transactionForSave.account = null
         }
-        // params.transactionId
-        //     ? promise = new Promise((resolve, reject) => { resolve(ApiService.patchTransaction(transactionForSave, params.transactionId)) })
-        //     : promise = new Promise((resolve, reject) => { resolve(ApiService.postTransaction(transactionForSave)) })
         if (params.transactionId) {
             await ApiService.patchTransaction(transactionForSave, params.transactionId)
         } else {
             await ApiService.postTransaction(transactionForSave)
         }
-        // params.transactionId
-        //     ? await ApiService.patchTransaction(transactionForSave, params.transactionId)
-        //     : await ApiService.postTransaction(transactionForSave)
         addNewTransactionParameters(transactionForSave.header, transactionForSave.category, transactionForSave.subcategory)
         if (event.nativeEvent.submitter.name === 'add') {
-            // await promise
             navigateHome()
         } else {
             setTransaction({ ...initialState })

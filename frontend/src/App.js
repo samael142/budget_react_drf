@@ -17,6 +17,9 @@ import Statistic from './components/pages/Statistic';
 import Last20 from './components/pages/last20';
 import Filter from './components/pages/Filter';
 import GeneratedFilter from './components/pages/GeneratedFilter';
+import BudgetList from './components/pages/BudgetList';
+import BudgetForm from './components/pages/BudgetForm';
+import BudgetDeatil from './components/pages/BudgetDetail';
 
 function App() {
 
@@ -85,7 +88,11 @@ function App() {
             <Route path='settings'>
               <Route path="" element={<Settings />} />
               <Route path="statistic" element={<Statistic />} />
-              <Route path="budget" element={<MoneyAccounts />} />
+              <Route path="budget">
+                <Route path="" element={<BudgetList />} />
+                <Route path="new" element={<BudgetForm />} />
+                <Route path="detail" element={<BudgetDeatil />} />
+              </Route>
               <Route path="last20" element={<Last20 />} />
               <Route path="filter" >
                 <Route path="" element={<Filter />} />

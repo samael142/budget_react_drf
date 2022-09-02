@@ -463,3 +463,7 @@ body {
 .height__100 {
     height: 110px;
 }
+
+.select__label {
+    margin-bottom: 10px;
+}

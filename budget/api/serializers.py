@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, CharField
-from budget.models import Header, Category, Subcategory
+from budget.models import Header, Category, Subcategory, BudgetPeriod
 from transactionapp.models import Transaction, TotalBalance, TotalBalancePerAccount, PlainOperation
 from maapp.models import MaInfo, MoneyAccount
 
@@ -102,6 +102,12 @@ class StatisticSerializer(ModelSerializer):
         fields = ['category', 'subcategory', 'operation_summ']
 
 
+class BudgetDetailSerializer(ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['category', 'operation_date', 'operation_summ']
+
+
 class PlainOperationModelListSerializer(ModelSerializer):
     header = HeaderModelSerializer()
     category = CategoryModelSerializer()
@@ -150,4 +156,29 @@ class PlainOperationModelSerializer(ModelSerializer):
 
     class Meta:
         model = PlainOperation
+        fields = '__all__'
+
+
+class BudgetModelListSerializer(ModelSerializer):
+    category = CategoryModelSerializer()
+
+    class Meta:
+        model = BudgetPeriod
+        fields = '__all__'
+
+
+class BudgetModelSerializer(ModelSerializer):
+    category = CharField(required=True)
+
+    def create(self, validated_data):
+        try:
+            category = validated_data.pop('category')
+            category_instance = Category.objects.get(name=category)
+            budget_instance = BudgetPeriod.objects.create(**validated_data, category=category_instance)
+        except KeyError:
+            budget_instance = BudgetPeriod.objects.create(**validated_data)
+        return budget_instance
+
+    class Meta:
+        model = BudgetPeriod
         fields = '__all__'

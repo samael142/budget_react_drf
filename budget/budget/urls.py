@@ -31,6 +31,8 @@ router.register('plain_operations', api.PlainOperationModelViewSet)
 router.register('money_accounts', api.MoneyAccountModelViewSet)
 router.register('report', api.ReportViewSet)
 router.register('statistic', api.StatisticViewSet)
+router.register('budget', api.BudgetModelViewSet)
+router.register('budget_detail', api.BudgetDetailModelViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

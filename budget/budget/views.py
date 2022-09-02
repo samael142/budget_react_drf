@@ -242,6 +242,8 @@ class BudgetDetailView(DetailView):
 
         context['articles'] = list_of_budget
         context['anchor'] = anchor_date
+        for el in list_of_budget:
+            print(el)
         return context
 
     @staticmethod

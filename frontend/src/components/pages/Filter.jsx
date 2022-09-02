@@ -7,9 +7,9 @@ const Filter = () => {
 
     const [queryData, setQueryData] = useState(
         {
-            header: '',
-            category: '',
-            subcategory: '',
+            filterHeader: '',
+            filterCategory: '',
+            filterSubcategory: '',
             start: GetCurrentDate(new Date()),
             end: GetCurrentDate(new Date())
         })
@@ -28,8 +28,8 @@ const Filter = () => {
             <br />
             <form onSubmit={handleSubmit}>
                 <input
-                    value={queryData.header}
-                    onChange={e => setQueryData({ ...queryData, header: e.target.value })}
+                    value={queryData.filterHeader}
+                    onChange={e => setQueryData({ ...queryData, filterHeader: e.target.value })}
                     onFocus={(event) => { event.target.select() }}
                     type="text" className="form__control" list="header"
                     placeholder="Заголовок" />
@@ -38,8 +38,8 @@ const Filter = () => {
                 </datalist>
                 <br />
                 <input
-                    value={queryData.category}
-                    onChange={e => setQueryData({ ...queryData, category: e.target.value })}
+                    value={queryData.filterCategory}
+                    onChange={e => setQueryData({ ...queryData, filterCategory: e.target.value })}
                     onFocus={(event) => { event.target.select() }}
                     type="text" className="form__control" list="category"
                     placeholder="Категория" />
@@ -48,8 +48,8 @@ const Filter = () => {
                 </datalist>
                 <br />
                 <input
-                    value={queryData.subcategory}
-                    onChange={e => setQueryData({ ...queryData, subcategory: e.target.value })}
+                    value={queryData.filterSubcategory}
+                    onChange={e => setQueryData({ ...queryData, filterSubcategory: e.target.value })}
                     onFocus={(event) => { event.target.select() }}
                     type="text" className="form__control" list="subcategory"
                     placeholder="Подкатегория" />

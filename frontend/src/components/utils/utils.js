@@ -1,4 +1,4 @@
-import { startOfISOWeek, endOfISOWeek, format, startOfMonth  } from 'date-fns'
+import { startOfISOWeek, endOfISOWeek, format, startOfMonth, getISODay } from 'date-fns'
 
 export const DateConvert = (date) => {
     return date.split('-').reverse().join('-');
@@ -24,4 +24,18 @@ export const GetStartMonth = (date) => {
     const currentDate = date
     const startMonthDay = format(startOfMonth(currentDate), 'yyyy-MM-dd')
     return startMonthDay
+}
+
+export const GetWeekDay = (date) => {
+    const dayNumber = getISODay(new Date(date))
+    const days = {
+        1: "Пн",
+        2: "Вт",
+        3: "Ср",
+        4: "Чт",
+        5: "Пт",
+        6: "Сб",
+        7: "Вс"
+    }
+    return days[dayNumber]
 }
