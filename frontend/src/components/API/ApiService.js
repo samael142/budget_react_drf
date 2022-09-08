@@ -188,6 +188,12 @@ export default class ApiService {
         return response.data
     }
 
+    static async getBudgetById(id) {
+        const response = await axios.get(`${ApiService.getUrl()}budget/${id}/`)
+        return response.data
+
+    }
+
     static async postBudget(budget) {
         const resp = await axios.post(`${ApiService.getUrl()}budget/`, budget)
         return resp
@@ -205,4 +211,20 @@ export default class ApiService {
             })
         return responseTransactions.data
     }
+
+    static async patchBudget(budget, id) {
+        const resp = await axios.patch(`${ApiService.getUrl()}budget/${id}/`, budget)
+        return resp
+    }
+
+    static async deleteBudget(id) {
+        const resp = await axios.delete(`${ApiService.getUrl()}budget/${id}/`)
+        return resp
+    }
+
+    static async getPlainOperations() {
+        const response = await axios.get(`${ApiService.getUrl()}plain_operations/`)
+        return response.data
+    }
+
 }

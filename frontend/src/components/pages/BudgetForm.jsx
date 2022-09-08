@@ -1,12 +1,13 @@
 import React from "react";
-import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ApiService from "../API/ApiService";
 import { MainContext } from "../../context";
 import { GetCurrentDate } from "../utils/utils";
 
 const BudgetForm = () => {
 
+    const params = useParams();
     const [budget, setBudget] = useState({
         name: "",
         plain_summ: "",
@@ -14,6 +15,24 @@ const BudgetForm = () => {
         end_date: GetCurrentDate(new Date()),
         category: ""
     })
+
+    useEffect(() => {
+        if (params.budgetId) {
+            readEditableBudget()
+        };
+    }, [])
+
+    const readEditableBudget = async () => {
+        const editableBudget = await ApiService.getBudgetById(params.budgetId)
+        setBudget({
+            ...budget,
+            name: editableBudget.name,
+            plain_summ: editableBudget.plain_summ,
+            start_date: editableBudget.start_date,
+            end_date: editableBudget.end_date,
+            category: editableBudget.category
+        })
+    }
 
     const { categories } = useContext(MainContext)
 
@@ -25,7 +44,16 @@ const BudgetForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        await ApiService.postBudget(budget)
+        if (params.budgetId) {
+            await ApiService.patchBudget(budget, params.budgetId)
+        } else {
+            await ApiService.postBudget(budget)
+        }
+        navigateHome()
+    }
+
+    const deleteBudget = async () => {
+        await ApiService.deleteBudget(params.budgetId)
         navigateHome()
     }
 
@@ -45,7 +73,7 @@ const BudgetForm = () => {
                     style={{ backgroundImage: "url(/static/select.svg)" }}
                     onChange={e => setBudget({ ...budget, category: e.target.value })}
                     required>
-                    <option value=''></option>
+                    <option value={budget.category}>{budget.category}</option>
                     {categories.map((category) => <option value={category} key={category}>{category}</option>)}
                 </select>
                 <br />
@@ -63,6 +91,10 @@ const BudgetForm = () => {
 
                 <div className="tr__upper tr__upper__left">
                     <input type="submit" className="btn btn__green" value="Отправить" />
+                    {params.budgetId
+                        ? <button type="button" onClick={deleteBudget} className="btn btn__red">Удалить</button>
+                        : <></>
+                    }
                     <input type="button" className="btn btn__red" value="Закрыть" onClick={navigateHome} />
                 </div>
             </form>

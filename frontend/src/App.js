@@ -20,6 +20,7 @@ import GeneratedFilter from './components/pages/GeneratedFilter';
 import BudgetList from './components/pages/BudgetList';
 import BudgetForm from './components/pages/BudgetForm';
 import BudgetDeatil from './components/pages/BudgetDetail';
+import PlainOperationsList from './components/pages/PlainOperationsList';
 
 function App() {
 
@@ -92,13 +93,17 @@ function App() {
                 <Route path="" element={<BudgetList />} />
                 <Route path="new" element={<BudgetForm />} />
                 <Route path="detail" element={<BudgetDeatil />} />
+                <Route path=":budgetId" element={<BudgetForm />} />
               </Route>
               <Route path="last20" element={<Last20 />} />
               <Route path="filter" >
                 <Route path="" element={<Filter />} />
                 <Route path="generated_filter" element={<GeneratedFilter />} />
               </Route>
-              <Route path="past" element={<MoneyAccounts />} />
+              <Route path="past" >
+                <Route path="" element={<PlainOperationsList />} />
+                <Route path=":plainOperationId" element={<PlainOperationForm />} />
+              </Route>
             </Route>
             <Route />
           </Routes>

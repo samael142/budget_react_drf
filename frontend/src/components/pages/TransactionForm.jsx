@@ -155,10 +155,7 @@ const TransactionForm = () => {
     }
 
     const deleteTransaction = async () => {
-        let promise = new Promise((resolve, reject) => {
-            resolve(ApiService.deleteTransaction(params.transactionId))
-        });
-        await promise
+        await ApiService.deleteTransaction(params.transactionId)
         navigateHome()
     }
 

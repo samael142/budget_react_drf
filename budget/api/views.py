@@ -162,10 +162,33 @@ class PlainOperationModelViewSet(ModelViewSet):
         order_by('operation_date')
     serializer_class = PlainOperationModelSerializer
 
-    def get_serializer_class(self):
-        if self.action == 'list':
-            return PlainOperationModelListSerializer
-        return PlainOperationModelSerializer
+    # def get_serializer_class(self):
+    #     if self.action == 'list':
+    #         return PlainOperationModelListSerializer
+    #     return PlainOperationModelSerializer
+
+    def list(self, request):
+        qs = []
+        queryset_element = {}
+        for el in self.queryset:
+            transactions_array = Transaction.objects.filter(plain_id=el.id).order_by('operation_date')
+            queryset_element['id'] = el.pk
+            queryset_element['header'] = el.header
+            queryset_element['category'] = el.category
+            queryset_element['subcategory'] = el.subcategory
+            queryset_element['summ'] = el.operation_summ
+            if len(transactions_array) != 0:
+                queryset_element['curr_date'] = transactions_array.first().operation_date
+                queryset_element['end_date'] = transactions_array.last().operation_date
+                queryset_element['disabled'] = False
+            else:
+                queryset_element['curr_date'] = "--"
+                queryset_element['end_date'] = "--"
+                queryset_element['disabled'] = True
+            qs.append(queryset_element)
+            queryset_element = {}
+        serializer = PlainOperationModelListSerializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class ReportViewSet(ModelViewSet):

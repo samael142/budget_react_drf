@@ -24,7 +24,7 @@ class PlainOperation(models.Model):
     # count = models.PositiveSmallIntegerField(null=True, blank=True, default=1)
 
     @staticmethod
-    def quantity_count(start_date, end_date, per, count):
+    def quantity_count(start_date, end_date, per, count=1):
         datetime_start_date = datetime.strptime(start_date, "%Y-%m-%d")
         datetime_end_date = datetime.strptime(end_date, "%Y-%m-%d")
         if per == "daily":
@@ -68,11 +68,10 @@ class PlainOperation(models.Model):
                                           plain_id=plain_operation_object, )
                 transaction.save()
                 if plain_operation_object.period == 'daily':
-                    operation_date = operation_date + timedelta(days=plain_operation_object.count)
+                    operation_date = operation_date + timedelta(days=1)
                 else:
-                    for _ in range(plain_operation_object.count):
-                        days_in_month = calendar.monthrange(operation_date.year, operation_date.month)[1]
-                        operation_date = operation_date + timedelta(days=days_in_month)
+                    days_in_month = calendar.monthrange(operation_date.year, operation_date.month)[1]
+                    operation_date = operation_date + timedelta(days=days_in_month)
 
 
 class Transaction(models.Model):

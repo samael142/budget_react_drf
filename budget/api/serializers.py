@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.serializers import ModelSerializer, CharField, Serializer, IntegerField, BooleanField
 from budget.models import Header, Category, Subcategory, BudgetPeriod
 from transactionapp.models import Transaction, TotalBalance, TotalBalancePerAccount, PlainOperation
 from maapp.models import MaInfo, MoneyAccount
@@ -108,14 +108,15 @@ class BudgetDetailSerializer(ModelSerializer):
         fields = ['category', 'operation_date', 'operation_summ']
 
 
-class PlainOperationModelListSerializer(ModelSerializer):
-    header = HeaderModelSerializer()
-    category = CategoryModelSerializer()
-    subcategory = SubcategoryModelSerializer()
-
-    class Meta:
-        model = PlainOperation
-        fields = '__all__'
+class PlainOperationModelListSerializer(Serializer):
+    id = IntegerField()
+    header = CharField()
+    category = CharField()
+    subcategory = CharField()
+    summ = IntegerField()
+    curr_date = CharField()
+    end_date = CharField()
+    disabled = BooleanField()
 
 
 class TotalBalanceModelSerializer(ModelSerializer):
@@ -178,6 +179,18 @@ class BudgetModelSerializer(ModelSerializer):
         except KeyError:
             budget_instance = BudgetPeriod.objects.create(**validated_data)
         return budget_instance
+
+    def update(self, instance, validated_data):
+        try:
+            category = validated_data.pop('category')
+            instance.category = Category.objects.get(name=category)
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+        except KeyError:
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+        instance.save()
+        return instance
 
     class Meta:
         model = BudgetPeriod

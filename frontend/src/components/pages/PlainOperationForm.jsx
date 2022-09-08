@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import useDebounce from "../../hooks/useDebounce";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ApiService from "../API/ApiService";
 import NewEntryHead from "../NewEntryHead";
 import { MainContext } from "../../context";
@@ -8,17 +8,13 @@ import { GetCurrentDate } from "../utils/utils";
 
 const PlainOperationForm = () => {
 
+    const params = useParams()
+    console.log(params);
+
     const { headers, categories, subcategories,
         setOnScreenDate, setHeaders, setCategories, setSubcategories } = useContext(MainContext)
 
     const navigate = useNavigate();
-
-    // const currentDate = new Date()
-    // const yyyy = currentDate.getFullYear()
-    // const mm = currentDate.getMonth() + 1
-    // const dd = currentDate.getDate()
-    // const stringDate = [yyyy, (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join("-")
-
 
     const [transaction, setTransaction] = useState({
         operation_date: GetCurrentDate(new Date()),
@@ -31,44 +27,44 @@ const PlainOperationForm = () => {
         comment: ''
     })
     const [endDate, setEndDate] = useState(GetCurrentDate(new Date()))
-    const [lastHeader, setLastHeader] = useState()
+    // const [lastHeader, setLastHeader] = useState()
     const [operationType, setOperationType] = useState('out')
-    const debValue = useDebounce(transaction.header, 500)
+    // const debValue = useDebounce(transaction.header, 500)
 
-    useEffect(() => {
-        searchExsistingHeader(debValue)
-    }, [debValue])
+    // useEffect(() => {
+    //     searchExsistingHeader(debValue)
+    // }, [debValue])
 
-    useEffect(() => {
-        autosetTransactionFields()
-    }, [lastHeader])
+    // useEffect(() => {
+    //     autosetTransactionFields()
+    // }, [lastHeader])
 
     const navigateHome = () => {
         setOnScreenDate(new Date())
         navigate('/');
     };
 
-    const searchExsistingHeader = (header) => {
-        let capHeader = header.charAt(0).toUpperCase() + header.slice(1);
-        let searchingExsistingHeader = headers.find(o => o === capHeader)
-        if (searchingExsistingHeader) {
-            setLastHeader(searchingExsistingHeader)
-        }
-    }
+    // const searchExsistingHeader = (header) => {
+    //     let capHeader = header.charAt(0).toUpperCase() + header.slice(1);
+    //     let searchingExsistingHeader = headers.find(o => o === capHeader)
+    //     if (searchingExsistingHeader) {
+    //         setLastHeader(searchingExsistingHeader)
+    //     }
+    // }
 
-    const autosetTransactionFields = async () => {
-        if (lastHeader) {
-            const lastTransaction = await ApiService.getLastHeaderTransaction(lastHeader)
-            if (lastTransaction.data.header.name) {
-                setTransaction({
-                    ...transaction,
-                    header: lastTransaction.data.header.name,
-                    category: lastTransaction.data.category.name,
-                    subcategory: lastTransaction.data.subcategory.name
-                })
-            }
-        }
-    }
+    // const autosetTransactionFields = async () => {
+    //     if (lastHeader) {
+    //         const lastTransaction = await ApiService.getLastHeaderTransaction(lastHeader)
+    //         if (lastTransaction.data.header.name) {
+    //             setTransaction({
+    //                 ...transaction,
+    //                 header: lastTransaction.data.header.name,
+    //                 category: lastTransaction.data.category.name,
+    //                 subcategory: lastTransaction.data.subcategory.name
+    //             })
+    //         }
+    //     }
+    // }
 
     const summConvert = (summ) => {
         if (operationType === "out") {
