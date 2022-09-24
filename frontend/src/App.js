@@ -78,7 +78,7 @@ function App() {
               <Route path="new" element={<PlainOperationForm />} />
             </Route>
             <Route path="money_accounts">
-              <Route path="list" element={<MoneyAccounts />} />
+              <Route path="list" element={<MoneyAccounts getMoneyAccountsList={getMoneyAccountsList}/>} />
               <Route path="new" element={<MoneyAccountForm getMoneyAccountsList={getMoneyAccountsList} />} />
               <Route path=":accountId" element={<TransactionsList onScreenDate={onScreenDate} />} />
             </Route>

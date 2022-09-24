@@ -125,7 +125,6 @@ const TransactionForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        // let promise
         const transactionForSave = {
             ...transaction,
             operation_summ: summConvert(transaction.operation_summ),

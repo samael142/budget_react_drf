@@ -24,18 +24,20 @@ const TransactionItem = (props) => {
         );
     } else {
         return (
+            props.transaction.operation_summ > 0 ?
             <Link to={`/transfer/${props.transaction.transfer_id}`}
                 className="transition__item tr__box transfer__color">
                 <div className="tr__box__row">
                     <div><b>{props.transaction.comment}</b>
                     </div>
-                    <div className={"num " + (props.transaction.operation_summ > 0 ? "green__color" : "red__color")}>{parseFloat(props.transaction.operation_summ).toLocaleString()}</div>
+                    <div className="black__color">{parseFloat(props.transaction.operation_summ).toLocaleString()}</div>
                 </div>
                 <div className="tr__box__row">
-                    <div>{props.transaction.account ? props.transaction.account.name : ""}</div>
+                    <div>Перевод</div>
                     <div>{DateConvert(props.transaction.operation_date)}</div>
                 </div>
             </Link>
+            : <></>
         )
     }
 };

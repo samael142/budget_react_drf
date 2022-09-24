@@ -1,4 +1,4 @@
-import React, { useState, useContext, useLayoutEffect } from "react";
+import React, { useState, useContext, useLayoutEffect, useEffect } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainContext } from "../../context";
 import ApiService from "../API/ApiService";
@@ -10,6 +10,8 @@ const TransferForm = () => {
 
     const [fromAccountName, setFromAccountName] = useState('')
     const [toAccountName, setToAccountName] = useState('')
+    const [accountNameFrom, setAccountNameFrom] = useState('')
+    const [accountNameTo, setAccountNameTo] = useState('')
 
     let params = useParams();
 
@@ -49,16 +51,14 @@ const TransferForm = () => {
         };
     }, [])
 
+    useEffect(() => {
+        setTransactionFrom({ ...transactionFrom, comment: accountNameFrom + " -> " + accountNameTo });
+        setTransactionTo({ ...transactionTo, comment: accountNameFrom + " -> " + accountNameTo });
+    }, [accountNameFrom, accountNameTo])
+
     const { moneyAccounts, setOnScreenDate } = useContext(MainContext)
 
     const navigate = useNavigate();
-
-    // const currentDate = new Date()
-    // const yyyy = currentDate.getFullYear()
-    // const mm = currentDate.getMonth() + 1
-    // const dd = currentDate.getDate()
-    // const stringDate = [yyyy, (mm > 9 ? '' : '0') + mm, (dd > 9 ? '' : '0') + dd].join("-")
-
 
     const [transactionFrom, setTransactionFrom] = useState({
         id: '',
@@ -136,7 +136,8 @@ const TransferForm = () => {
                     style={{ backgroundImage: "url(/static/select.svg)" }}
                     onChange={e => {
                         setTransactionFrom({ ...transactionFrom, account: e.target.value });
-                        setTransactionTo({ ...transactionTo, comment: "Перевод с " + e.target.options[e.target.selectedIndex].text });
+                        // setTransactionTo({ ...transactionTo, comment: "Перевод с " + e.target.options[e.target.selectedIndex].text });
+                        setAccountNameFrom(e.target.options[e.target.selectedIndex].text)
                     }}>
                     <option value={transactionFrom.account}>{fromAccountName}</option>
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}
@@ -147,7 +148,8 @@ const TransferForm = () => {
                     style={{ backgroundImage: "url(/static/select.svg)" }}
                     onChange={e => {
                         setTransactionTo({ ...transactionTo, account: e.target.value });
-                        setTransactionFrom({ ...transactionFrom, comment: "Перевод на " + e.target.options[e.target.selectedIndex].text });
+                        // setTransactionFrom({ ...transactionFrom, comment: "Перевод на " + e.target.options[e.target.selectedIndex].text });
+                        setAccountNameTo(e.target.options[e.target.selectedIndex].text)
                     }}>
                     <option value={transactionTo.account}>{toAccountName}</option>
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}

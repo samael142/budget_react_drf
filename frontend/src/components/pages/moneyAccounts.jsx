@@ -1,13 +1,18 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import ApiService from "../API/ApiService";
 import { MainContext } from "../../context";
 import MoneyAccountItem from "../MoneyAccountItem";
 import { Link } from "react-router-dom";
 
 
-const MoneyAccounts = () => {
+const MoneyAccounts = (props) => {
 
     const { moneyAccounts, setMoneyAccounts } = useContext(MainContext)
+
+    useEffect(() => {
+        props.getMoneyAccountsList()
+    }, [])
+
 
 
     const handleClick = async (moneyAccount) => {
