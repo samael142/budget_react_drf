@@ -8,8 +8,8 @@ import { GetCurrentDate } from "../utils/utils";
 
 const TransferForm = () => {
 
-    const [fromAccountName, setFromAccountName] = useState('')
-    const [toAccountName, setToAccountName] = useState('')
+    // const [fromAccountName, setFromAccountName] = useState('')
+    // const [toAccountName, setToAccountName] = useState('')
     const [accountNameFrom, setAccountNameFrom] = useState('')
     const [accountNameTo, setAccountNameTo] = useState('')
 
@@ -28,7 +28,7 @@ const TransferForm = () => {
                     transfer_id: item.transfer_id,
                     comment: item.comment
                 })
-                setFromAccountName(item.account.name)
+                setAccountNameFrom(item.account.name)
             }
             if (parseFloat(item.operation_summ) > 0) {
                 setTransactionTo({
@@ -40,7 +40,7 @@ const TransferForm = () => {
                     transfer_id: item.transfer_id,
                     comment: item.comment
                 })
-                setToAccountName(item.account.name)
+                setAccountNameTo(item.account.name)
             }
         });
     }
@@ -139,7 +139,7 @@ const TransferForm = () => {
                         // setTransactionTo({ ...transactionTo, comment: "Перевод с " + e.target.options[e.target.selectedIndex].text });
                         setAccountNameFrom(e.target.options[e.target.selectedIndex].text)
                     }}>
-                    <option value={transactionFrom.account}>{fromAccountName}</option>
+                    <option value={transactionFrom.account}>{accountNameFrom}</option>
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}
                 </select>
                 <h5 className="select__label">Куда</h5>
@@ -151,7 +151,7 @@ const TransferForm = () => {
                         // setTransactionFrom({ ...transactionFrom, comment: "Перевод на " + e.target.options[e.target.selectedIndex].text });
                         setAccountNameTo(e.target.options[e.target.selectedIndex].text)
                     }}>
-                    <option value={transactionTo.account}>{toAccountName}</option>
+                    <option value={transactionTo.account}>{accountNameTo}</option>
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}
                 </select>
                 <br />
