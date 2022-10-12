@@ -9,8 +9,8 @@ RUN apt-get update && apt-get -y dist-upgrade
 RUN apt install -y netcat
 
 
-COPY requirements.txt /
-RUN pip install -r requirements.txt
+COPY _requirements.txt /
+RUN pip install -r _requirements.txt
 RUN pip install gunicorn
 ADD . /app
 WORKDIR /app
