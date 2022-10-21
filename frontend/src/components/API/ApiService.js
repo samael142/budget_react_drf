@@ -99,8 +99,8 @@ export default class ApiService {
     }
 
 
-    static postPlainOperation(transaction) {
-        axios.post(`${ApiService.getUrl()}plain_operations/`, transaction)
+    static async postPlainOperation(transaction) {
+        await axios.post(`${ApiService.getUrl()}plain_operations/`, transaction)
     }
 
     static async getLastHeaderTransaction(header) {
@@ -227,4 +227,19 @@ export default class ApiService {
         return response.data
     }
 
+    static async getPlainOperationById(plainOperationId) {
+        const response = await axios.get(`${ApiService.getUrl()}plain_operations/${plainOperationId}`)
+        return response.data
+    }
+
+    static async getPlainTransactions(plainOperationId) {
+        const response = await axios.get(`${ApiService.getUrl()}transactions/`,
+            { params: { 'plain_id': plainOperationId } })
+        return response.data
+    }
+
+    static async deletePlainOperation(id) {
+        await axios.delete(`${ApiService.getUrl()}transactions/`,
+            { params: { 'plain_id': id } })
+    }
 }

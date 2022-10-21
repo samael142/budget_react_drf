@@ -85,7 +85,7 @@ class Transaction(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     past = models.BooleanField(default=False)
-    plain_id = models.ForeignKey(PlainOperation, on_delete=models.RESTRICT, null=True, blank=True)
+    plain_id = models.ForeignKey(PlainOperation, on_delete=models.CASCADE, null=True, blank=True)
     transfer_id = models.CharField(max_length=8, null=True, blank=True)
 
     @staticmethod

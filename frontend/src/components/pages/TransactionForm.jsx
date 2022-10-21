@@ -13,6 +13,7 @@ const TransactionForm = () => {
 
     const readEditableTransaction = async () => {
         const editablTransaction = await ApiService.getTransactionById(params.transactionId)
+        setDisabledHead(true)
         setTransaction({
             ...transaction,
             operation_date: editablTransaction.data.operation_date,
@@ -79,6 +80,7 @@ const TransactionForm = () => {
     const [operationType, setOperationType] = useState('out')
     const [selectedAccountName, setSelectedAccountName] = useState("")
     const [activate, setActivate] = useState(transaction.past)
+    const [disabledHead, setDisabledHead] = useState(false)
     const debValue = useDebounce(transaction.header, 200)
 
     useEffect(() => {
@@ -176,7 +178,7 @@ const TransactionForm = () => {
 
     return (
         <>
-            <NewEntryHead element={'transaction'} />
+            <NewEntryHead element={'transaction'} disabled={disabledHead}/>
             <form onSubmit={handleSubmit}>
                 <div className="tr__upper">
                     <input className="form__control form__sm row__2" type="date" id="start" name="operation_date"

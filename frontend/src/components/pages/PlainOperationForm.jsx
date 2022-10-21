@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import useDebounce from "../../hooks/useDebounce";
 import { useNavigate, useParams } from 'react-router-dom';
 import ApiService from "../API/ApiService";
 import NewEntryHead from "../NewEntryHead";
@@ -8,8 +7,13 @@ import { GetCurrentDate } from "../utils/utils";
 
 const PlainOperationForm = () => {
 
+    const periodObject = {
+        once: 'Разовая',
+        daily: 'Ежедневная',
+        monthly: 'Ежемесячная'
+    }
+
     const params = useParams()
-    console.log(params);
 
     const { headers, categories, subcategories,
         setOnScreenDate, setHeaders, setCategories, setSubcategories } = useContext(MainContext)
@@ -27,44 +31,40 @@ const PlainOperationForm = () => {
         comment: ''
     })
     const [endDate, setEndDate] = useState(GetCurrentDate(new Date()))
-    // const [lastHeader, setLastHeader] = useState()
     const [operationType, setOperationType] = useState('out')
-    // const debValue = useDebounce(transaction.header, 500)
+    const [disabledHead, setDisabledHead] = useState(false)
 
-    // useEffect(() => {
-    //     searchExsistingHeader(debValue)
-    // }, [debValue])
+    const readEditableTransaction = async () => {
+        const editableTransaction = await ApiService.getPlainOperationById(params.plainOperationId)
+        const plainTransactions = await ApiService.getPlainTransactions(params.plainOperationId)
+        setEndDate(plainTransactions[1].operation_date)
+        setDisabledHead(true)
+        setTransaction({
+            ...transaction,
+            operation_date: plainTransactions[0].operation_date,
+            operation_summ: Math.abs(parseFloat(editableTransaction.operation_summ)),
+            period: editableTransaction.period,
+            header: editableTransaction.header,
+            category: editableTransaction.category,
+            subcategory: editableTransaction.subcategory,
+            comment: editableTransaction.comment
+        })
+        parseFloat(editableTransaction.operation_summ) < 0
+            ? setOperationType('out')
+            : setOperationType('in')
+    }
 
-    // useEffect(() => {
-    //     autosetTransactionFields()
-    // }, [lastHeader])
+    useEffect(() => {
+        if (params.plainOperationId) {
+            readEditableTransaction()
+        };
+    }, [])
+
 
     const navigateHome = () => {
         setOnScreenDate(new Date())
         navigate('/');
     };
-
-    // const searchExsistingHeader = (header) => {
-    //     let capHeader = header.charAt(0).toUpperCase() + header.slice(1);
-    //     let searchingExsistingHeader = headers.find(o => o === capHeader)
-    //     if (searchingExsistingHeader) {
-    //         setLastHeader(searchingExsistingHeader)
-    //     }
-    // }
-
-    // const autosetTransactionFields = async () => {
-    //     if (lastHeader) {
-    //         const lastTransaction = await ApiService.getLastHeaderTransaction(lastHeader)
-    //         if (lastTransaction.data.header.name) {
-    //             setTransaction({
-    //                 ...transaction,
-    //                 header: lastTransaction.data.header.name,
-    //                 category: lastTransaction.data.category.name,
-    //                 subcategory: lastTransaction.data.subcategory.name
-    //             })
-    //         }
-    //     }
-    // }
 
     const summConvert = (summ) => {
         if (operationType === "out") {
@@ -88,8 +88,11 @@ const PlainOperationForm = () => {
         return months <= 0 ? 1 : months;
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
+        if (params.plainOperationId) {
+            await ApiService.deletePlainOperation(params.plainOperationId)
+        }
         const transactionForSave = {
             ...transaction,
             operation_summ: summConvert(transaction.operation_summ),
@@ -110,7 +113,7 @@ const PlainOperationForm = () => {
             default:
                 break;
         }
-        ApiService.postPlainOperation(transactionForSave)
+        await ApiService.postPlainOperation(transactionForSave)
         addNewTransactionParameters(transactionForSave.header, transactionForSave.category, transactionForSave.subcategory)
         setTimeout(() => {
             navigateHome()
@@ -129,29 +132,42 @@ const PlainOperationForm = () => {
         }
     }
 
+    const deletePlainOperation = async () => {
+        await ApiService.deletePlainOperation(params.plainOperationId)
+        navigateHome()
+    }
+
     return (
         <>
-            <NewEntryHead element={'plain'} />
+            <NewEntryHead element={'plain'} disabled={disabledHead} />
             <form onSubmit={handleSubmit}>
                 <div className="tr__upper">
                     <input className="form__control form__sm row__2" type="date" name="operation_date"
                         onChange={e => setTransaction({ ...transaction, operation_date: e.target.value })}
-                        value={transaction.operation_date} />
+                        value={transaction.operation_date}
+                    />
                     <select
                         onChange={e => setOperationType(e.target.value)}
+                        disabled={params.plainOperationId ? true : false}
                         defaultValue="out" className="form__select form__sm row__2" name="operation_type" style={{ backgroundImage: "url(/static/select.svg)" }}>
+                        <option value={operationType}>
+                            {operationType === 'out' ? 'Расход' : 'Приход'}
+                        </option>
                         <option value="out">Расход</option>
                         <option value="in">Приход</option>
                     </select>
                 </div>
 
                 <div className="tr__upper">
-                    <input className="form__control form__sm row__2" type="date" name="operation_date"
+                    <input className="form__control form__sm row__2" type="date" name="operation_date" id="endDate"
                         onChange={e => setEndDate(e.target.value)}
-                        value={endDate} />
-                    <select
+                        value={endDate}
+                    />
+                    <select id="period"
                         onChange={e => setTransaction({ ...transaction, period: e.target.value })}
+                        disabled={params.plainOperationId ? true : false}
                         defaultValue={transaction.period} className="form__select form__sm row__2" name="operation_type" style={{ backgroundImage: "url(/static/select.svg)" }}>
+                        {params.plainOperationId && <option value={transaction.period}>{periodObject[transaction.period]}</option>}
                         <option value="once">Разовая</option>
                         <option value="daily">Ежедневная</option>
                         <option value="monthly">Ежемесячная</option>
@@ -173,6 +189,7 @@ const PlainOperationForm = () => {
                     className="form__control form__sm" list="headers"
                     placeholder="Заголовок"
                     value={transaction.header} required
+                    disabled={params.plainOperationId ? true : false}
                     onChange={e => setTransaction({ ...transaction, header: e.target.value })} />
                 <datalist id="headers">
                     {headers.map((header) => <option value={header} key={header} />)}
@@ -183,6 +200,7 @@ const PlainOperationForm = () => {
                     className="form__control form__sm" list="categories"
                     placeholder="Категория"
                     value={transaction.category} required
+                    disabled={params.plainOperationId ? true : false}
                     onChange={e => setTransaction({ ...transaction, category: e.target.value })} />
                 <datalist id="categories">
                     {categories.map((category) => <option value={category} key={category} />)}
@@ -193,17 +211,27 @@ const PlainOperationForm = () => {
                     className="form__control form__sm" list="subcategories"
                     placeholder="Подкатегория"
                     value={transaction.subcategory} required
+                    disabled={params.plainOperationId ? true : false}
                     onChange={e => setTransaction({ ...transaction, subcategory: e.target.value })} />
                 <datalist id="subcategories">
                     {subcategories.map((subcategory) => <option value={subcategory} key={subcategory} />)}
                 </datalist>
                 <br />
                 <input type="text" name="comment" className="form__control form__sm" placeholder="Комментарий"
+                    disabled={params.plainOperationId ? true : false}
                     onChange={e => setTransaction({ ...transaction, comment: e.target.value })}
                     value={transaction.comment} />
                 <br />
                 <button type="submit" className="btn btn__green">Отправить</button>
+                {params.plainOperationId
+                    ? <button type="button" onClick={deletePlainOperation} className="btn btn__red">Удалить</button>
+                    : <></>
+                }
                 <button type="button" onClick={navigateHome} className="btn btn__red">Закрыть</button>
+
+
+                {/* <button type="submit" className="btn btn__green">Отправить</button>
+                <button type="button" onClick={navigateHome} className="btn btn__red">Закрыть</button> */}
             </form>
         </>
     )

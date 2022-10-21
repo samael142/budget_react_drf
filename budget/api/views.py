@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from xml.sax.handler import property_declaration_handler
 
 from django.db.models import Sum
 from rest_framework.decorators import action
@@ -58,6 +59,7 @@ class TransactionModelViewSet(ModelViewSet):
         header = request.GET.get('last_header', None)
         transaction_id = request.GET.get('transaction_id', None)
         transfer_id = request.GET.get('transfer_id', None)
+        plain_id = request.GET.get('plain_id', None)
         last20 = request.GET.get('last20', None)
         filter = request.GET.get('filter', None)
         queryset = self.filter_queryset(self.get_queryset())
@@ -70,6 +72,12 @@ class TransactionModelViewSet(ModelViewSet):
             serializer = TransactionModelListSerializer(queryset)
         if transfer_id:
             queryset = Transaction.objects.filter(transfer_id=transfer_id)
+            serializer = TransactionModelListSerializer(queryset, many=True)
+        if plain_id:
+            first_transaction = (Transaction.objects.filter(plain_id=plain_id).order_by('operation_date')).first().pk
+            last_transaction = (Transaction.objects.filter(plain_id=plain_id).order_by('operation_date')).last().pk
+            plain_transactions_list = [first_transaction, last_transaction]
+            queryset = Transaction.objects.filter(pk__in=plain_transactions_list).order_by('operation_date')
             serializer = TransactionModelListSerializer(queryset, many=True)
         if last20:
             queryset = Transaction.objects.all().order_by('-updated')[:20]
@@ -102,14 +110,17 @@ class TransactionModelViewSet(ModelViewSet):
                                                   operation_date__range=(start, end)). \
                 order_by('operation_date').all()
             serializer = TransactionModelListSerializer(queryset, many=True)
-            # print(filter_header, filter_category, filter_subcategory, start, end)
         return Response(serializer.data)
 
     @action(methods=['delete'], detail=False)
     def delete(self, request):
         transfer_id = request.GET.get('transfer_id', None)
+        plain_id = request.GET.get('plain_id', None)
         if transfer_id:
             queryset = Transaction.objects.filter(transfer_id=transfer_id)
+            queryset.delete()
+        if plain_id:
+            queryset = Transaction.objects.filter(plain_id=plain_id)
             queryset.delete()
         return Response()
 
@@ -160,12 +171,8 @@ class PlainOperationModelViewSet(ModelViewSet):
     queryset = PlainOperation.objects. \
         select_related('header', 'category', 'subcategory'). \
         order_by('operation_date')
+    print('get plain operatiofns')
     serializer_class = PlainOperationModelSerializer
-
-    # def get_serializer_class(self):
-    #     if self.action == 'list':
-    #         return PlainOperationModelListSerializer
-    #     return PlainOperationModelSerializer
 
     def list(self, request):
         qs = []

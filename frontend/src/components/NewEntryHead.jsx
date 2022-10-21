@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 
-const NewEntryHead = ( {element} ) => {
+const NewEntryHead = ( {element, disabled} ) => {
 
     const navigate = useNavigate();
 
@@ -11,7 +11,7 @@ const NewEntryHead = ( {element} ) => {
 
     return (
         <>
-            <select
+            <select disabled={disabled}
                 onChange={handleChange}
                 defaultValue={element} className="form__select title__single" style={{ width: 'auto' }}>
                 <option value="transaction">Транзакция</option>

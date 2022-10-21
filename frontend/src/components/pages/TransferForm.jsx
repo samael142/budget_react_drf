@@ -12,11 +12,13 @@ const TransferForm = () => {
     // const [toAccountName, setToAccountName] = useState('')
     const [accountNameFrom, setAccountNameFrom] = useState('')
     const [accountNameTo, setAccountNameTo] = useState('')
+    const [disabledHead, setDisabledHead] = useState(false)
 
     let params = useParams();
 
     const readEditableTransactions = async () => {
         const response = await ApiService.getTransfer(params.transferId)
+        setDisabledHead(true)
         response.forEach(function (item) {
             if (parseFloat(item.operation_summ) < 0) {
                 setTransactionFrom({
@@ -105,7 +107,7 @@ const TransferForm = () => {
 
     return (
         <>
-            <NewEntryHead element={'transfer'} />
+            <NewEntryHead element={'transfer'} disabled={disabledHead}/>
             <form onSubmit={handleSubmit}>
                 <div className="tr__upper">
                     <input className="form__control form__sm row__2" type="date" id="start" name="operation_date"
@@ -136,7 +138,6 @@ const TransferForm = () => {
                     style={{ backgroundImage: "url(/static/select.svg)" }}
                     onChange={e => {
                         setTransactionFrom({ ...transactionFrom, account: e.target.value });
-                        // setTransactionTo({ ...transactionTo, comment: "Перевод с " + e.target.options[e.target.selectedIndex].text });
                         setAccountNameFrom(e.target.options[e.target.selectedIndex].text)
                     }}>
                     <option value={transactionFrom.account}>{accountNameFrom}</option>
@@ -148,7 +149,6 @@ const TransferForm = () => {
                     style={{ backgroundImage: "url(/static/select.svg)" }}
                     onChange={e => {
                         setTransactionTo({ ...transactionTo, account: e.target.value });
-                        // setTransactionFrom({ ...transactionFrom, comment: "Перевод на " + e.target.options[e.target.selectedIndex].text });
                         setAccountNameTo(e.target.options[e.target.selectedIndex].text)
                     }}>
                     <option value={transactionTo.account}>{accountNameTo}</option>

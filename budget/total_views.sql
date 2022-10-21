@@ -86,3 +86,7 @@ order by
 --WHERE tr.past = false
 --order by tr.header_id, tr.operation_date DESC) as foo
 --order by header;
+
+ALTER TABLE public.transactionapp_transaction DROP CONSTRAINT transactionapp_trans_plain_id_id_2a5abb34_fk_transacti;
+ALTER TABLE public.transactionapp_transaction ADD CONSTRAINT transactionapp_trans_plain_id_id_2a5abb34_fk_transacti FOREIGN KEY (plain_id_id) REFERENCES public.transactionapp_plainoperation(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
