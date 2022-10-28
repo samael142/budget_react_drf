@@ -18,6 +18,7 @@ from django.urls import path, include
 from .views import *
 from rest_framework.routers import DefaultRouter
 import api.views as api
+from rest_framework.authtoken import views
 
 router = DefaultRouter()
 router.register('headers', api.HeaderModelViewSet)
@@ -55,4 +56,5 @@ urlpatterns = [
     path('budget/delete/<int:pk>/', BudgetDeleteView.as_view(), name='budget_delete'),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(router.urls)),
+    path('api/api-token-auth/', views.obtain_auth_token),
     ]

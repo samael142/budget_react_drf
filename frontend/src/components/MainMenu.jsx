@@ -1,6 +1,11 @@
 import React, { useContext } from "react";
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
+import home from '../static/home.svg'
+import transaction from '../static/transaction.svg'
+import accounts from '../static/accounts.svg'
+import report from '../static/report.svg'
+import settings from '../static/settings.svg'
 
 
 const MainMenu = ({ SetOnScreenDate, onScreenDate }) => {
@@ -37,27 +42,27 @@ const MainMenu = ({ SetOnScreenDate, onScreenDate }) => {
                         </li> */}
                         <li className="nav__item">
                             <Link to="/transaction/new" className="nav__link">
-                                <img src="/static/transaction.svg" alt="Транзнакция" className="nav__img" />
+                                <img src={transaction} alt="Транзнакция" className="nav__img" />
                             </Link>
                         </li>
                         <li className="nav__item">
                             <Link to="/money_accounts/list" className="nav__link">
-                                <img src="/static/accounts.svg" alt="Баланс" className="nav__img" />
+                                <img src={accounts} alt="Баланс" className="nav__img" />
                             </Link>
                         </li>
                         <li className="nav__item">
                             <Link to="/report" className="nav__link">
-                                <img src="/static/report.svg" alt="Отчёт" className="nav__img" />
+                                <img src={report} alt="Отчёт" className="nav__img" />
                             </Link>
                         </li>
                         <li className="nav__item">
                             <Link to='/settings' className="nav__link">
-                                <img src="/static/settings.svg" alt="Настройки" className="nav__img" />
+                                <img src={settings} alt="Настройки" className="nav__img" />
                             </Link>
                         </li>
                         <li className="nav__item">
                             <Link to="/" className="nav__link" onClick={homeClick} id="homeButton">
-                                <img src="/static/home.svg" alt="Домашняя" className="nav__img" />
+                                <img src={home} alt="Домашняя" className="nav__img" />
                             </Link>
                         </li>
                         {/* <li className="nav__item right__arrow">

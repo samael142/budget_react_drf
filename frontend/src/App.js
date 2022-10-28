@@ -21,6 +21,7 @@ import BudgetList from './components/pages/BudgetList';
 import BudgetForm from './components/pages/BudgetForm';
 import BudgetDeatil from './components/pages/BudgetDetail';
 import PlainOperationsList from './components/pages/PlainOperationsList';
+import Login from './components/pages/Login';
 
 function App() {
 
@@ -29,10 +30,20 @@ function App() {
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [moneyAccounts, setMoneyAccounts] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
 
   useEffect(() => {
-    getTransactionParameters()
+    tryFetching()
   }, [])
+
+  async function tryFetching() {
+    const response = await ApiService.tryFetching()
+    if (response !== 'Unauthorized') {
+      setIsAuthenticated(true)
+      getTransactionParameters()
+    }
+  }
 
   async function getTransactionParameters() {
     const headers = await ApiService.getHeaders()
@@ -56,16 +67,20 @@ function App() {
       categories,
       subcategories,
       moneyAccounts,
+      isAuthenticated,
       setHeaders,
       setCategories,
       setSubcategories,
       setOnScreenDate,
       setMoneyAccounts,
+      setIsAuthenticated
     }}>
       <Router>
         <div className="App container">
           <Routes>
-            <Route path="/" element={<TransactionsList onScreenDate={onScreenDate} />} />
+            {isAuthenticated
+              ? <Route path="/" element={<TransactionsList onScreenDate={onScreenDate} />} />
+              : <Route path="/" element={<Login />} />}
             <Route path="transaction">
               <Route path="new" element={<TransactionForm />} />
               <Route path=":transactionId" element={<TransactionForm />} />
@@ -78,7 +93,7 @@ function App() {
               <Route path="new" element={<PlainOperationForm />} />
             </Route>
             <Route path="money_accounts">
-              <Route path="list" element={<MoneyAccounts getMoneyAccountsList={getMoneyAccountsList}/>} />
+              <Route path="list" element={<MoneyAccounts getMoneyAccountsList={getMoneyAccountsList} />} />
               <Route path="new" element={<MoneyAccountForm getMoneyAccountsList={getMoneyAccountsList} />} />
               <Route path=":accountId" element={<TransactionsList onScreenDate={onScreenDate} />} />
             </Route>
