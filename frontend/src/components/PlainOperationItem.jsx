@@ -11,7 +11,7 @@ const PlainOperationItem = (props) => {
             <div className="tr__box__row">
                 <div className="tr__box__row__left">{props.plainOperation.header}</div>
                 <div className={"tr__box__row__right " + (props.plainOperation.summ > 0 ? 'green__color' : 'red__color')}>
-                    {props.plainOperation.summ.toLocaleString()}
+                    {props.plainOperation.summ.toLocaleString("ru",{minimumFractionDigits: 2})}
                 </div>
             </div>
             <div className="tr__box__row">

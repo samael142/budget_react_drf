@@ -10,7 +10,7 @@ const TransactionItem = (props) => {
                 <div className="tr__box__row">
                     <div><b>{props.transaction.header ? props.transaction.header.name : ""}</b>
                     </div>
-                    <div className={"num " + (props.transaction.operation_summ > 0 ? "green__color" : "red__color")}>{parseFloat(props.transaction.operation_summ).toLocaleString()}</div>
+                    <div className={"num " + (props.transaction.operation_summ > 0 ? "green__color" : "red__color")}>{parseFloat(props.transaction.operation_summ).toLocaleString("ru",{minimumFractionDigits: 2})}</div>
                 </div>
                 <div className="tr__box__row">
                     <div>{props.transaction.category ? props.transaction.category.name : ""}</div>
@@ -30,7 +30,7 @@ const TransactionItem = (props) => {
                 <div className="tr__box__row">
                     <div><b>{props.transaction.comment}</b>
                     </div>
-                    <div className="black__color">{parseFloat(props.transaction.operation_summ).toLocaleString()}</div>
+                    <div className="black__color">{parseFloat(props.transaction.operation_summ).toLocaleString("ru",{minimumFractionDigits: 2})}</div>
                 </div>
                 <div className="tr__box__row">
                     <div>Перевод</div>

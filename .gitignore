@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 /.idea/
 budget/docker-compose.yml
+budget/budget/settings.py
