@@ -130,3 +130,4 @@ dmypy.json
 /.idea/
 budget/docker-compose.yml
 budget/budget/settings.py
+./docker-compose.yml
