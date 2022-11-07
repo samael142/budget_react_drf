@@ -2,13 +2,6 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "email": "mail@mail.com",
-  "homepage": "./",
-  "author": {
-        "name": "John Doe",
-        "url": "https://example.com",
-        "email": "johndoe@example.com"
-    },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -25,16 +18,11 @@
     "swiper": "^8.2.6",
     "web-vitals": "^2.1.4"
   },
-  "main": "electron/main.js",
   "scripts": {
-    "start": "export BROWSER=none && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron": "electron .",
-    "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron .",
-    "build-electron": "mkdir build/electron && cp -r electron/. build/electron",
-    "package": "electron-builder build --linux -c.extraMetadata.main=build/electron/main.js --publish never"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -53,26 +41,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "electron": "^21.2.0",
-    "electron-builder": "^23.6.0"
-  },
-  "build": {
-     "productName":"yourProductName",
-     "appId":"org.yourProductName",	  
-     "files": ["build/**/*", "node_modules/**/*"],
-     "directories": {
-       "buildResources": "public"
-     },
-     "linux":{
-        "target":[
-            "deb",
-            "apk",
-            "snap",
-            "AppImage"
-        ],
-        "category":"Development"
-    }
-   }
+  }
 }

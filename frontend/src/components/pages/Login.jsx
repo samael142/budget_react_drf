@@ -8,10 +8,11 @@ import { MainContext } from "../../context";
 const Login = () => {
 
     const navigate = useNavigate()
-    const { setIsAuthenticated } = useContext(MainContext)
+    const { setIsAuthenticated, getTransactionParameters } = useContext(MainContext)
 
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
+    const [showLoginError, setShowLoginError] = useState(false)
 
     const handleSubmit = async (event) => {
 
@@ -20,12 +21,9 @@ const Login = () => {
             const response = await ApiService.getToken(login, password)
             setIsAuthenticated(true)
             localStorage.setItem('token', response.data.token)
-            ApiService.tryFetching()
-            const timer = setTimeout(() => {
-                navigate('/')
-            }, 1000);
+            getTransactionParameters()
         } catch (err) {
-            console.log('err');
+            setShowLoginError(true)
         }
     }
 
@@ -36,7 +34,7 @@ const Login = () => {
             <form onSubmit={handleSubmit}>
                 <input value={login} onChange={e => setLogin(e.target.value)} type="text" name="username" className="form__control" placeholder="Логин" required />
                 <br />
-                <label htmlFor="password">Неправильное имя пользователя или пароль</label>
+                {showLoginError && <label className="red__color" htmlFor="password">Неправильное имя пользователя или пароль</label>}
                 <input id="password" value={password} onChange={e => setPassword(e.target.value)} type="password" name="password" className="form__control" placeholder="Пароль" required />
                 <br />
                 <br />

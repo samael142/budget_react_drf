@@ -11,6 +11,7 @@ export default class ApiService {
     }
 
     static async tryFetching() {
+        
         try {
             const response = await axios.get(ApiService.getUrl(), { headers: ApiService.getApiHeaders() })
             return response
@@ -29,15 +30,19 @@ export default class ApiService {
     }
 
     static async getTransactions(date) {
-        const responseTransactions = await axios.get(`${ApiService.getUrl()}transactions/`,
-            {
-                headers: ApiService.getApiHeaders(),
-                params: {
-                    year: date.getFullYear(),
-                    month: date.getMonth() + 1
-                }
-            },)
-        return responseTransactions.data
+        try {
+            const responseTransactions = await axios.get(`${ApiService.getUrl()}transactions/`,
+                {
+                    headers: ApiService.getApiHeaders(),
+                    params: {
+                        year: date.getFullYear(),
+                        month: date.getMonth() + 1
+                    }
+                },)
+            return responseTransactions.data
+        } catch (err) {
+            return err.response.statusText;
+        }
 
     }
 
@@ -55,15 +60,19 @@ export default class ApiService {
     }
 
     static async getTotals(date) {
-        const responseTotals = await axios.get(`${ApiService.getUrl()}total_balance/`,
-            {
-                headers: ApiService.getApiHeaders(),
-                params: {
-                    year: date.getFullYear(),
-                    month: date.getMonth() + 1
-                }
-            })
-        return responseTotals.data
+        try {
+            const responseTotals = await axios.get(`${ApiService.getUrl()}total_balance/`,
+                {
+                    headers: ApiService.getApiHeaders(),
+                    params: {
+                        year: date.getFullYear(),
+                        month: date.getMonth() + 1
+                    }
+                })
+            return responseTotals.data
+        } catch (err) {
+            return err.response.statusText;
+        }
     }
 
     static async getTotalsPerAccount(date, accountId) {

@@ -30,7 +30,7 @@ function App() {
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [moneyAccounts, setMoneyAccounts] = useState([])
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
 
 
   useEffect(() => {
@@ -40,8 +40,9 @@ function App() {
   async function tryFetching() {
     const response = await ApiService.tryFetching()
     if (response !== 'Unauthorized') {
-      setIsAuthenticated(true)
       getTransactionParameters()
+    } else {
+      setIsAuthenticated(false)
     }
   }
 
@@ -73,7 +74,8 @@ function App() {
       setSubcategories,
       setOnScreenDate,
       setMoneyAccounts,
-      setIsAuthenticated
+      setIsAuthenticated,
+      getTransactionParameters
     }}>
       <Router>
         <div className="App container">

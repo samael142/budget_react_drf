@@ -1,14 +1,14 @@
 version: '3.7'
 services:
   web:
-    build: .
-    command: gunicorn budget.wsgi:application --bind 0.0.0.0:8000
+    build: ./budget
+    command: gunicorn budget.wsgi:application --bind 0.0.0.0:8080
     volumes:
       - base_volume:/app/static
     expose:
-      - 8000
+      - 8080
     env_file:
-      - ./budget/.env
+      - ./budget/budget/.env
     depends_on:
       - db
   db:
@@ -16,17 +16,23 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=
-      - POSTGRES_PASSWORD=
-      - POSTGRES_DB=
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=2967431Qwe2
+      - POSTGRES_DB=budgetdjango_base_volume
   nginx:
-    build: ../nginx
+    build: ./nginx
     ports:
-      - "1337:80"
+      - 8000:80
     volumes:
       - base_volume:/app/static
     depends_on:
       - web
+  frontend:
+    build: ./frontend
+    ports:
+      - 80:80
+    depends_on:
+      - nginx
 
 volumes:
   base_volume:
