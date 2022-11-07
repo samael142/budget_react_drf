@@ -18,7 +18,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=2967431Qwe2
-      - POSTGRES_DB=budgetdjango_base_volume
+      - POSTGRES_DB=budget_django
   nginx:
     build: ./nginx
     ports:
