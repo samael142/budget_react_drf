@@ -17,7 +17,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=2967431Qwe2
+      - POSTGRES_PASSWORD=
       - POSTGRES_DB=budget_django
   nginx:
     build: ./nginx
