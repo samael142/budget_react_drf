@@ -104,6 +104,10 @@ body {
     z-index: 100;
 }
 
+.hide {
+    display: none !important;
+}
+
 .tr__box__acc1 {
     display: inline-block;
 }
@@ -447,7 +451,6 @@ body {
 }
 
 .fix__footer {
-    height: 65px;
     background: white;
     display: flex;
     position: fixed;

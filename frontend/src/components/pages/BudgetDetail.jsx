@@ -32,6 +32,8 @@ const BudgetDeatil = () => {
         <div className="container">
             {data.map(item => <BudgetDetailItem item={item} category={state.category.name} name={state.name} key={item[4]} budgetId={state.id} />)}
             <div className="clear__block"></div>
+            <div className="clear__block"></div>
+            <div className="clear__block"></div>
         </div>
     )
 }

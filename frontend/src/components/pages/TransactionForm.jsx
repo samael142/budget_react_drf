@@ -91,6 +91,14 @@ const TransactionForm = () => {
         autosetTransactionFields()
     }, [lastHeader])
 
+    useEffect(() => {
+        const el = document.getElementById("main__menu");
+        el.classList.toggle("hide");
+        return () => {
+            el.classList.toggle("hide");
+        }
+    }, [])
+
     const navigateHome = () => {
         setOnScreenDate(new Date())
         navigate('/');
@@ -178,7 +186,7 @@ const TransactionForm = () => {
 
     return (
         <>
-            <NewEntryHead element={'transaction'} disabled={disabledHead}/>
+            <NewEntryHead element={'transaction'} disabled={disabledHead} />
             <form onSubmit={handleSubmit}>
                 <div className="tr__upper">
                     <input className="form__control form__sm row__2" type="date" id="start" name="operation_date"
@@ -248,7 +256,23 @@ const TransactionForm = () => {
                     onChange={e => setTransaction({ ...transaction, comment: e.target.value })}
                     value={transaction.comment} />
                 <br />
-                {params.transactionId && transaction.past
+                {params.transactionId && transaction.past &&
+                    <div>
+                        <input onChange={activateTransaction} name="activate" className="form__check" type="checkbox" value="0" id="activate" />
+                        <label htmlFor="activate">Активировать</label>
+                        <br />
+                        <br />
+                    </div>
+                }
+                {params.transactionId && !transaction.past &&
+                    <div>
+                        <input onChange={activateTransaction} name="activate" className="form__check" type="checkbox" value="0" id="activate" />
+                        <label htmlFor="activate">Деактивировать</label>
+                        <br />
+                        <br />
+                    </div>
+                }
+                {/* {params.transactionId && transaction.past
                     ? <div>
                         <input onChange={activateTransaction} name="activate" className="form__check" type="checkbox" value="0" id="activate" />
                         <label for="activate">Активировать</label>
@@ -261,7 +285,7 @@ const TransactionForm = () => {
                         <br />
                         <br />
                     </div>
-                }
+                } */}
                 <button type="submit" name="add" className="btn btn__green">Отправить</button>
                 {params.transactionId
                     ? <button type="button" onClick={deleteTransaction} className="btn btn__red">Удалить</button>

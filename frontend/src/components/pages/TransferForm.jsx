@@ -54,6 +54,14 @@ const TransferForm = () => {
     }, [])
 
     useEffect(() => {
+        const el = document.getElementById("main__menu");
+        el.classList.toggle("hide");
+        return () => {
+            el.classList.toggle("hide");
+        }
+    }, [])
+
+    useEffect(() => {
         setTransactionFrom({ ...transactionFrom, comment: accountNameFrom + " -> " + accountNameTo });
         setTransactionTo({ ...transactionTo, comment: accountNameFrom + " -> " + accountNameTo });
     }, [accountNameFrom, accountNameTo])

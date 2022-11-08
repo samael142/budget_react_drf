@@ -6,9 +6,12 @@ import transaction from '../static/transaction.svg'
 import accounts from '../static/accounts.svg'
 import report from '../static/report.svg'
 import settings from '../static/settings.svg'
+import { MainContext } from "../context";
 
 
-const MainMenu = ({ SetOnScreenDate, onScreenDate }) => {
+const MainMenu = () => {
+
+    const { onScreenDate, SetOnScreenDate } = useContext(MainContext)
 
     const navigate = useNavigate();
 
@@ -30,7 +33,7 @@ const MainMenu = ({ SetOnScreenDate, onScreenDate }) => {
     }
 
     return (
-        <div className="fix__footer container">
+        <div className="fix__footer container" id="main__menu">
             <div className="tr__box__acc1">
                 <div className="down__menu1">
                     <ul className="new__nav">

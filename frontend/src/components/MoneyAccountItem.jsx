@@ -28,7 +28,7 @@ const MoneyAccountItem = (props) => {
             </div>
             <Link
                 to={`/money_accounts/${props.moneyAccount.id}`}
-                className={"tr__box__acc transparent__color " + (parseFloat(props.moneyAccount.sum) > 0 ? "green__color" : "red__color")}>{parseFloat(props.moneyAccount.sum).toLocaleString()}
+                className={"tr__box__acc transparent__color " + (parseFloat(props.moneyAccount.sum) > 0 ? "green__color" : "red__color")}>{parseFloat(props.moneyAccount.sum).toLocaleString("ru",{minimumFractionDigits: 2})}
             </Link>
         </div>
     )

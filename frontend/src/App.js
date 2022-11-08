@@ -69,6 +69,7 @@ function App() {
       subcategories,
       moneyAccounts,
       isAuthenticated,
+      onScreenDate,
       setHeaders,
       setCategories,
       setSubcategories,
@@ -81,7 +82,7 @@ function App() {
         <div className="App container">
           <Routes>
             {isAuthenticated
-              ? <Route path="/" element={<TransactionsList onScreenDate={onScreenDate} />} />
+              ? <Route path="/" element={<><TransactionsList onScreenDate={onScreenDate} /></>} />
               : <Route path="/" element={<Login />} />}
             <Route path="transaction">
               <Route path="new" element={<TransactionForm />} />
@@ -124,10 +125,7 @@ function App() {
             </Route>
             <Route />
           </Routes>
-          <MainMenu
-            SetOnScreenDate={setOnScreenDate}
-            onScreenDate={onScreenDate}
-          />
+          <MainMenu />
         </div>
       </Router>
     </MainContext.Provider>

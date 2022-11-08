@@ -60,6 +60,14 @@ const PlainOperationForm = () => {
         };
     }, [])
 
+    useEffect(() => {
+        const el = document.getElementById("main__menu");
+        el.classList.toggle("hide");
+        return () => {
+            el.classList.toggle("hide");
+        }
+    }, [])
+
 
     const navigateHome = () => {
         setOnScreenDate(new Date())

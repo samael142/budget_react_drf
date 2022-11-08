@@ -3,6 +3,7 @@ import ApiService from "../API/ApiService";
 import { MainContext } from "../../context";
 import MoneyAccountItem from "../MoneyAccountItem";
 import { Link } from "react-router-dom";
+import { scroller } from "react-scroll";
 
 
 const MoneyAccounts = (props) => {
@@ -11,6 +12,7 @@ const MoneyAccounts = (props) => {
 
     useEffect(() => {
         props.getMoneyAccountsList()
+        scroller.scrollTo("container");
     }, [])
 
 
