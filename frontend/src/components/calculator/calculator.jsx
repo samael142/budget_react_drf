@@ -25,6 +25,14 @@ export default function Calculator(props) {
         }
     }
 
+    function inputDot(e) {
+        e.preventDefault()
+        let input = e.target.value
+        if (num.length >= 1 && !(/\./).test(num)) {
+            setNum(num + input)
+        }
+    }
+
     function inputOperator(e) {
         e.preventDefault()
         let input = e.target.value
@@ -34,12 +42,16 @@ export default function Calculator(props) {
     }
 
 
-    function clear() {
+    function clear(e) {
+        e.preventDefault()
         setNum(0);
     }
 
-    function del() {
-        setNum(num.slice(0, -1));
+    function del(e) {
+        e.preventDefault()
+        if (num.length !== 1 && num) {
+            setNum(num.slice(0, -1))
+       };
     }
 
     // function porcentagem(e) {
@@ -96,7 +108,7 @@ export default function Calculator(props) {
                     <button className='orange button__calc' onClick={inputOperator} value={'+'}>+</button>
                     <button className='grey button__calc' onClick={inputNum} value={0}>0</button>
                     <button className='button__calc' style={{ visibility: "hidden" }}>k</button>
-                    <button className='grey button__calc' onClick={inputNum} value={"."}>,</button>
+                    <button className='grey button__calc' onClick={inputDot} value={"."}>,</button>
                     <button className='orange button__calc' onClick={calculate}>=</button>
                 </div>
             </div>
