@@ -1,0 +1,48 @@
+.button__calc {
+    width: 2.5em;
+    height: 2.5em;
+    font-size: 1em;
+    border: none;
+    border-radius: 2em;
+}
+
+.button__calc:hover {
+    cursor: pointer;
+}
+
+.wrapper {
+    background-color: black;
+    border-radius: 1em;
+    width: 11em;
+    height: 17em;
+    position: fixed;
+    right: 10px;
+    /* padding: 1em; */
+}
+
+.orange {
+    background-color: #FF9500;
+    color: white;
+}
+
+.grey {
+    background-color: #505050;
+    color: white;
+}
+
+.resultado {
+    color: white;
+    display: flex;
+    justify-content: flex-end; /* Ou 'right' = o resultado seria o mesmo */
+    margin-right: 0.6em;
+    font-size: 1.3em;
+}
+
+.button__box {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    /* min-height: 100vh; */
+    grid-template-columns: repeat(4, 2.5em);
+    grid-template-rows: repeat(5, 2.5em);
+}

@@ -6,6 +6,7 @@ import NewEntryHead from "../NewEntryHead";
 import { useContext } from "react";
 import { MainContext } from "../../context";
 import { GetCurrentDate } from "../utils/utils";
+import Calculator from "../calculator/calculator";
 
 const TransactionForm = () => {
 
@@ -81,6 +82,7 @@ const TransactionForm = () => {
     const [selectedAccountName, setSelectedAccountName] = useState("")
     const [activate, setActivate] = useState(transaction.past)
     const [disabledHead, setDisabledHead] = useState(false)
+    const [showCalculator, setShowCalculator] = useState(false)
     const debValue = useDebounce(transaction.header, 200)
 
     useEffect(() => {
@@ -110,6 +112,10 @@ const TransactionForm = () => {
         if (searchingExsistingHeader) {
             setLastHeader(searchingExsistingHeader)
         }
+    }
+
+    const toggleCalculator = () => {
+        setShowCalculator(!showCalculator)
     }
 
     const autosetTransactionFields = async () => {
@@ -211,8 +217,9 @@ const TransactionForm = () => {
                         value={transaction.operation_summ}
                         type="number" step="0.01" name="operation_summ" className="form__control form__sm" placeholder="Сумма"
                         required />
-                    <input id="showCalculator" className="form__control" type="button" value="->"></input>
+                    <input onClick={toggleCalculator} className="form__control" type="button" value="->"></input>
                 </div>
+                {showCalculator && <Calculator transaction={transaction} setTransaction={setTransaction}/>}
                 <h5 className="select__label">Счёт</h5>
                 <select
                     className="form__select form__sm"

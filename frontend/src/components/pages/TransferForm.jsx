@@ -4,6 +4,7 @@ import { MainContext } from "../../context";
 import ApiService from "../API/ApiService";
 import NewEntryHead from "../NewEntryHead";
 import { GetCurrentDate } from "../utils/utils";
+import Calculator from "../calculator/calculator";
 
 
 const TransferForm = () => {
