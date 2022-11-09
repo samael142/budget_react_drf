@@ -3,9 +3,8 @@ import './calculator.css';
 
 
 export default function Calculator(props) {
+
     const [num, setNum] = useState(props.transaction.operation_summ);
-    // const [oldNum, setOldNum] = useState(0);
-    // const [operator, setOperator] = useState();
     const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
     useEffect(() => {
@@ -41,7 +40,6 @@ export default function Calculator(props) {
         }
     }
 
-
     function clear(e) {
         e.preventDefault()
         setNum(0);
@@ -53,25 +51,6 @@ export default function Calculator(props) {
             setNum(num.slice(0, -1))
        };
     }
-
-    // function porcentagem(e) {
-    //     setNum(num / 100);
-    // }
-
-    // function changeSign() {
-    //     if (num > 0) {
-    //         setNum(-num);
-    //     } else {
-    //         setNum(Math.abs(num));
-    //     }
-    // }
-
-    // function operatorHandler(e) {
-    //     let operatorInput = e.target.value;
-    //     setOperator(operatorInput);
-    //     setOldNum(num);
-    //     setNum(0);
-    // }
 
     function calculate(e) {
         e.preventDefault()
