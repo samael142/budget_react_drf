@@ -4,7 +4,6 @@ import { MainContext } from "../../context";
 import ApiService from "../API/ApiService";
 import NewEntryHead from "../NewEntryHead";
 import { GetCurrentDate } from "../utils/utils";
-import Calculator from "../calculator/calculator";
 
 
 const TransferForm = () => {
@@ -167,7 +166,7 @@ const TransferForm = () => {
                 <button type="submit" className="btn btn__green">Отправить</button>
                 {params.transferId
                     ? <button type="button" onClick={deleteTransactions} className="btn btn__red">Удалить</button>
-                    : <button type="submit" name="copy" className="btn btn__green">+Отправить</button>
+                    : <></>
                 }
                 <button type="button" onClick={navigateHome} className="btn btn__red">Закрыть</button>
             </form>

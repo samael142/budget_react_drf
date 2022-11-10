@@ -6,30 +6,32 @@ import transaction from '../static/transaction.svg'
 import accounts from '../static/accounts.svg'
 import report from '../static/report.svg'
 import settings from '../static/settings.svg'
+import left from '../static/left.svg'
+import right from '../static/right.svg'
 import { MainContext } from "../context";
 
 
 const MainMenu = () => {
 
-    const { onScreenDate, SetOnScreenDate } = useContext(MainContext)
+    const { onScreenDate, setOnScreenDate } = useContext(MainContext)
 
     const navigate = useNavigate();
 
 
     const homeClick = () => {
-        SetOnScreenDate(() => new Date())
+        setOnScreenDate(() => new Date())
         // clickToHome()
         navigate('/');
     }
 
     const rightArrowClick = () => {
         // setShowTransition(false)
-        SetOnScreenDate(new Date(onScreenDate.setMonth(onScreenDate.getMonth() + 1)))
+        setOnScreenDate(() => new Date(onScreenDate.setMonth(onScreenDate.getMonth() + 1)))
     }
 
     const leftArrowClick = () => {
         // setShowTransition(false)
-        SetOnScreenDate(new Date(onScreenDate.setMonth(onScreenDate.getMonth() - 1)))
+        setOnScreenDate(() => new Date(onScreenDate.setMonth(onScreenDate.getMonth() - 1)))
     }
 
     return (
@@ -37,12 +39,12 @@ const MainMenu = () => {
             <div className="tr__box__acc1">
                 <div className="down__menu1">
                     <ul className="new__nav">
-                        {/* <li className="nav__item left__arrow">
+                        <li className="nav__item left__arrow">
                             <div onClick={leftArrowClick}
                                 className="nav__link left__arrow">
-                                <img src="/static/left.svg" alt="Назад" className="nav__img" />
+                                <img src={left} alt="Назад" className="nav__img" />
                             </div>
-                        </li> */}
+                        </li>
                         <li className="nav__item">
                             <Link to="/transaction/new" className="nav__link">
                                 <img src={transaction} alt="Транзнакция" className="nav__img" />
@@ -68,12 +70,12 @@ const MainMenu = () => {
                                 <img src={home} alt="Домашняя" className="nav__img" />
                             </Link>
                         </li>
-                        {/* <li className="nav__item right__arrow">
+                        <li className="nav__item right__arrow">
                             <div onClick={rightArrowClick}
                                 className="nav__link right__arrow">
-                                <img src="/static/right.svg" alt="Вперёд" className="nav__img" />
+                                <img src={right} alt="Вперёд" className="nav__img" />
                             </div>
-                        </li> */}
+                        </li>
                     </ul>
                 </div>
             </div>
