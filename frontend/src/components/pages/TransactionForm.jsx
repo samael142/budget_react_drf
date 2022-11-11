@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { MainContext } from "../../context";
 import { GetCurrentDate } from "../utils/utils";
 import Calculator from "../calculator/calculator";
+import DataList from "../Datalist";
 
 const TransactionForm = () => {
 
@@ -219,7 +220,7 @@ const TransactionForm = () => {
                         required />
                     <input onClick={toggleCalculator} className="form__control" type="button" value="->"></input>
                 </div>
-                {showCalculator && <Calculator transaction={transaction} setTransaction={setTransaction}/>}
+                {showCalculator && <Calculator transaction={transaction} setTransaction={setTransaction} />}
                 <h5 className="select__label">Счёт</h5>
                 <select
                     className="form__select form__sm"
@@ -229,7 +230,7 @@ const TransactionForm = () => {
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}
                 </select>
                 <br />
-                <input onFocus={(event) => { event.target.select() }}
+                {/* <input onFocus={(event) => { event.target.select() }}
                     type="text" name="header"
                     className="form__control form__sm" list="headers"
                     placeholder="Заголовок"
@@ -237,9 +238,17 @@ const TransactionForm = () => {
                     onChange={e => setTransaction({ ...transaction, header: e.target.value })} />
                 <datalist id="headers">
                     {headers.map((header) => <option value={header} key={header} />)}
-                </datalist>
+                </datalist> */}
+                <DataList
+                    items={headers}
+                    name='header'
+                    value={transaction.header}
+                    placeholder='Заголовок'
+                    transaction={transaction}
+                    func={setTransaction}
+                />
                 <br />
-                <input onFocus={(event) => { event.target.select() }}
+                {/* <input onFocus={(event) => { event.target.select() }}
                     type="text" name="category"
                     className="form__control form__sm" list="categories"
                     placeholder="Категория"
@@ -247,9 +256,17 @@ const TransactionForm = () => {
                     onChange={e => setTransaction({ ...transaction, category: e.target.value })} />
                 <datalist id="categories">
                     {categories.map((category) => <option value={category} key={category} />)}
-                </datalist>
+                </datalist> */}
+                <DataList
+                    items={categories}
+                    name='category'
+                    value={transaction.category}
+                    placeholder='Категория'
+                    transaction={transaction}
+                    func={setTransaction}
+                />
                 <br />
-                <input onFocus={(event) => { event.target.select() }}
+                {/* <input onFocus={(event) => { event.target.select() }}
                     type="text" name="subcategory"
                     className="form__control form__sm" list="subcategories"
                     placeholder="Подкатегория"
@@ -257,7 +274,15 @@ const TransactionForm = () => {
                     onChange={e => setTransaction({ ...transaction, subcategory: e.target.value })} />
                 <datalist id="subcategories">
                     {subcategories.map((subcategory) => <option value={subcategory} key={subcategory} />)}
-                </datalist>
+                </datalist> */}
+                <DataList
+                    items={subcategories}
+                    name='subcategory'
+                    value={transaction.subcategory}
+                    placeholder='Подкатегория'
+                    transaction={transaction}
+                    func={setTransaction}
+                />
                 <br />
                 <input type="text" name="comment" className="form__control form__sm" placeholder="Комментарий"
                     onChange={e => setTransaction({ ...transaction, comment: e.target.value })}
