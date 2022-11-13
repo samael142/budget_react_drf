@@ -488,3 +488,20 @@ body {
 .border__5px {
     border: 5px solid black;
 }
+
+.datalist__elements {
+    display: flex;
+    box-sizing: border-box;
+    flex-wrap:wrap
+}
+
+.datalist__element {
+    font-size: 15px;
+    border-radius: 5px;
+    border: lightgray 1px solid;
+    padding: 0 5px;
+    margin-top: 3px;
+    margin-right: 2px;
+    background: lightgray;
+    font-weight: 450;
+}

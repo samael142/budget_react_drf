@@ -7,7 +7,7 @@ import { useContext } from "react";
 import { MainContext } from "../../context";
 import { GetCurrentDate } from "../utils/utils";
 import Calculator from "../calculator/calculator";
-import DataList from "../Datalist";
+import DataList from "../DatalistV2";
 
 const TransactionForm = () => {
 
