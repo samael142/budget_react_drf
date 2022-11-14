@@ -72,3 +72,11 @@ class BudgetPeriod(models.Model):
 #     class Meta:
 #         managed = False
 #         db_table = 'last_headers'
+
+class HeadersRating(models.Model):
+    name = models.CharField(verbose_name='название', max_length=128)
+
+    class Meta:
+        managed = False
+        db_table = 'headers_rating'
+        

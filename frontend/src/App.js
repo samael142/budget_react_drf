@@ -30,6 +30,7 @@ function App() {
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [moneyAccounts, setMoneyAccounts] = useState([])
+  // const [headersRating, setHeadersRating] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(true)
 
 
@@ -51,10 +52,12 @@ function App() {
     const categories = await ApiService.getCategories()
     const subcategories = await ApiService.getSubcategories()
     const moneyAccounts = await ApiService.getMoneyAccounts()
+    // const headersRating = await ApiService.getHeadersRating()
     setHeaders(headers)
     setCategories(categories)
     setSubcategories(subcategories)
     setMoneyAccounts(moneyAccounts)
+    // setHeadersRating(headersRating)
   }
 
   async function getMoneyAccountsList() {
@@ -70,6 +73,7 @@ function App() {
       moneyAccounts,
       isAuthenticated,
       onScreenDate,
+      // headersRating,
       setHeaders,
       setCategories,
       setSubcategories,

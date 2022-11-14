@@ -20,8 +20,9 @@ from .serializers import HeaderModelSerializer, \
     StatisticSerializer, \
     BudgetModelListSerializer, \
     BudgetModelSerializer, \
-    BudgetDetailSerializer
-from budget.models import Header, Category, Subcategory, BudgetPeriod
+    BudgetDetailSerializer, \
+    HeadersRatingModelSerializer
+from budget.models import Header, Category, Subcategory, BudgetPeriod, HeadersRating
 from transactionapp.models import Transaction, TotalBalance, PlainOperation, TotalBalancePerAccount
 from maapp.models import MaInfo, MoneyAccount
 from .filters import DateFilter
@@ -133,6 +134,11 @@ class TransactionModelViewSet(ModelViewSet):
 class MoneyAccountListViewSet(ReadOnlyModelViewSet):
     queryset = MaInfo.objects.all()
     serializer_class = MoneyAccountListModelSerializer
+    
+    
+class HeadersRatingViewSet(ReadOnlyModelViewSet):
+    queryset = HeadersRating.objects.all()
+    serializer_class = HeadersRatingModelSerializer
 
 
 class TotalBalanceModelViewSet(ModelViewSet):

@@ -492,7 +492,8 @@ body {
 .datalist__elements {
     display: flex;
     box-sizing: border-box;
-    flex-wrap:wrap
+    flex-wrap: wrap;
+    z-index: 999;
 }
 
 .datalist__element {

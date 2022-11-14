@@ -34,6 +34,7 @@ router.register('report', api.ReportViewSet)
 router.register('statistic', api.StatisticViewSet)
 router.register('budget', api.BudgetModelViewSet)
 router.register('budget_detail', api.BudgetDetailModelViewSet)
+router.register('headers_rating', api.HeadersRatingViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

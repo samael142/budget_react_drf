@@ -4,6 +4,7 @@ import ApiService from "../API/ApiService";
 import NewEntryHead from "../NewEntryHead";
 import { MainContext } from "../../context";
 import { GetCurrentDate } from "../utils/utils";
+import DataList from "../DatalistV2";
 
 const PlainOperationForm = () => {
 
@@ -192,7 +193,7 @@ const PlainOperationForm = () => {
                     <input id="showCalculator" className="form__control" type="button" value="->"></input>
                 </div>
                 <br />
-                <input onFocus={(event) => { event.target.select() }}
+                {/* <input onFocus={(event) => { event.target.select() }}
                     type="text" name="header"
                     className="form__control form__sm" list="headers"
                     placeholder="Заголовок"
@@ -201,9 +202,17 @@ const PlainOperationForm = () => {
                     onChange={e => setTransaction({ ...transaction, header: e.target.value })} />
                 <datalist id="headers">
                     {headers.map((header) => <option value={header} key={header} />)}
-                </datalist>
+                </datalist> */}
+                <DataList
+                    items={headers}
+                    name='header'
+                    value={transaction.header}
+                    placeholder='Заголовок'
+                    transaction={transaction}
+                    func={setTransaction}
+                />
                 <br />
-                <input onFocus={(event) => { event.target.select() }}
+                {/* <input onFocus={(event) => { event.target.select() }}
                     type="text" name="category"
                     className="form__control form__sm" list="categories"
                     placeholder="Категория"
@@ -212,9 +221,17 @@ const PlainOperationForm = () => {
                     onChange={e => setTransaction({ ...transaction, category: e.target.value })} />
                 <datalist id="categories">
                     {categories.map((category) => <option value={category} key={category} />)}
-                </datalist>
+                </datalist> */}
+                <DataList
+                    items={categories}
+                    name='category'
+                    value={transaction.category}
+                    placeholder='Категория'
+                    transaction={transaction}
+                    func={setTransaction}
+                />
                 <br />
-                <input onFocus={(event) => { event.target.select() }}
+                {/* <input onFocus={(event) => { event.target.select() }}
                     type="text" name="subcategory"
                     className="form__control form__sm" list="subcategories"
                     placeholder="Подкатегория"
@@ -223,7 +240,15 @@ const PlainOperationForm = () => {
                     onChange={e => setTransaction({ ...transaction, subcategory: e.target.value })} />
                 <datalist id="subcategories">
                     {subcategories.map((subcategory) => <option value={subcategory} key={subcategory} />)}
-                </datalist>
+                </datalist> */}
+                <DataList
+                    items={subcategories}
+                    name='subcategory'
+                    value={transaction.subcategory}
+                    placeholder='Подкатегория'
+                    transaction={transaction}
+                    func={setTransaction}
+                />
                 <br />
                 <input type="text" name="comment" className="form__control form__sm" placeholder="Комментарий"
                     disabled={params.plainOperationId ? true : false}

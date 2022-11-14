@@ -246,6 +246,7 @@ const TransactionForm = () => {
                     placeholder='Заголовок'
                     transaction={transaction}
                     func={setTransaction}
+                    // defaults={headersRating}
                 />
                 <br />
                 {/* <input onFocus={(event) => { event.target.select() }}

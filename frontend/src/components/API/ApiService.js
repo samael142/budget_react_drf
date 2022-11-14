@@ -88,6 +88,11 @@ export default class ApiService {
         return responseTotals.data
     }
 
+    static async getHeadersRating() {
+        const response = await axios.get(`${ApiService.getUrl()}headers_rating/`, { headers: ApiService.getApiHeaders() })
+        return Array.from(response.data, x => x.name)
+    }
+
     static async getHeaders() {
         const responseHeaders = await axios.get(`${ApiService.getUrl()}headers/`, { headers: ApiService.getApiHeaders() })
         return Array.from(responseHeaders.data, x => x.name)
