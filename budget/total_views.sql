@@ -93,15 +93,16 @@ ALTER TABLE public.transactionapp_transaction ADD CONSTRAINT transactionapp_tran
 CREATE
 OR REPLACE VIEW headers_rating AS
 SELECT
-  bh.id
+  bh.id,
   bh.name,
   COUNT(tr.header_id) AS count
 FROM
   budget_header AS bh
   LEFT JOIN transactionapp_transaction AS tr ON bh.id = tr.header_id
 WHERE 
-  NOT tr.past 
+  NOT tr.past AND tr.operation_summ < 0
 GROUP BY
-  bh.name
+  bh.id
 ORDER  BY
-  count DESC;
+  count DESC
+LIMIT 10
