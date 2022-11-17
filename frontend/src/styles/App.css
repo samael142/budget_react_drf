@@ -505,6 +505,8 @@ body {
     margin-right: 2px;
     background: lightgray;
     font-weight: 450;
+    width: auto;
+    height: 22px;
 }
 
 .my__select {
