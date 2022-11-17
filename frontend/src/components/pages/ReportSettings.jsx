@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainContext } from "../../context";
 import { GetCurrentWeek } from "../utils/utils";
+import DataList from "../DatalistV2";
 
 
 const ReportSettings = () => {
@@ -29,7 +30,7 @@ const ReportSettings = () => {
         <div>
             <br />
             <form onSubmit={handleSubmit}>
-                <input
+                {/* <input
                     value={queryData.category}
                     onChange={e => setQueryData({ ...queryData, category: e.target.value })}
                     onFocus={(event) => { event.target.select() }}
@@ -37,7 +38,16 @@ const ReportSettings = () => {
                     placeholder="Категория" required />
                 <datalist id="category">
                     {categories.map((category) => <option value={category} key={category} />)}
-                </datalist>
+                </datalist> */}
+                <DataList
+                    items={categories}
+                    name='category'
+                    value={queryData.category}
+                    placeholder='Категория'
+                    transaction={queryData}
+                    func={setQueryData}
+                    required={true}
+                />
                 <br />
                 <input
                     onChange={e => setQueryData({ ...queryData, summ: e.target.value })}

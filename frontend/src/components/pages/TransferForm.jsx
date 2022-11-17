@@ -4,6 +4,7 @@ import { MainContext } from "../../context";
 import ApiService from "../API/ApiService";
 import NewEntryHead from "../NewEntryHead";
 import { GetCurrentDate } from "../utils/utils";
+import Select from "../Select";
 
 
 const TransferForm = () => {
@@ -13,6 +14,26 @@ const TransferForm = () => {
     const [accountNameFrom, setAccountNameFrom] = useState('')
     const [accountNameTo, setAccountNameTo] = useState('')
     const [disabledHead, setDisabledHead] = useState(false)
+    const [transactionFrom, setTransactionFrom] = useState({
+        id: '',
+        operation_date: GetCurrentDate(new Date()),
+        operation_summ: '',
+        account: '',
+        transfer_id: String(Date.now()).slice(-8),
+        comment: ''
+    })
+    const [transactionTo, setTransactionTo] = useState({
+        id: '',
+        operation_date: GetCurrentDate(new Date()),
+        operation_summ: '',
+        account: '',
+        transfer_id: transactionFrom.transfer_id,
+        comment: ''
+    })
+
+    const { moneyAccounts, setOnScreenDate } = useContext(MainContext)
+
+    const navigate = useNavigate();
 
     let params = useParams();
 
@@ -66,27 +87,14 @@ const TransferForm = () => {
         setTransactionTo({ ...transactionTo, comment: accountNameFrom + " -> " + accountNameTo });
     }, [accountNameFrom, accountNameTo])
 
-    const { moneyAccounts, setOnScreenDate } = useContext(MainContext)
+    useEffect(() => {
+        if (transactionFrom.account) { setAccountNameFrom((moneyAccounts.find(o => o.id === transactionFrom.account)).name) }
+    }, [transactionFrom])
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        if (transactionTo.account) { setAccountNameTo((moneyAccounts.find(o => o.id === transactionTo.account)).name) }
 
-    const [transactionFrom, setTransactionFrom] = useState({
-        id: '',
-        operation_date: GetCurrentDate(new Date()),
-        operation_summ: '',
-        account: '',
-        transfer_id: String(Date.now()).slice(-8),
-        comment: ''
-    })
-
-    const [transactionTo, setTransactionTo] = useState({
-        id: '',
-        operation_date: GetCurrentDate(new Date()),
-        operation_summ: '',
-        account: '',
-        transfer_id: transactionFrom.transfer_id,
-        comment: ''
-    })
+    }, [transactionTo])
 
     const deleteTransactions = async () => {
         let promise = new Promise((resolve, reject) => {
@@ -115,7 +123,7 @@ const TransferForm = () => {
 
     return (
         <>
-            <NewEntryHead element={'transfer'} disabled={disabledHead}/>
+            <NewEntryHead element={'transfer'} disabled={disabledHead} />
             <form onSubmit={handleSubmit}>
                 <div className="tr__upper">
                     <input className="form__control form__sm row__2" type="date" id="start" name="operation_date"
@@ -139,8 +147,9 @@ const TransferForm = () => {
                         required />
                     <input id="showCalculator" className="form__control" type="button" value="->"></input>
                 </div>
+                <br />
 
-                <h5 className="select__label">Откуда</h5>
+                {/* <h5 className="select__label">Откуда</h5>
                 <select
                     className="form__select form__sm"
                     style={{ backgroundImage: "url(/static/select.svg)" }}
@@ -150,8 +159,23 @@ const TransferForm = () => {
                     }}>
                     <option value={transactionFrom.account}>{accountNameFrom}</option>
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}
-                </select>
-                <h5 className="select__label">Куда</h5>
+                </select> */}
+                <Select
+                    items={moneyAccounts}
+                    transaction={transactionFrom}
+                    func={setTransactionFrom}
+                    name={'account'}
+                    defaultValue={accountNameFrom}
+                    label={'Выбрать счёт откуда'} />
+                    <br />
+                <Select
+                    items={moneyAccounts}
+                    transaction={transactionTo}
+                    func={setTransactionTo}
+                    name={'account'}
+                    defaultValue={accountNameTo}
+                    label={'Выбрать счёт куда'} />
+                {/* <h5 className="select__label">Куда</h5>
                 <select
                     className="form__select form__sm"
                     style={{ backgroundImage: "url(/static/select.svg)" }}
@@ -161,7 +185,7 @@ const TransferForm = () => {
                     }}>
                     <option value={transactionTo.account}>{accountNameTo}</option>
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}
-                </select>
+                </select> */}
                 <br />
                 <button type="submit" className="btn btn__green">Отправить</button>
                 {params.transferId

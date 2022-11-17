@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import DatalistElement from "./DatalistElement";
 
 const DataList = (props) => {
 
-    const inputRef = useRef()
 
     const [slicedItems, setSlicedItems] = useState([])
     const [inputValue, setInputValue] = useState('')
@@ -42,27 +41,22 @@ const DataList = (props) => {
         }
     }
 
-    const focusAfterClick = () => {
-        inputRef.current.focus()
-    }
-
     return (
         <>
             <input
-                ref={inputRef}
                 onFocus={handleFocus}
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 type="text"
                 className="form__control form__sm" list={props.name}
-                value={props.value} required
+                value={props.value}
                 onChange={slice}
                 placeholder={props.placeholder}
+                required={props.required}
             />
             {showElements &&
                 <div className="datalist__elements">
                     {slicedItems.map((item) =>
                         <DatalistElement
-                            focusAfterClick={focusAfterClick}
                             itemName={item}
                             key={item}
                             setInputValue={setInputValue}

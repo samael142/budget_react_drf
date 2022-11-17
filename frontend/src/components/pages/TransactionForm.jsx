@@ -8,6 +8,7 @@ import { MainContext } from "../../context";
 import { GetCurrentDate } from "../utils/utils";
 import Calculator from "../calculator/calculator";
 import DataList from "../DatalistV2";
+import Select from "../Select";
 
 const TransactionForm = () => {
 
@@ -221,15 +222,24 @@ const TransactionForm = () => {
                     <input onClick={toggleCalculator} className="form__control" type="button" value="->"></input>
                 </div>
                 {showCalculator && <Calculator transaction={transaction} setTransaction={setTransaction} />}
-                <h5 className="select__label">Счёт</h5>
-                <select
+                {/* <h5 className="select__label">Счёт:</h5> */}
+                {/* <select
                     className="form__select form__sm"
                     style={{ backgroundImage: "url(/static/select.svg)" }}
                     onChange={e => setTransaction({ ...transaction, account: e.target.value })}>
                     <option value={transaction.account}>{selectedAccountName}</option>
                     {moneyAccounts.map((account) => <option value={account.id} key={account.id}>{account.name}</option>)}
-                </select>
+                </select> */}
                 <br />
+                <Select
+                    items={moneyAccounts}
+                    transaction={transaction}
+                    func={setTransaction}
+                    name={'account'}
+                    defaultValue={selectedAccountName}
+                    label={'Выбрать счёт'} />
+                    <br />
+                {/* <br /> */}
                 {/* <input onFocus={(event) => { event.target.select() }}
                     type="text" name="header"
                     className="form__control form__sm" list="headers"
@@ -246,7 +256,8 @@ const TransactionForm = () => {
                     placeholder='Заголовок'
                     transaction={transaction}
                     func={setTransaction}
-                    // defaults={headersRating}
+                    required={true}
+                // defaults={headersRating}
                 />
                 <br />
                 {/* <input onFocus={(event) => { event.target.select() }}
@@ -265,6 +276,7 @@ const TransactionForm = () => {
                     placeholder='Категория'
                     transaction={transaction}
                     func={setTransaction}
+                    required={true}
                 />
                 <br />
                 {/* <input onFocus={(event) => { event.target.select() }}
@@ -283,6 +295,7 @@ const TransactionForm = () => {
                     placeholder='Подкатегория'
                     transaction={transaction}
                     func={setTransaction}
+                    required={true}
                 />
                 <br />
                 <input type="text" name="comment" className="form__control form__sm" placeholder="Комментарий"

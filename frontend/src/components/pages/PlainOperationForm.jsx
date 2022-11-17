@@ -210,6 +210,7 @@ const PlainOperationForm = () => {
                     placeholder='Заголовок'
                     transaction={transaction}
                     func={setTransaction}
+                    required={true}
                 />
                 <br />
                 {/* <input onFocus={(event) => { event.target.select() }}
@@ -229,6 +230,7 @@ const PlainOperationForm = () => {
                     placeholder='Категория'
                     transaction={transaction}
                     func={setTransaction}
+                    required={true}
                 />
                 <br />
                 {/* <input onFocus={(event) => { event.target.select() }}
@@ -248,6 +250,7 @@ const PlainOperationForm = () => {
                     placeholder='Подкатегория'
                     transaction={transaction}
                     func={setTransaction}
+                    required={true}
                 />
                 <br />
                 <input type="text" name="comment" className="form__control form__sm" placeholder="Комментарий"
