@@ -12,7 +12,7 @@ const StatisticList = (props) => {
     if (props.data.length !== 0) {
         let categoryMarker = props.data[0].category__name
         let categorySumm = 0
-
+        props.data.push({ category__name: null, subcategory__name: null, total_summ: 0 })
         for (const el of props.data) {
             if (el.category__name === categoryMarker) {
                 categorySumm += el.total_summ
