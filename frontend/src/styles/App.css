@@ -498,15 +498,25 @@ body {
 
 .datalist__element {
     font-size: 15px;
-    border-radius: 5px;
-    border: lightgray 1px solid;
+    border-radius: 15px;
+    /* border: lightgray 1px solid; */
     padding: 0 5px;
     margin-top: 3px;
     margin-right: 2px;
-    background: lightgray;
+    /* background: lightgray; */
     font-weight: 450;
     width: auto;
     height: 22px;
+}
+
+.datalist__element:nth-child(even) {
+    border: lightgray 1px solid;
+    background: lightgray;
+}
+
+.datalist__element:nth-child(odd) {
+    border: lightblue 1px solid;
+    background: lightblue;
 }
 
 .my__select {

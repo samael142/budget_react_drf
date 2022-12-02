@@ -71,6 +71,7 @@ FROM
 group by
   ma.id
 order by
+  ma.is_visible DESC,
   count DESC;
 
 --CREATE or REPLACE VIEW last_headers AS
