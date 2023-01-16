@@ -10,6 +10,8 @@ import PlainOperationForm from './components/pages/PlainOperationForm';
 import MoneyAccounts from './components/pages/moneyAccounts';
 import { MainContext } from './context'
 import ReportSettings from './components/pages/ReportSettings';
+import ExcludeReportSettings from './components/pages/ExcludeReportSettings';
+import GeneratedExcludeReport from './components/pages/GenedatedExcludeReport';
 import GeneratedReport from './components/pages/GenedatedReport';
 import MoneyAccountForm from './components/pages/MoneyAccountForm';
 import Settings from './components/pages/Settings';
@@ -107,6 +109,10 @@ function App() {
             <Route path="report">
               <Route path="" element={<ReportSettings />} />
               <Route path="generated_report" element={<GeneratedReport />} />
+            </Route>
+            <Route path="exclude_report">
+              <Route path="" element={<ExcludeReportSettings />} />
+              <Route path="generated_report" element={<GeneratedExcludeReport />} />
             </Route>
             <Route path='settings'>
               <Route path="" element={<Settings />} />

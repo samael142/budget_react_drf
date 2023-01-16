@@ -5,6 +5,7 @@ import home from '../static/home.svg'
 import transaction from '../static/transaction.svg'
 import accounts from '../static/accounts.svg'
 import report from '../static/report.svg'
+import exclude from '../static/exclude.svg'
 import settings from '../static/settings.svg'
 import left from '../static/left.svg'
 import right from '../static/right.svg'
@@ -58,6 +59,11 @@ const MainMenu = () => {
                         <li className="nav__item">
                             <Link to="/report" className="nav__link">
                                 <img src={report} alt="Отчёт" className="nav__img" />
+                            </Link>
+                        </li>
+                        <li className="nav__item">
+                            <Link to="/exclude_report" className="nav__link">
+                                <img src={exclude} alt="Отчёт2" className="nav__img" />
                             </Link>
                         </li>
                         <li className="nav__item">

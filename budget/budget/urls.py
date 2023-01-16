@@ -31,6 +31,7 @@ router.register('total_balance_per_account', api.TotalBalancePerAccountModelView
 router.register('plain_operations', api.PlainOperationModelViewSet)
 router.register('money_accounts', api.MoneyAccountModelViewSet)
 router.register('report', api.ReportViewSet)
+router.register('ex_report', api.ExcludeReportViewSet)
 router.register('statistic', api.StatisticViewSet)
 router.register('budget', api.BudgetModelViewSet)
 router.register('budget_detail', api.BudgetDetailModelViewSet)

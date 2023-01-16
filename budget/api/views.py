@@ -21,7 +21,8 @@ from .serializers import HeaderModelSerializer, \
     BudgetModelListSerializer, \
     BudgetModelSerializer, \
     BudgetDetailSerializer, \
-    HeadersRatingModelSerializer
+    HeadersRatingModelSerializer, \
+    ExcludeReportSerializer
 from budget.models import Header, Category, Subcategory, BudgetPeriod, HeadersRating
 from transactionapp.models import Transaction, TotalBalance, PlainOperation, TotalBalancePerAccount
 from maapp.models import MaInfo, MoneyAccount
@@ -66,7 +67,8 @@ class TransactionModelViewSet(ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = TransactionModelListSerializer(queryset, many=True)
         if header:
-            queryset = Transaction.objects.filter(header__name=header, past=0).order_by('-operation_date').first()
+            queryset = Transaction.objects.filter(
+                header__name=header, past=0).order_by('-operation_date').first()
             serializer = TransactionModelListSerializer(queryset)
         if transaction_id:
             queryset = Transaction.objects.get(pk=transaction_id)
@@ -75,10 +77,13 @@ class TransactionModelViewSet(ModelViewSet):
             queryset = Transaction.objects.filter(transfer_id=transfer_id)
             serializer = TransactionModelListSerializer(queryset, many=True)
         if plain_id:
-            first_transaction = (Transaction.objects.filter(plain_id=plain_id).order_by('operation_date')).first().pk
-            last_transaction = (Transaction.objects.filter(plain_id=plain_id).order_by('operation_date')).last().pk
+            first_transaction = (Transaction.objects.filter(
+                plain_id=plain_id).order_by('operation_date')).first().pk
+            last_transaction = (Transaction.objects.filter(
+                plain_id=plain_id).order_by('operation_date')).last().pk
             plain_transactions_list = [first_transaction, last_transaction]
-            queryset = Transaction.objects.filter(pk__in=plain_transactions_list).order_by('operation_date')
+            queryset = Transaction.objects.filter(
+                pk__in=plain_transactions_list).order_by('operation_date')
             serializer = TransactionModelListSerializer(queryset, many=True)
         if last20:
             queryset = Transaction.objects.all().order_by('-updated')[:20]
@@ -134,32 +139,36 @@ class TransactionModelViewSet(ModelViewSet):
 class MoneyAccountListViewSet(ReadOnlyModelViewSet):
     queryset = MaInfo.objects.all()
     serializer_class = MoneyAccountListModelSerializer
-    
-    
+
+
 class HeadersRatingViewSet(ReadOnlyModelViewSet):
     queryset = HeadersRating.objects.all()
     serializer_class = HeadersRatingModelSerializer
 
 
 class TotalBalanceModelViewSet(ModelViewSet):
-    queryset = TotalBalance.objects.values_list('operation_date', 'total', 'case')
+    queryset = TotalBalance.objects.values_list(
+        'operation_date', 'total', 'case')
     serializer_class = TotalBalanceModelSerializer
     filterset_class = DateFilter
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        out_qs = [{'operation_date': el[0], 'total': el[1], 'day': el[2]} for el in queryset]
+        out_qs = [{'operation_date': el[0], 'total': el[1], 'day': el[2]}
+                  for el in queryset]
         return Response(out_qs)
 
 
 class TotalBalancePerAccountModelViewSet(ModelViewSet):
-    queryset = TotalBalancePerAccount.objects.values_list('account', 'operation_date', 'total', 'case')
+    queryset = TotalBalancePerAccount.objects.values_list(
+        'account', 'operation_date', 'total', 'case')
     serializer_class = TotalBalancePerAccountModelSerializer
     filterset_class = DateFilter
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        out_qs = [{'account': el[0], 'operation_date': el[1], 'total': el[2], 'day': el[3]} for el in queryset]
+        out_qs = [{'account': el[0], 'operation_date': el[1],
+                   'total': el[2], 'day': el[3]} for el in queryset]
         return Response(out_qs)
 
 
@@ -183,15 +192,18 @@ class PlainOperationModelViewSet(ModelViewSet):
         qs = []
         queryset_element = {}
         for el in self.queryset:
-            transactions_array = Transaction.objects.filter(plain_id=el.id).order_by('operation_date')
+            transactions_array = Transaction.objects.filter(
+                plain_id=el.id).order_by('operation_date')
             if len(transactions_array) != 0:
                 queryset_element['id'] = el.pk
                 queryset_element['header'] = el.header
                 queryset_element['category'] = el.category
                 queryset_element['subcategory'] = el.subcategory
                 queryset_element['summ'] = el.operation_summ
-                queryset_element['curr_date'] = transactions_array.first().operation_date
-                queryset_element['end_date'] = transactions_array.last().operation_date
+                queryset_element['curr_date'] = transactions_array.first(
+                ).operation_date
+                queryset_element['end_date'] = transactions_array.last(
+                ).operation_date
                 queryset_element['disabled'] = False
                 qs.append(queryset_element)
             queryset_element = {}
@@ -213,6 +225,20 @@ class ReportViewSet(ModelViewSet):
         return Response(qs)
 
 
+class ExcludeReportViewSet(ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = ExcludeReportSerializer
+
+    def list(self, request):
+        category = request.GET.getlist('category[]')
+        month = request.GET.get('month')
+        qs = Transaction.objects. \
+            filter(past=0, transfer_id=None, operation_date__year=month[0:4], operation_date__month=month[5:]). \
+            values('operation_date', 'category__name').annotate(
+                total_summ=Sum('operation_summ')).exclude(category__in=category).order_by('operation_date')
+        return Response(qs)
+
+
 class StatisticViewSet(ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = StatisticSerializer
@@ -225,11 +251,13 @@ class StatisticViewSet(ModelViewSet):
             qs = Transaction.objects.filter(category__name=category, past=0,
                                             operation_date__range=(start_date, end_date)). \
                 values('category__name', 'subcategory__name'). \
-                annotate(total_summ=Sum('operation_summ')).order_by('category__name', 'total_summ')
+                annotate(total_summ=Sum('operation_summ')).order_by(
+                    'category__name', 'total_summ')
         else:
             qs = Transaction.objects.filter(past=0, operation_date__range=(start_date, end_date)). \
                 values('category__name', 'subcategory__name'). \
-                annotate(total_summ=Sum('operation_summ')).order_by('category__name', 'total_summ')
+                annotate(total_summ=Sum('operation_summ')).order_by(
+                    'category__name', 'total_summ')
         return Response(qs)
 
 
@@ -273,7 +301,8 @@ class BudgetDetailModelViewSet(ModelViewSet):
                 anchor = True
 
             articles_summ = Transaction.objects. \
-                filter(category__name=category, operation_date__in=el, past=0).aggregate(Sum('operation_summ'))
+                filter(category__name=category, operation_date__in=el,
+                       past=0).aggregate(Sum('operation_summ'))
 
             if articles_summ['operation_summ__sum']:
                 appended_digit = float(articles_summ['operation_summ__sum'])

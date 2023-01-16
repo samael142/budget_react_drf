@@ -8,8 +8,8 @@ class HeaderModelSerializer(ModelSerializer):
     class Meta:
         model = Header
         fields = ['name']
-   
-        
+
+
 class HeadersRatingModelSerializer(ModelSerializer):
     class Meta:
         model = HeadersRating
@@ -19,7 +19,7 @@ class HeadersRatingModelSerializer(ModelSerializer):
 class CategoryModelSerializer(ModelSerializer):
     class Meta:
         model = Category
-        fields = ['name']
+        fields = ['id', 'name']
 
 
 class SubcategoryModelSerializer(ModelSerializer):
@@ -38,9 +38,12 @@ class TransactionModelSerializer(ModelSerializer):
             header = validated_data.pop('header')
             category = validated_data.pop('category')
             subcategory = validated_data.pop('subcategory')
-            header_instance, created = Header.objects.get_or_create(name=header)
-            category_instance, created = Category.objects.get_or_create(name=category)
-            subcategory_instance, created = Subcategory.objects.get_or_create(name=subcategory)
+            header_instance, created = Header.objects.get_or_create(
+                name=header)
+            category_instance, created = Category.objects.get_or_create(
+                name=category)
+            subcategory_instance, created = Subcategory.objects.get_or_create(
+                name=subcategory)
             transaction_instance = Transaction.objects.create(**validated_data,
                                                               header=header_instance,
                                                               category=category_instance,
@@ -54,9 +57,12 @@ class TransactionModelSerializer(ModelSerializer):
             header = validated_data.pop('header')
             category = validated_data.pop('category')
             subcategory = validated_data.pop('subcategory')
-            instance.header, created = Header.objects.get_or_create(name=header)
-            instance.category, created = Category.objects.get_or_create(name=category)
-            instance.subcategory, created = Subcategory.objects.get_or_create(name=subcategory)
+            instance.header, created = Header.objects.get_or_create(
+                name=header)
+            instance.category, created = Category.objects.get_or_create(
+                name=category)
+            instance.subcategory, created = Subcategory.objects.get_or_create(
+                name=subcategory)
             for attr, value in validated_data.items():
                 setattr(instance, attr, value)
         except KeyError:
@@ -94,12 +100,21 @@ class TransactionModelListSerializer(ModelSerializer):
 
 
 class ReportSerializer(ModelSerializer):
+    # category = CategoryModelSerializer()
+    # subcategory = SubcategoryModelSerializer()
+
+    class Meta:
+        model = Transaction
+        fields = ['operation_date', 'operation_summ']
+
+
+class ExcludeReportSerializer(ModelSerializer):
     category = CategoryModelSerializer()
     subcategory = SubcategoryModelSerializer()
 
     class Meta:
         model = Transaction
-        fields = ['operation_date', 'operation_summ']
+        fields = ['category', 'operation_date', 'operation_summ']
 
 
 class StatisticSerializer(ModelSerializer):
@@ -153,8 +168,10 @@ class PlainOperationModelSerializer(ModelSerializer):
         category = validated_data.pop('category')
         subcategory = validated_data.pop('subcategory')
         header_instance, created = Header.objects.get_or_create(name=header)
-        category_instance, created = Category.objects.get_or_create(name=category)
-        subcategory_instance, created = Subcategory.objects.get_or_create(name=subcategory)
+        category_instance, created = Category.objects.get_or_create(
+            name=category)
+        subcategory_instance, created = Subcategory.objects.get_or_create(
+            name=subcategory)
         transaction_instance = PlainOperation.objects.create(**validated_data,
                                                              header=header_instance,
                                                              category=category_instance,
@@ -181,7 +198,8 @@ class BudgetModelSerializer(ModelSerializer):
         try:
             category = validated_data.pop('category')
             category_instance = Category.objects.get(name=category)
-            budget_instance = BudgetPeriod.objects.create(**validated_data, category=category_instance)
+            budget_instance = BudgetPeriod.objects.create(
+                **validated_data, category=category_instance)
         except KeyError:
             budget_instance = BudgetPeriod.objects.create(**validated_data)
         return budget_instance

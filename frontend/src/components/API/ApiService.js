@@ -103,6 +103,11 @@ export default class ApiService {
         return Array.from(responseCategories.data, x => x.name)
     }
 
+    static async getCategoriesWithId() {
+        const responseCategories = await axios.get(`${ApiService.getUrl()}categories/`, { headers: ApiService.getApiHeaders() })
+        return responseCategories.data
+    }
+
     static async getSubcategories() {
         const responseSubcategories = await axios.get(`${ApiService.getUrl()}subcategories/`, { headers: ApiService.getApiHeaders() })
         return Array.from(responseSubcategories.data, x => x.name)
@@ -170,6 +175,18 @@ export default class ApiService {
                     category: category,
                     start: start,
                     end: end
+                }
+            })
+        return responseTransactions.data
+    }
+
+    static async getExcludeReportData(category, month) {
+        const responseTransactions = await axios.get(`${ApiService.getUrl()}ex_report/`,
+            {
+                headers: ApiService.getApiHeaders(),
+                params: {
+                    category: category,
+                    month: month,
                 }
             })
         return responseTransactions.data
