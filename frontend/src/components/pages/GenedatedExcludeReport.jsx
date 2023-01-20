@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ApiService from "../API/ApiService";
 import { useNavigate } from "react-router-dom";
-import ExcludeReportList from "../ExcludeReportList";
 import ExcludeReportItem from "../ExcludeReportItem";
 import { getListOfDays, getDaysQuantity } from "../utils/utils";
 
@@ -172,7 +171,6 @@ const GeneratedExcludeReport = () => {
                 </div>
             )}
             <RenderGlobalFooter />
-
             <br />
             <input type="button" onClick={navigateHome} className="btn btn__red" value="Закрыть" />
             <div className='clear__block'></div>
