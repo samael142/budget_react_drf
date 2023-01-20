@@ -118,22 +118,13 @@ const GeneratedExcludeReport = () => {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '5px' }}>
-                <div onClick={sortByName} className="exreport__box transparent__color"
-                    style={{ fontWeight: 'bold', fontSize: 20  }}>
-                    &#8595;
-                </div>
-                <div onClick={sortBySumm} className="exreport__box transparent__color"
-                    style={{ fontWeight: 'bold', fontSize: 20 }}>
-                    &#8595;
-                </div>
-            </div>
             {dataForRenderer.map((item, index) =>
                 <div key={index}>
                     <div className="exreport__box transparent__color" style={{ fontWeight: 'bold' }}>
                         {item.week[0]} &#8594; {item.week.at(-1)}
                     </div>
-                    {item.transactions.map((transaction, subindex) => <ExcludeReportItem key={subindex} item={transaction} />)}
+                    {item.transactions.map((transaction, subindex) =>
+                        <ExcludeReportItem sortByName={sortByName} sortBySumm={sortBySumm} key={subindex} item={transaction} />)}
                     <div style={{ marginBottom: '5px' }}>
                         <div className="double__button no__radius">
                             <div className="exreport__box transparent__color"
