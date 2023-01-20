@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from xml.sax.handler import property_declaration_handler
-
 from django.db.models import Sum
 from rest_framework.decorators import action
 from rest_framework.response import Response

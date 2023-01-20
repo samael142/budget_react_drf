@@ -61,7 +61,7 @@ const ExcludeReportList = (props) => {
         )
     }
 
-    const renderFooter = (weekNumber, summ, weekLength, totalEconomy) => {
+    const renderFooter = (weekNumber, summ, economy, totalEconomy) => {
         return (
             <div style={{ marginBottom: '5px' }}>
                 <div className="double__button no__radius">
@@ -71,7 +71,7 @@ const ExcludeReportList = (props) => {
                     </div>
                     <div className="exreport__box transparent__color"
                         style={{ fontWeight: 'bold' }}>
-                        {(summ).toLocaleString("ru", { minimumFractionDigits: 2 })}
+                        {summ.toLocaleString("ru", { minimumFractionDigits: 2 })}
                     </div>
                 </div>
                 <div className="double__button no__radius">
@@ -80,9 +80,9 @@ const ExcludeReportList = (props) => {
                         Экономия:
                     </div>
                     <div className={"exreport__box transparent__color " +
-                        (summ + weekLength * props.summ >= 0 ? "green__color" : "red__color")}
+                        (economy >= 0 ? "green__color" : "red__color")}
                         style={{ fontWeight: 'bold' }}>
-                        {(summ + weekLength * props.summ).toLocaleString("ru", { minimumFractionDigits: 2 })}
+                        {economy.toLocaleString("ru", { minimumFractionDigits: 2 })}
                     </div>
                 </div>
                 <div className="double__button no__radius">
@@ -93,7 +93,7 @@ const ExcludeReportList = (props) => {
                     <div className={"exreport__box transparent__color " +
                         (totalEconomy >= 0 ? "green__color" : "red__color")}
                         style={{ fontWeight: 'bold' }}>
-                        {(totalEconomy).toLocaleString("ru", { minimumFractionDigits: 2 })}
+                        {totalEconomy.toLocaleString("ru", { minimumFractionDigits: 2 })}
                     </div>
                 </div>
             </div>
@@ -132,7 +132,7 @@ const ExcludeReportList = (props) => {
                         Экономия:
                     </div>
                     <div className={"exreport__box transparent__color " +
-                        (totalPlan + totalSumm>= 0 ? "green__color" : "red__color")}
+                        (totalPlan + totalSumm >= 0 ? "green__color" : "red__color")}
                         style={{ fontWeight: 'bold' }}>
                         {(totalPlan + totalSumm).toLocaleString("ru", { minimumFractionDigits: 2 })}
                     </div>
@@ -141,31 +141,38 @@ const ExcludeReportList = (props) => {
         )
     }
 
-    renderGlobalFooter()
-
-    const weeksList = getListOfDays()
-    let totalEconomy = 0
-    for (let week of weeksList) {
-        mainList.push(renderHeader(week))
-        let summ = 0
-        let weekLength = week.length
+    let newArr = []
+    let newObj = { week: [], transactions: [], days: 0, summ: 0, economy: 0, totalEconomy: 0 }
+    for (let weekList of getListOfDays()) {
+        newObj.week = [weekList[0], weekList.at(-1)]
+        newObj.days = weekList.length
         for (let transaction of props.data) {
-            if (week.find(element => element === transaction.operation_date)) {
-                mainList.push(<ExcludeReportItem item={transaction} />)
-                summ += parseFloat(transaction.total_summ)
+            if (weekList.find(element => element === transaction.operation_date)) {
+                let existingCategory = newObj.transactions.find(element => element.category__name === transaction.category__name)
+                if (existingCategory) {
+                    existingCategory.total_summ += transaction.total_summ
+                } else {
+                    newObj.transactions.push({ category__name: transaction.category__name, total_summ: transaction.total_summ })
+                }
+                newObj.summ += transaction.total_summ
             }
         }
-        totalEconomy += summ + weekLength * props.summ
-        mainList.push(renderFooter(weeksList.indexOf(week) + 1, summ, weekLength, totalEconomy))
+        newObj.transactions.sort((a, b) => a.category__name.localeCompare(b.category__name));
+        newObj.economy = newObj.summ + props.summ * newObj.days
+        newObj.totalEconomy += newObj.economy
+        newArr.push(newObj)
 
+        newObj = { week: [], transactions: [], days: 0, summ: 0, economy: 0, totalEconomy: newObj.totalEconomy }
+    }
+
+    for (let element of newArr) {
+        mainList.push(renderHeader(element.week))
+        element.transactions.map((transaction) => mainList.push(<ExcludeReportItem item={transaction} />))
+        mainList.push(renderFooter(newArr.indexOf(element) + 1, element.summ, element.economy, element.totalEconomy))
     }
     mainList.push(renderGlobalFooter())
 
-    return (
-        <>
-            {mainList}
-        </>
-    )
+    return mainList
 }
 
 export default ExcludeReportList;

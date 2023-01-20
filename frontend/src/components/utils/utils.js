@@ -46,3 +46,48 @@ export const GetWeekDay = (date) => {
     }
     return days[dayNumber]
 }
+
+export const getDaysQuantity = (period) => {
+    const year = parseInt(period.slice(0, 4))
+    const month = parseInt(period.slice(5))
+    let days = 0
+    const daysObject = {
+        1: 31,
+        3: 31,
+        4: 30,
+        5: 31,
+        6: 30,
+        7: 31,
+        8: 31,
+        9: 30,
+        10: 31,
+        11: 30,
+        12: 31
+    }
+    if (month == 2) {
+        ((year % 4 == 0) && (year % 100 != 0))
+            ? days = 29
+            : days = 28
+    } else {
+        days = daysObject[month]
+    }
+
+    return days
+}
+
+export const getListOfDays = (period) => {
+    const daysQuantity = getDaysQuantity(period)
+    let weeksList = []
+    let week = []
+    for (let i = 1; i <= daysQuantity; i++) {
+        let day = period + '-' + (i < 10 ? '0' : '') + i.toString()
+        week.push(day)
+        if (getISODay(new Date(day)) === 7) {
+            weeksList.push(week)
+            week = []
+        }
+    }
+    weeksList.push(week)
+
+    return weeksList
+}
