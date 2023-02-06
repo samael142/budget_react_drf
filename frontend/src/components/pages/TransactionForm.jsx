@@ -29,7 +29,8 @@ const TransactionForm = () => {
             subcategory: editablTransaction.data.subcategory.name,
             comment: editablTransaction.data.comment,
             past: editablTransaction.data.past,
-            plain_id: editablTransaction.data.plain_id
+            plain_id: editablTransaction.data.plain_id,
+            hide_from_report: editablTransaction.data.hide_from_report
         })
         if (editablTransaction.data.account) {
             setSelectedAccountName(editablTransaction.data.account.name)
@@ -66,7 +67,8 @@ const TransactionForm = () => {
         subcategory: '',
         comment: '',
         past: false,
-        plain_id: ''
+        plain_id: '',
+        hide_from_report: false,
     })
 
     const initialState = {
@@ -192,6 +194,10 @@ const TransactionForm = () => {
         setActivate(!activate)
     }
 
+    const hideFromReport = () => {
+        setTransaction({...transaction, hide_from_report: !transaction.hide_from_report})
+    }
+
     return (
         <>
             <NewEntryHead element={'transaction'} disabled={disabledHead} />
@@ -314,6 +320,14 @@ const TransactionForm = () => {
                     <div>
                         <input onChange={activateTransaction} name="activate" className="form__check" type="checkbox" value="0" id="activate" />
                         <label htmlFor="activate">Деактивировать</label>
+                        <br />
+                        <br />
+                    </div>
+                }
+                {!transaction.past &&
+                    <div>
+                        <input onChange={hideFromReport} name="activate" className="form__check" type="checkbox" checked={transaction.hide_from_report} id="hide"/>
+                        <label htmlFor="hide">Не учитывать в отчёте</label>
                         <br />
                         <br />
                     </div>

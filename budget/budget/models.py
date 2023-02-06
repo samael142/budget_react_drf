@@ -62,21 +62,4 @@ class BudgetPeriod(models.Model):
     start_date = models.DateField(verbose_name='дата начала')
     end_date = models.DateField(verbose_name='дата конца')
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
-
-
-# class LastHeaders(models.Model):
-#     header = models.CharField(verbose_name='заголовок', max_length=64)
-#     category = models.CharField(verbose_name='категория', max_length=64)
-#     subcategory = models.CharField(verbose_name='подкатегория', max_length=64)
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'last_headers'
-
-class HeadersRating(models.Model):
-    name = models.CharField(verbose_name='название', max_length=128)
-
-    class Meta:
-        managed = False
-        db_table = 'headers_rating'
-        
+      

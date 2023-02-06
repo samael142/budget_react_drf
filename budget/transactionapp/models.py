@@ -87,6 +87,7 @@ class Transaction(models.Model):
     past = models.BooleanField(default=False)
     plain_id = models.ForeignKey(PlainOperation, on_delete=models.CASCADE, null=True, blank=True)
     transfer_id = models.CharField(max_length=8, null=True, blank=True)
+    hide_from_report = models.BooleanField(default=False, null=True, blank=True)
 
     @staticmethod
     def get_last_transaction():

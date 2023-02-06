@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, CharField, Serializer, IntegerField, BooleanField
-from budget.models import Header, Category, Subcategory, BudgetPeriod, HeadersRating
+from budget.models import Header, Category, Subcategory, BudgetPeriod
 from transactionapp.models import Transaction, TotalBalance, TotalBalancePerAccount, PlainOperation
 from maapp.models import MaInfo, MoneyAccount
 
@@ -8,12 +8,6 @@ class HeaderModelSerializer(ModelSerializer):
     class Meta:
         model = Header
         fields = ['name']
-
-
-class HeadersRatingModelSerializer(ModelSerializer):
-    class Meta:
-        model = HeadersRating
-        fields = '__all__'
 
 
 class CategoryModelSerializer(ModelSerializer):

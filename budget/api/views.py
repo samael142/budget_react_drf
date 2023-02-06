@@ -20,9 +20,8 @@ from .serializers import HeaderModelSerializer, \
     BudgetModelListSerializer, \
     BudgetModelSerializer, \
     BudgetDetailSerializer, \
-    HeadersRatingModelSerializer, \
     ExcludeReportSerializer
-from budget.models import Header, Category, Subcategory, BudgetPeriod, HeadersRating
+from budget.models import Header, Category, Subcategory, BudgetPeriod
 from transactionapp.models import Transaction, TotalBalance, PlainOperation, TotalBalancePerAccount
 from maapp.models import MaInfo, MoneyAccount
 from .filters import DateFilter
@@ -140,11 +139,6 @@ class MoneyAccountListViewSet(ReadOnlyModelViewSet):
     serializer_class = MoneyAccountListModelSerializer
 
 
-class HeadersRatingViewSet(ReadOnlyModelViewSet):
-    queryset = HeadersRating.objects.all()
-    serializer_class = HeadersRatingModelSerializer
-
-
 class TotalBalanceModelViewSet(ModelViewSet):
     queryset = TotalBalance.objects.values_list(
         'operation_date', 'total', 'case')
@@ -233,6 +227,7 @@ class ExcludeReportViewSet(ModelViewSet):
         month = request.GET.get('month')
         qs = Transaction.objects. \
             filter(past=0, transfer_id=None, operation_date__year=month[0:4], operation_date__month=month[5:]). \
+            exclude(hide_from_report=True). \
             values('operation_date', 'category__name').annotate(
                 total_summ=Sum('operation_summ')).exclude(category__in=category).order_by('operation_date')
         return Response(qs)

@@ -107,3 +107,8 @@ GROUP BY
 ORDER  BY
   count DESC
 LIMIT 10
+
+
+
+ALTER TABLE IF EXISTS public.transactionapp_transaction
+    ADD COLUMN hide_from_report boolean;

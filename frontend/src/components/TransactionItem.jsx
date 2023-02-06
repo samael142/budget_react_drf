@@ -10,7 +10,9 @@ const TransactionItem = (props) => {
     if (!props.transaction.transfer_id) {
         return (
             <Link to={`/transaction/${props.transaction.id}`}
-                className={"transition__item tr__box " + (props.transaction.past ? "past__color" : "")}>
+                className={"transition__item tr__box " + (props.transaction.past ? "past__color" : "")}
+                style={props.transaction.hide_from_report ? { background: '#00bcd438' } : {}}
+            >
                 <div className="tr__box__row">
                     <div><b>{props.transaction.header ? props.transaction.header.name : ""}</b>
                     </div>
