@@ -3,7 +3,7 @@ import TotalItem from "./TotalItem";
 import TransactionItem from "./TransactionItem";
 
 
-const MainList = ({ transactions, totals }) => {  
+const MainListTest = ({ transactions, totals }) => {
 
     let currentMonthMarker = false
     const mainList = []
@@ -19,10 +19,10 @@ const MainList = ({ transactions, totals }) => {
         if (dateMarker !== el.operation_date) {
             if (totals.find(o => o.operation_date === el.operation_date) === undefined) {
                 let insertionDate = new Date(el.operation_date);
-                totals.push({operation_date: el.operation_date, total: undefined, day: weekDays[insertionDate.getDay()]});
+                totals.push({ operation_date: el.operation_date, total: undefined, day: weekDays[insertionDate.getDay()] });
             }
             mainList.push(
-                <TotalItem total={totals.find(o => o.operation_date === el.operation_date)} currentDate={stringDate} key={el.operation_date} />
+                    <TotalItem total={totals.find(o => o.operation_date === el.operation_date)} currentDate={stringDate} key={el.operation_date} />
             )
             if (el.operation_date === stringDate) {
                 currentMonthMarker = true
@@ -39,11 +39,8 @@ const MainList = ({ transactions, totals }) => {
     }
 
     return (
-        <div className={!currentMonthMarker ? "current__date" : ""}>
-            {mainList}
-            <div className='clear__block'></div>
-        </div>
+        mainList
     )
 }
 
-export default MainList;
+export default MainListTest;

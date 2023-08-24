@@ -9,26 +9,26 @@ const TransactionItem = (props) => {
 
     if (!props.transaction.transfer_id) {
         return (
-            <Link to={`/transaction/${props.transaction.id}`}
-                className={"transition__item tr__box " + (props.transaction.past ? "past__color" : "")}
-                style={props.transaction.hide_from_report ? { background: '#00bcd438' } : {}}
-            >
-                <div className="tr__box__row">
-                    <div><b>{props.transaction.header ? props.transaction.header.name : ""}</b>
+                <Link to={`/transaction/${props.transaction.id}`}
+                    className={"tr__box " + (props.transaction.past ? "past__color" : "")}
+                    style={props.transaction.hide_from_report ? { background: '#00bcd438' } : {}}
+                >
+                    <div className="tr__box__row">
+                        <div><b>{props.transaction.header ? props.transaction.header.name : ""}</b>
+                        </div>
+                        <div className={"num " + (props.transaction.operation_summ > 0 ? "green__color" : "red__color")}>
+                            {parseFloat(props.transaction.operation_summ).toLocaleString("ru", { minimumFractionDigits: 2 })}
+                        </div>
                     </div>
-                    <div className={"num " + (props.transaction.operation_summ > 0 ? "green__color" : "red__color")}>
-                        {parseFloat(props.transaction.operation_summ).toLocaleString("ru", { minimumFractionDigits: 2 })}
+                    <div className="tr__box__row">
+                        <div>{props.transaction.category ? props.transaction.category.name : ""}</div>
+                        <div>{props.transaction.account ? props.transaction.account.name : ""}</div>
                     </div>
-                </div>
-                <div className="tr__box__row">
-                    <div>{props.transaction.category ? props.transaction.category.name : ""}</div>
-                    <div>{props.transaction.account ? props.transaction.account.name : ""}</div>
-                </div>
-                <div className="tr__box__row">
-                    <div>{props.transaction.subcategory ? props.transaction.subcategory.name : ""}</div>
-                    <div>{DateConvert(props.transaction.operation_date)}</div>
-                </div>
-            </Link>
+                    <div className="tr__box__row">
+                        <div>{props.transaction.subcategory ? props.transaction.subcategory.name : ""}</div>
+                        <div>{DateConvert(props.transaction.operation_date)}</div>
+                    </div>
+                </Link>
         );
     } else {
         return (

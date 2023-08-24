@@ -542,3 +542,21 @@ body {
     border-radius: 0.25rem;
     box-sizing: border-box;
 }
+
+.example-enter {
+    opacity: 0;
+}
+
+.example-enter-active {
+    opacity: 1;
+    transition: opacity 100ms ease-in;
+}
+
+.example-exit {
+    opacity: 1;
+}
+
+.example-exit-active {
+    opacity: 0.01;
+    transition: opacity 100ms ease-in;
+}

@@ -1,44 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import ApiService from '../API/ApiService';
+import MainList from '../MainList';
 import { scroller } from "react-scroll";
 import { useParams } from 'react-router-dom';
-import MainListTest from '../MainListTest';
 
 
 
 const TransactionsList = ({ onScreenDate }) => {
-
+    
     const [transactions, setTransactions] = useState([])
     const [totals, setTotals] = useState([])
-    const [arrayOfData, setArrayOfData] = useState([])
 
 
     let params = useParams();
 
     useEffect(() => {
+        // const el = document.getElementById("homeButton");
+        // el.addEventListener("click", clickToHome)
         fetchTransactions()
+        // return () => {
+        //     el.removeEventListener("click", clickToHome)
+        // }
     }, [onScreenDate])
 
     useEffect(() => {
         if (totals.length !== 0) {
-            setArrayOfData(MainListTest({ transactions, totals }));
-        }
-    }, [totals]);
-
-    useEffect(() => {
-        setArrayOfData([])
-    }, [onScreenDate])
-
-    useEffect(() => {
-        if (arrayOfData.length !== 0) {
             scrollToSection()
         }
-    }, [arrayOfData])
-
+    }, [totals]);
 
     const scrollToSection = () => {
         scroller.scrollTo("current__date");
     };
+
+    // const clickToHome = () => {
+    //     fetchTransactions()
+    // }
 
     async function fetchTransactions() {
         let totalsResponse
@@ -56,7 +53,10 @@ const TransactionsList = ({ onScreenDate }) => {
 
     return (
         <>
-            {arrayOfData}
+            <MainList
+                totals={totals}
+                transactions={transactions}
+            />
         </>
     );
 }

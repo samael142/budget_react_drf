@@ -34,6 +34,7 @@ function App() {
   const [moneyAccounts, setMoneyAccounts] = useState([])
   // const [headersRating, setHeadersRating] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(true)
+  const [showTransactionsList, setShowTransactionsList] = useState(false)
 
 
   useEffect(() => {
@@ -75,6 +76,7 @@ function App() {
       moneyAccounts,
       isAuthenticated,
       onScreenDate,
+      showTransactionsList,
       // headersRating,
       setHeaders,
       setCategories,
@@ -82,6 +84,7 @@ function App() {
       setOnScreenDate,
       setMoneyAccounts,
       setIsAuthenticated,
+      setShowTransactionsList,
       getTransactionParameters
     }}>
       <Router>

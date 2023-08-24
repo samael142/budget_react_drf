@@ -176,17 +176,20 @@ class TotalBalancePerAccountModelViewSet(ModelViewSet):
 
 
 class PlainOperationModelViewSet(ModelViewSet):
-    queryset = PlainOperation.objects. \
+    queryset = PlainOperation.objects.all(). \
         select_related('header', 'category', 'subcategory'). \
         order_by('-pk')
     serializer_class = PlainOperationModelSerializer
 
     def list(self, request):
+        queryset = PlainOperation.objects.all(). \
+        select_related('header', 'category', 'subcategory'). \
+        order_by('-pk')
         qs = []
-        queryset_element = {}
-        for el in self.queryset:
+        queryset_element = {}        
+        for el in queryset:
             transactions_array = Transaction.objects.filter(
-                plain_id=el.id).order_by('operation_date')
+                plain_id_id=el.id).order_by('operation_date')
             if len(transactions_array) != 0:
                 queryset_element['id'] = el.pk
                 queryset_element['header'] = el.header
