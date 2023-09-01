@@ -57,6 +57,7 @@ const TransactionsList = ({ onScreenDate }) => {
     return (
         <>
             {arrayOfData}
+            <div className='clear__block'></div>
         </>
     );
 }
