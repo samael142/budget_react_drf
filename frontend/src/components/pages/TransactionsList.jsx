@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ApiService from '../API/ApiService';
 import { scroller } from "react-scroll";
 import { useParams } from 'react-router-dom';
 import MainListTest from '../MainListTest';
+import { MainContext } from '../../context';
 
 
 
@@ -11,12 +12,14 @@ const TransactionsList = ({ onScreenDate }) => {
     const [transactions, setTransactions] = useState([])
     const [totals, setTotals] = useState([])
     const [arrayOfData, setArrayOfData] = useState([])
+    const { setLastLink } = useContext(MainContext)
 
 
     let params = useParams();
 
     useEffect(() => {
         fetchTransactions()
+        setLastLink(window.location.pathname)
     }, [onScreenDate])
 
     useEffect(() => {

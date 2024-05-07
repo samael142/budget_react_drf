@@ -91,24 +91,38 @@ order by
 ALTER TABLE public.transactionapp_transaction DROP CONSTRAINT transactionapp_trans_plain_id_id_2a5abb34_fk_transacti;
 ALTER TABLE public.transactionapp_transaction ADD CONSTRAINT transactionapp_trans_plain_id_id_2a5abb34_fk_transacti FOREIGN KEY (plain_id_id) REFERENCES public.transactionapp_plainoperation(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
-CREATE
-OR REPLACE VIEW headers_rating AS
+-- CREATE
+-- OR REPLACE VIEW headers_rating AS
+-- SELECT
+--   bh.id,
+--   bh.name,
+--   COUNT(tr.header_id) AS count
+-- FROM
+--   budget_header AS bh
+--   LEFT JOIN transactionapp_transaction AS tr ON bh.id = tr.header_id
+-- WHERE 
+--   NOT tr.past AND tr.operation_summ < 0
+-- GROUP BY
+--   bh.id
+-- ORDER  BY
+--   count DESC
+-- LIMIT 10
+
+
+
+-- ALTER TABLE IF EXISTS public.transactionapp_transaction
+--     ADD COLUMN hide_from_report boolean;
+
+CREATE or REPLACE VIEW daily_summ AS
 SELECT
-  bh.id,
-  bh.name,
-  COUNT(tr.header_id) AS count
-FROM
-  budget_header AS bh
-  LEFT JOIN transactionapp_transaction AS tr ON bh.id = tr.header_id
+	operation_date,
+	SUM(CASE WHEN operation_summ < 0 THEN operation_summ END) AS negative_values,
+	SUM(CASE WHEN operation_summ > 0 THEN operation_summ END) AS positive_values
+FROM 
+  transactionapp_transaction
 WHERE 
-  NOT tr.past AND tr.operation_summ < 0
-GROUP BY
-  bh.id
-ORDER  BY
-  count DESC
-LIMIT 10
-
-
-
-ALTER TABLE IF EXISTS public.transactionapp_transaction
-    ADD COLUMN hide_from_report boolean;
+  NOT past AND transfer_id IS NULL
+GROUP BY 
+  operation_date
+ORDER BY 
+  operation_date;

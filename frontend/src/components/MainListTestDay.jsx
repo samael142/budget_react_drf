@@ -1,6 +1,7 @@
 import React from 'react';
 import TotalItem from "./TotalItem";
 import TransactionItem from "./TransactionItem";
+import DayBox from './DayBox';
 
 const MainListTest = ({ transactions, totals }) => {
 
@@ -21,7 +22,8 @@ const MainListTest = ({ transactions, totals }) => {
                 totals.push({ operation_date: el.operation_date, total: undefined, day: weekDays[insertionDate.getDay()] });
             }
             mainList.push(
-                    <TotalItem total={totals.find(o => o.operation_date === el.operation_date)} currentDate={stringDate} key={el.operation_date} />
+                    <DayBox el = {el} totals = {totals} stringDate = {stringDate}/>
+                    // <TotalItem total={totals.find(o => o.operation_date === el.operation_date)} currentDate={stringDate} key={el.operation_date} />
             )
             if (el.operation_date === stringDate) {
                 currentMonthMarker = true

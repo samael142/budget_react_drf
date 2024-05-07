@@ -13,6 +13,7 @@ import Select from "../Select";
 const TransactionForm = () => {
 
     let params = useParams();
+    const { lastLink } = useContext(MainContext);
 
     const readEditableTransaction = async () => {
         const editablTransaction = await ApiService.getTransactionById(params.transactionId)
@@ -107,7 +108,7 @@ const TransactionForm = () => {
 
     const navigateHome = () => {
         setOnScreenDate(new Date())
-        navigate('/');
+        navigate(lastLink);
     };
 
     const searchExsistingHeader = (header) => {

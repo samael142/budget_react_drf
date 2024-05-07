@@ -4,10 +4,8 @@ import SubcategoryStatisticItem from "./SubcategoryStatisticItem";
 
 const StatisticList = (props) => {
 
-
     let statisticList = []
-    let subcateriesList = []
-
+    let subcategoriesList = []
 
     if (props.data.length !== 0) {
         let categoryMarker = props.data[0].category__name
@@ -16,8 +14,8 @@ const StatisticList = (props) => {
         for (const el of props.data) {
             if (el.category__name === categoryMarker) {
                 categorySumm += el.total_summ
-                subcateriesList.push(
-                    <SubcategoryStatisticItem subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} />
+                subcategoriesList.push(
+                    <SubcategoryStatisticItem subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} xy={el.subcategory__name + categoryMarker} startDate={props.startDate} endDate={props.endDate}/>
                 )
             } else {
                 statisticList.push(
@@ -25,15 +23,15 @@ const StatisticList = (props) => {
                 )
                 categorySumm = el.total_summ
                 categoryMarker = el.category__name
-                Array.prototype.push.apply(statisticList, subcateriesList);
-                subcateriesList = [<SubcategoryStatisticItem subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} />]
+                Array.prototype.push.apply(statisticList, subcategoriesList);
+                subcategoriesList = [<SubcategoryStatisticItem subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} xy={el.subcategory__name + categoryMarker} startDate={props.startDate} endDate={props.endDate}/>]
             }
         }
         if (statisticList.length === 0) {
             statisticList.push(
                 <CategoryStatisticItem category={categoryMarker} summ={categorySumm} key={categoryMarker} />
             )
-            Array.prototype.push.apply(statisticList, subcateriesList);
+            Array.prototype.push.apply(statisticList, subcategoriesList);
         }
     }
 

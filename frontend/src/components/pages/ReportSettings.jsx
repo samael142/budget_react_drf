@@ -30,15 +30,6 @@ const ReportSettings = () => {
         <div>
             <br />
             <form onSubmit={handleSubmit}>
-                {/* <input
-                    value={queryData.category}
-                    onChange={e => setQueryData({ ...queryData, category: e.target.value })}
-                    onFocus={(event) => { event.target.select() }}
-                    type="text" className="form__control" list="category"
-                    placeholder="Категория" required />
-                <datalist id="category">
-                    {categories.map((category) => <option value={category} key={category} />)}
-                </datalist> */}
                 <DataList
                     items={categories}
                     name='category'

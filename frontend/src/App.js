@@ -24,6 +24,7 @@ import BudgetForm from './components/pages/BudgetForm';
 import BudgetDeatil from './components/pages/BudgetDetail';
 import PlainOperationsList from './components/pages/PlainOperationsList';
 import Login from './components/pages/Login';
+import { GetCurrentDate, GetStartMonth } from './components/utils/utils';
 
 function App() {
 
@@ -35,11 +36,14 @@ function App() {
   // const [headersRating, setHeadersRating] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(true)
   const [showTransactionsList, setShowTransactionsList] = useState(false)
+  const [lastLink, setLastLink] = useState(window.location.pathname)
+  const [statisticParameters, setStatisticParameters] = useState({category : "", startDate: GetStartMonth(new Date()), endDate: GetCurrentDate(new Date())})
+  const [statisticDetailModeArray, setStatisticDetailModeArray] = useState([])
 
 
-  useEffect(() => {
-    tryFetching()
-  }, [])
+    useEffect(() => {
+      tryFetching()
+    }, [])
 
   async function tryFetching() {
     const response = await ApiService.tryFetching()
@@ -77,7 +81,12 @@ function App() {
       isAuthenticated,
       onScreenDate,
       showTransactionsList,
-      // headersRating,
+      lastLink,
+      statisticParameters,
+      statisticDetailModeArray,
+      setStatisticDetailModeArray,
+      setStatisticParameters,
+      setLastLink,
       setHeaders,
       setCategories,
       setSubcategories,
