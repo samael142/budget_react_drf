@@ -605,6 +605,10 @@ body {
     font-weight: 600;
 }
 
-.font__10 {
+.font__12 {
     font-size: 12px !important;
+}
+
+.font__10 {
+    font-size: 10px !important;
 }

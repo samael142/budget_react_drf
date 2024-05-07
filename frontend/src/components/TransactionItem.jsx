@@ -23,14 +23,15 @@ const TransactionItem = (props) => {
                         </div>
                     </div>
 
-                    <div className="tr__box__row font__10">
+                    <div className="tr__box__row font__12">
                         <div>{props.transaction.category ? props.transaction.category.name : ""}</div>
+                        <div>{props.transaction.account ? props.transaction.account.name : ""}</div>
                     </div>
 
 
-                    <div className="tr__box__row font__10">
+                    <div className="tr__box__row font__12">
                         <div>{props.transaction.category ? props.transaction.subcategory.name : ""}</div>
-                        <div>{props.transaction.account ? props.transaction.account.name : ""}</div>
+                        <div className="font__10">{DateConvert(props.transaction.operation_date)}</div>
                     </div>
                 </div>
             </Link>

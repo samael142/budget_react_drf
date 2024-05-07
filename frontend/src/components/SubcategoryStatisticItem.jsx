@@ -13,7 +13,7 @@ const SubcategoryStatisticItem = (props) => {
     const [transactions, getTransactions] = useState([])
     const queryData = {
         end: props.endDate,
-        filterCategory: "",
+        filterCategory: props.category,
         filterHeader: "",
         filterSubcategory: props.subcategory,
         start: props.startDate

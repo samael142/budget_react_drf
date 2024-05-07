@@ -15,7 +15,7 @@ const StatisticList = (props) => {
             if (el.category__name === categoryMarker) {
                 categorySumm += el.total_summ
                 subcategoriesList.push(
-                    <SubcategoryStatisticItem subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} xy={el.subcategory__name + categoryMarker} startDate={props.startDate} endDate={props.endDate}/>
+                    <SubcategoryStatisticItem category={categoryMarker} subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} xy={el.subcategory__name + categoryMarker} startDate={props.startDate} endDate={props.endDate}/>
                 )
             } else {
                 statisticList.push(
@@ -24,7 +24,7 @@ const StatisticList = (props) => {
                 categorySumm = el.total_summ
                 categoryMarker = el.category__name
                 Array.prototype.push.apply(statisticList, subcategoriesList);
-                subcategoriesList = [<SubcategoryStatisticItem subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} xy={el.subcategory__name + categoryMarker} startDate={props.startDate} endDate={props.endDate}/>]
+                subcategoriesList = [<SubcategoryStatisticItem category={categoryMarker} subcategory={el.subcategory__name} summ={el.total_summ} key={el.subcategory__name + categoryMarker} xy={el.subcategory__name + categoryMarker} startDate={props.startDate} endDate={props.endDate}/>]
             }
         }
         if (statisticList.length === 0) {
