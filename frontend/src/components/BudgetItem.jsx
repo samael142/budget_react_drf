@@ -13,7 +13,8 @@ const BudgetItem = (props) => {
     }
 
     return (
-        <div className="tr__box" onClick={handleClick}>
+        <div className="tr__box">
+        <div className="tr__box__column" onClick={handleClick}>
             <div className="tr__box__row">
                 <div><b>{props.budget.name}</b></div>
             </div>
@@ -23,6 +24,7 @@ const BudgetItem = (props) => {
             <div className="tr__box__row">
                 <div>Категория:&nbsp;{props.budget.category.name}</div>
             </div>
+        </div>
         </div>
     )
 }

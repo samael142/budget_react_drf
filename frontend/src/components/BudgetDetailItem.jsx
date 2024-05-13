@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 
 const BudgetDetailItem = (props) => {
     return (
+        <div className="tr__box">
+        <div className={"" + (props.item[3] > 0 ? "tr__box__color__green" : "tr__box__color__red")}></div>
         <Link to={`/settings/budget/${props.budgetId}`}
-            className={"tr__box " + (props.item[3] < 0 ? 'light__red ' : 'transfer__color ') + (props.item[6] ? 'border__5px' : '')}>
+            className={"tr__box__column " + (props.item[6] ? 'border__5px' : '')}>
             <div className="tr__box__row budget__row">
                 <div><b>{props.name}</b>&nbsp;&nbsp;Категория:&nbsp;{props.category}</div>
             </div>
@@ -18,6 +20,7 @@ const BudgetDetailItem = (props) => {
                 <div>+&nbsp;<span>{props.item[1].toLocaleString("ru",{minimumFractionDigits: 2})}</span></div>
             </div>
         </Link>
+        </div>
     )
 }
 
