@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from decimal import Decimal
 from xml.sax.handler import property_declaration_handler
 from django.db.models import Sum
 from rest_framework.decorators import action
@@ -218,7 +219,20 @@ class ReportViewSet(ModelViewSet):
         qs = Transaction.objects. \
             filter(category__name=category, past=0, operation_date__range=(start_date, end_date)). \
             values('operation_date').annotate(total_summ=Sum('operation_summ'))
-        return Response(qs)
+        daily_totals = {
+            row['operation_date']: row['total_summ']
+            for row in qs
+        }
+        current_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        report = []
+        while current_date <= end_date:
+            report.append({
+                'operation_date': current_date,
+                'total_summ': daily_totals.get(current_date, Decimal('0.00')),
+            })
+            current_date += timedelta(days=1)
+        return Response(report)
 
 
 class ExcludeReportViewSet(ModelViewSet):
